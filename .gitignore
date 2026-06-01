@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Env
+.env
+.env.*
+!.env.example
+.env.local
+.env.*.local
+
+# Uploads
+backend/uploads/
+uploads/
+*.pdf
+*.wav
+*.mp3
+*.mp4
+*.m4a
+
+# Local databases / generated data
+*.db
+*.sqlite
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Whisper/HF caches (local dev only)
+.cache/
