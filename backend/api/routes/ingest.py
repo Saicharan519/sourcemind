@@ -13,7 +13,7 @@ from config import settings
 from core.document_pipeline import ingest_document
 from core.evaluator import evaluate_source
 from core.video_pipeline import ingest_video
-from db.postgres import create_source
+from db.postgres import create_source, get_source
 
 router = APIRouter(prefix="/api/ingest", tags=["ingest"])
 
@@ -21,14 +21,22 @@ router = APIRouter(prefix="/api/ingest", tags=["ingest"])
 async def _ingest_doc_and_eval(source_id, pdf_path, filename):
     """Run ingestion, then trigger RAGAS eval if ingestion succeeded."""
     await ingest_document(source_id, pdf_path, filename)
-    # Eval runs sequentially after ingestion completes. Failures are swallowed
-    # inside evaluate_source — no need to guard here.
-    # await evaluate_source(source_id)
+    # Eval runs sequentially after ingestion. Failures are swallowed inside
+    # evaluate_source, and score_with_ragas offloads the heavy work to a thread.
+    if await _source_is_ready(source_id):
+        await evaluate_source(source_id)
 
 
 async def _ingest_video_and_eval(source_id, url):
     await ingest_video(source_id, url)
-    # await evaluate_source(source_id)
+    if await _source_is_ready(source_id):
+        await evaluate_source(source_id)
+
+
+async def _source_is_ready(source_id) -> bool:
+    """Only evaluate sources that finished ingesting (skip 'failed')."""
+    src = await get_source(source_id)
+    return bool(src and src.get("status") == "ready")
 
 
 @router.post("/document", response_model=IngestResponse, status_code=202)

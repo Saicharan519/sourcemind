@@ -8,11 +8,12 @@ Designed to run as a FastAPI BackgroundTask.
 """
 from __future__ import annotations
 
+import asyncio
 import os
 from functools import lru_cache
 from uuid import UUID
 
-import whisper
+from faster_whisper import WhisperModel
 
 from config import settings
 from core.chunker import segment_chunk
@@ -24,21 +25,43 @@ from utils.audio import download_youtube_audio
 
 
 @lru_cache(maxsize=1)
-def _whisper_model():
-    print(f"[whisper] loading model: {settings.WHISPER_MODEL}")
-    m = whisper.load_model(settings.WHISPER_MODEL)
+def _whisper_model() -> WhisperModel:
+    device = "cuda" if settings.EMBEDDING_DEVICE == "cuda" else "cpu"
+    compute_type = "float16" if device == "cuda" else "int8"
+    print(f"[whisper] loading faster-whisper model: {settings.WHISPER_MODEL} ({device}/{compute_type})")
+    m = WhisperModel(settings.WHISPER_MODEL, device=device, compute_type=compute_type)
     print("[whisper] loaded.")
     return m
 
 
 def transcribe_audio(wav_path: str) -> list[dict]:
-    """Returns Whisper segments: [{text, start, end}, ...]."""
+    """Returns Whisper segments: [{text, start, end}, ...]. Blocking/CPU-bound.
+
+    Uses greedy decoding (beam_size=1) + a VAD filter that skips silence/music —
+    together these are what actually deliver faster-whisper's speedup on CPU.
+    Iterating the returned generator is what drives the work, so we log progress
+    against the known audio duration (faster-whisper prints no progress bar).
+    """
     model = _whisper_model()
-    result = model.transcribe(wav_path, task="transcribe", verbose=False)
-    return [
-        {"text": s.get("text", ""), "start": s.get("start", 0.0), "end": s.get("end", 0.0)}
-        for s in result.get("segments", [])
-    ]
+    segments, info = model.transcribe(
+        wav_path,
+        task="transcribe",
+        beam_size=1,
+        vad_filter=True,
+        vad_parameters={"min_silence_duration_ms": 500},
+    )
+    total = float(getattr(info, "duration", 0.0)) or 0.0
+    print(f"[whisper] transcribing ~{int(total)}s of audio (lang={getattr(info, 'language', '?')})")
+
+    out: list[dict] = []
+    next_mark = 0.10
+    for s in segments:
+        out.append({"text": s.text or "", "start": float(s.start or 0.0), "end": float(s.end or 0.0)})
+        if total and s.end and (s.end / total) >= next_mark:
+            print(f"[whisper] ~{int(100 * s.end / total)}% ({int(s.end)}/{int(total)}s)")
+            next_mark += 0.10
+    print(f"[whisper] done — {len(out)} segments")
+    return out
 
 
 async def _generate_title(sample_text: str, fallback_title: str) -> str:
@@ -61,15 +84,15 @@ async def _generate_title(sample_text: str, fallback_title: str) -> str:
 async def ingest_video(source_id: UUID, youtube_url: str) -> None:
     wav_path: str | None = None
     try:
-        # 1. Download audio
-        wav_path, meta = download_youtube_audio(youtube_url)
+        # 1. Download audio (network + ffmpeg — offload so the event loop stays free)
+        wav_path, meta = await asyncio.to_thread(download_youtube_audio, youtube_url)
         duration = meta.get("duration", 0)
 
         if duration > settings.MAX_VIDEO_DURATION_MIN * 60:
             raise ValueError(f"Video exceeds max duration of {settings.MAX_VIDEO_DURATION_MIN} minutes.")
 
-        # 2. Transcribe
-        segments = transcribe_audio(wav_path)
+        # 2. Transcribe (CPU-bound — offload so chat/polling stays responsive)
+        segments = await asyncio.to_thread(transcribe_audio, wav_path)
         if not segments:
             raise ValueError("Transcription produced no segments.")
 
@@ -84,7 +107,7 @@ async def ingest_video(source_id: UUID, youtube_url: str) -> None:
 
         # 5. Embed + upsert
         texts = [c.content for c in chunks]
-        embeddings = embed_texts(texts)
+        embeddings = await asyncio.to_thread(embed_texts, texts)
         payloads = [
             {
                 "source_id": str(source_id),

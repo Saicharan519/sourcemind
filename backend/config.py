@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     GROQ_MODEL_MAIN: str = "llama-3.3-70b-versatile"
     GROQ_MODEL_FAST: str = "llama-3.1-8b-instant"
 
+    # Mistral (used as the RAGAS evaluator LLM — higher free-tier limits than Groq)
+    MISTRAL_API_KEY: str = ""
+    MISTRAL_MODEL_EVAL: str = "mistral-small-latest"
+
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://sourcemind:sourcemind_secret@localhost:5432/sourcemind"
 

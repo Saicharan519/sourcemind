@@ -1,36 +1,55 @@
 """
-LangGraph agentic query router.
+Agentic query router — a real LangGraph ``StateGraph``.
 
-Every chat request runs through this state machine:
-  - classify_query: simple | comparative | multi_hop
-  - simple_rag:      standard retrieve + answer
-  - comparative_rag: decompose into 2 sub-queries, retrieve both, synthesize
-  - multi_hop_rag:   step-1 retrieve → intermediate answer → step-2 retrieve → final
+Graph shape:
 
-Each path is an async generator that yields events:
+    START → classify ──(conditional on query_type)──┬─→ simple      → END
+                                                    ├─→ comparative → END
+                                                    └─→ multi_hop   → END
+
+Streaming: LangGraph nodes mutate state and return; they cannot themselves be
+async generators. To keep the token-by-token SSE stream, each node pushes events
+into an ``asyncio.Queue`` via an ``emit`` callable carried in the graph state.
+``route_and_stream`` runs the compiled graph as a background task and drains the
+queue, yielding the same event dicts the API layer expects:
+
   {"type": "query_type", "value": ...}
   {"type": "sub_queries", "value": [...]}
   {"type": "citations", "value": [...]}
   {"type": "token", "value": "..."}
-  {"type": "done"}
+  {"type": "done", "value": None}
 """
 from __future__ import annotations
 
+import asyncio
 import json
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator, Awaitable, Callable, Optional, TypedDict
 from uuid import UUID
 
-from langchain_core.messages import HumanMessage
+from langgraph.graph import END, START, StateGraph
 
 from core.rag_engine import (
     build_citations,
     format_context_for_llm,
-    generate_answer_sync,
     get_fast_llm,
     hydrate_contexts,
     retrieve,
     stream_answer,
 )
+
+
+# -- Graph state -----------------------------------------------------------
+
+EmitFn = Callable[[dict], Awaitable[None]]
+
+
+class QueryState(TypedDict, total=False):
+    question: str
+    source_id: Optional[UUID]
+    chat_history: list[dict[str, str]]
+    emit: EmitFn            # SSE writer threaded through state
+    query_type: str         # set by the classify node; drives routing
+    sub_queries: list[str]
 
 
 # -- Classification --------------------------------------------------------
@@ -121,40 +140,37 @@ async def make_followup_query(question: str, intermediate: str) -> str:
         return question
 
 
-# -- Path implementations --------------------------------------------------
+# -- Graph nodes -----------------------------------------------------------
 
-async def _emit(event_type: str, value: Any) -> dict:
-    return {"type": event_type, "value": value}
+async def classify_node(state: QueryState) -> dict[str, Any]:
+    qt = await classify_query(state["question"])
+    await state["emit"]({"type": "query_type", "value": qt})
+    return {"query_type": qt}
 
 
-async def _simple_path(
-    question: str,
-    source_id: UUID | None,
-    chat_history: list[dict[str, str]] | None,
-) -> AsyncIterator[dict]:
-    yield {"type": "query_type", "value": "simple"}
+async def simple_node(state: QueryState) -> dict[str, Any]:
+    question = state["question"]
+    source_id = state.get("source_id")
+    emit = state["emit"]
 
     chunks = await retrieve(question, source_id=source_id)
     chunks = await hydrate_contexts(chunks)
-    citations = build_citations(chunks)
-    yield {"type": "citations", "value": citations}
+    await emit({"type": "citations", "value": build_citations(chunks)})
 
-    async for tok in stream_answer(question, chunks, chat_history):
-        yield {"type": "token", "value": tok}
-    yield {"type": "done", "value": None}
+    async for tok in stream_answer(question, chunks, state.get("chat_history")):
+        await emit({"type": "token", "value": tok})
+    # LangGraph requires each node to write at least one state channel.
+    return {"query_type": state.get("query_type", "simple")}
 
 
-async def _comparative_path(
-    question: str,
-    source_id: UUID | None,
-    chat_history: list[dict[str, str]] | None,
-) -> AsyncIterator[dict]:
-    yield {"type": "query_type", "value": "comparative"}
+async def comparative_node(state: QueryState) -> dict[str, Any]:
+    question = state["question"]
+    source_id = state.get("source_id")
+    emit = state["emit"]
 
     subs = await decompose_comparative(question)
-    yield {"type": "sub_queries", "value": subs}
+    await emit({"type": "sub_queries", "value": subs})
 
-    import asyncio
     chunk_lists = await asyncio.gather(
         *(retrieve(s, source_id=source_id) for s in subs),
         return_exceptions=True,
@@ -167,7 +183,7 @@ async def _comparative_path(
         all_chunks.extend(cl)
 
     # Dedupe by id
-    seen = set()
+    seen: set[str] = set()
     unique = []
     for c in all_chunks:
         cid = str(c.get("id"))
@@ -176,8 +192,7 @@ async def _comparative_path(
             unique.append(c)
 
     hydrated = await hydrate_contexts(unique)
-    citations = build_citations(hydrated)
-    yield {"type": "citations", "value": citations}
+    await emit({"type": "citations", "value": build_citations(hydrated)})
 
     synth_question = (
         f"Compare the answers to the following sub-questions, and produce a "
@@ -186,23 +201,20 @@ async def _comparative_path(
         f"Sub-question 1: {subs[0]}\n"
         f"Sub-question 2: {subs[1]}"
     )
-    async for tok in stream_answer(synth_question, hydrated, chat_history):
-        yield {"type": "token", "value": tok}
-    yield {"type": "done", "value": None}
+    async for tok in stream_answer(synth_question, hydrated, state.get("chat_history")):
+        await emit({"type": "token", "value": tok})
+    return {"sub_queries": subs}
 
 
-async def _multi_hop_path(
-    question: str,
-    source_id: UUID | None,
-    chat_history: list[dict[str, str]] | None,
-) -> AsyncIterator[dict]:
-    yield {"type": "query_type", "value": "multi_hop"}
+async def multi_hop_node(state: QueryState) -> dict[str, Any]:
+    question = state["question"]
+    source_id = state.get("source_id")
+    emit = state["emit"]
 
     # Step 1: retrieve + intermediate answer (Groq 8B, no stream)
     chunks_1 = await retrieve(question, source_id=source_id)
     chunks_1 = await hydrate_contexts(chunks_1)
 
-    # quick intermediate answer using the fast model
     fast = get_fast_llm()
     interm_prompt = (
         f"Based ONLY on the following context, give a brief 2-3 sentence "
@@ -214,13 +226,13 @@ async def _multi_hop_path(
 
     # Step 2: follow-up query
     followup = await make_followup_query(question, intermediate)
-    yield {"type": "sub_queries", "value": [question, followup]}
+    await emit({"type": "sub_queries", "value": [question, followup]})
 
     chunks_2 = await retrieve(followup, source_id=source_id)
     chunks_2 = await hydrate_contexts(chunks_2)
 
     # combine + dedupe
-    seen = set()
+    seen: set[str] = set()
     combined: list[dict[str, Any]] = []
     for c in chunks_1 + chunks_2:
         cid = str(c.get("id"))
@@ -228,8 +240,7 @@ async def _multi_hop_path(
             seen.add(cid)
             combined.append(c)
 
-    citations = build_citations(combined)
-    yield {"type": "citations", "value": citations}
+    await emit({"type": "citations", "value": build_citations(combined)})
 
     final_question = (
         f"Original question: {question}\n\n"
@@ -237,9 +248,38 @@ async def _multi_hop_path(
         f"Synthesize a final, well-grounded answer using BOTH the step-1 finding "
         f"and the additional context retrieved below."
     )
-    async for tok in stream_answer(final_question, combined, chat_history):
-        yield {"type": "token", "value": tok}
-    yield {"type": "done", "value": None}
+    async for tok in stream_answer(final_question, combined, state.get("chat_history")):
+        await emit({"type": "token", "value": tok})
+    return {"sub_queries": [question, followup]}
+
+
+# -- Graph assembly --------------------------------------------------------
+
+def _route(state: QueryState) -> str:
+    return state.get("query_type", "simple")
+
+
+def _build_graph():
+    g = StateGraph(QueryState)
+    g.add_node("classify", classify_node)
+    g.add_node("simple", simple_node)
+    g.add_node("comparative", comparative_node)
+    g.add_node("multi_hop", multi_hop_node)
+
+    g.add_edge(START, "classify")
+    g.add_conditional_edges(
+        "classify",
+        _route,
+        {"simple": "simple", "comparative": "comparative", "multi_hop": "multi_hop"},
+    )
+    g.add_edge("simple", END)
+    g.add_edge("comparative", END)
+    g.add_edge("multi_hop", END)
+    return g.compile()
+
+
+# Compiled once at import; reused across requests.
+GRAPH = _build_graph()
 
 
 # -- Public entry point ---------------------------------------------------
@@ -250,15 +290,40 @@ async def route_and_stream(
     chat_history: list[dict[str, str]] | None = None,
 ) -> AsyncIterator[dict]:
     """
-    Main entry. Classify query, dispatch to the right path, yield events.
+    Run the compiled LangGraph and yield SSE event dicts as nodes produce them.
+    Nodes push events into a queue via `emit`; we drain it until the graph run
+    completes.
     """
-    qt = await classify_query(question)
-    if qt == "comparative":
-        async for ev in _comparative_path(question, source_id, chat_history):
-            yield ev
-    elif qt == "multi_hop":
-        async for ev in _multi_hop_path(question, source_id, chat_history):
-            yield ev
-    else:
-        async for ev in _simple_path(question, source_id, chat_history):
-            yield ev
+    queue: asyncio.Queue = asyncio.Queue()
+    _SENTINEL = object()
+
+    async def emit(event: dict) -> None:
+        await queue.put(event)
+
+    state: QueryState = {
+        "question": question,
+        "source_id": source_id,
+        "chat_history": chat_history or [],
+        "emit": emit,
+    }
+
+    async def _run() -> None:
+        try:
+            await GRAPH.ainvoke(state)
+            await queue.put({"type": "done", "value": None})
+        except Exception as e:
+            print(f"[route_and_stream] graph run failed: {e}")
+            await queue.put({"type": "error", "value": str(e)})
+            await queue.put({"type": "done", "value": None})
+        finally:
+            await queue.put(_SENTINEL)
+
+    task = asyncio.create_task(_run())
+    try:
+        while True:
+            event = await queue.get()
+            if event is _SENTINEL:
+                break
+            yield event
+    finally:
+        await task

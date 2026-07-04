@@ -130,14 +130,28 @@ async def run_rag_on_qa(source_id: UUID, qa_pairs: list[dict[str, str]]) -> list
 # -- RAGAS scoring ---------------------------------------------------------
 
 def _build_ragas_llm():
-    """Wrap Groq LLM for RAGAS."""
-    from langchain_groq import ChatGroq
+    """
+    Wrap the RAGAS evaluator LLM. Prefer Mistral (higher free-tier limits, which
+    avoids the 429 → timeout → NaN cascade that Groq's low TPM caused). Falls
+    back to Groq 8B if no Mistral key is configured.
+    """
     from ragas.llms import LangchainLLMWrapper
-    chat = ChatGroq(
-        model=settings.GROQ_MODEL_FAST,
-        api_key=settings.GROQ_API_KEY,
-        temperature=0.0,
-    )
+
+    if settings.MISTRAL_API_KEY:
+        from langchain_mistralai import ChatMistralAI
+        chat = ChatMistralAI(
+            model=settings.MISTRAL_MODEL_EVAL,
+            api_key=settings.MISTRAL_API_KEY,
+            temperature=0.0,
+        )
+    else:
+        from langchain_groq import ChatGroq
+        print("[ragas] MISTRAL_API_KEY not set — falling back to Groq 8B evaluator")
+        chat = ChatGroq(
+            model=settings.GROQ_MODEL_FAST,
+            api_key=settings.GROQ_API_KEY,
+            temperature=0.0,
+        )
     return LangchainLLMWrapper(chat)
 
 
@@ -187,15 +201,21 @@ async def score_with_ragas(records: list[dict[str, Any]]) -> dict[str, float]:
         import ragas as _ragas
         _ragas.utils.num_workers = 1
 
-        result = evaluate(
-            ds,
-            metrics=[faithfulness, answer_relevancy, context_recall, context_precision],
-            llm=ragas_llm,
-            embeddings=ragas_emb,
-            raise_exceptions=False,
-            run_config=RunConfig(timeout=120, max_retries=3, max_wait=60),
-        )
-        df = result.to_pandas()
+        # ragas.evaluate() is synchronous and CPU/network-heavy — run it off the
+        # event loop so eval never freezes the API server.
+        def _run_eval():
+            result = evaluate(
+                ds,
+                metrics=[faithfulness, answer_relevancy, context_recall, context_precision],
+                llm=ragas_llm,
+                embeddings=ragas_emb,
+                raise_exceptions=False,
+                run_config=RunConfig(timeout=120, max_retries=3, max_wait=60),
+            )
+            return result.to_pandas()
+
+        import asyncio
+        df = await asyncio.to_thread(_run_eval)
         return {
             "faithfulness": float(df["faithfulness"].mean()) if "faithfulness" in df else None,
             "answer_relevancy": float(df["answer_relevancy"].mean()) if "answer_relevancy" in df else None,

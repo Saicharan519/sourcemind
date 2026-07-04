@@ -8,6 +8,7 @@ Designed to run as a FastAPI BackgroundTask.
 """
 from __future__ import annotations
 
+import asyncio
 import os
 from uuid import UUID
 
@@ -60,8 +61,8 @@ async def ingest_document(source_id: UUID, pdf_path: str, original_filename: str
     'failed' with an error message on exception.
     """
     try:
-        # 1. Extract
-        pages = extract_pdf_pages(pdf_path)
+        # 1. Extract (PyMuPDF is blocking — offload so the event loop stays free)
+        pages = await asyncio.to_thread(extract_pdf_pages, pdf_path)
         if not pages:
             raise ValueError("No extractable text in PDF.")
 
@@ -90,7 +91,7 @@ async def ingest_document(source_id: UUID, pdf_path: str, original_filename: str
 
         # 5. Embed children + upsert to Qdrant with payload
         child_texts = [c.content for c in children]
-        embeddings = embed_texts(child_texts)
+        embeddings = await asyncio.to_thread(embed_texts, child_texts)
 
         payloads = [
             {
