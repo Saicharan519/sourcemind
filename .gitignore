@@ -56,3 +56,7 @@ Thumbs.db
 
 # Whisper/HF caches (local dev only)
 .cache/
+
+# Personal notes (not part of the project)
+instructions_to_run.md
+.claude/
