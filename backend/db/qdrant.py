@@ -85,6 +85,7 @@ class QdrantStore:
         query_vector: list[float],
         source_id: UUID | None = None,
         top_k: int = 10,
+        with_vectors: bool = False,
     ) -> list[dict[str, Any]]:
         flt = None
         if source_id is not None:
@@ -102,12 +103,37 @@ class QdrantStore:
             query_filter=flt,
             limit=top_k,
             with_payload=True,
-            with_vectors=False,
+            with_vectors=with_vectors,
         )
         return [
-            {"id": str(r.id), "score": float(r.score), "payload": r.payload or {}}
+            {
+                "id": str(r.id),
+                "score": float(r.score),
+                "payload": r.payload or {},
+                "vector": (list(r.vector) if with_vectors and r.vector is not None else None),
+            }
             for r in results
         ]
+
+    @classmethod
+    async def retrieve(cls, ids: list[str]) -> dict[str, dict[str, Any]]:
+        """Fetch points (payload + vector) by id. Used to backfill BM25-only hits
+        that carry no Qdrant payload/vector after RRF fusion."""
+        if not ids:
+            return {}
+        points = await cls.client().retrieve(
+            collection_name=settings.QDRANT_COLLECTION,
+            ids=ids,
+            with_payload=True,
+            with_vectors=True,
+        )
+        return {
+            str(p.id): {
+                "payload": p.payload or {},
+                "vector": (list(p.vector) if p.vector is not None else None),
+            }
+            for p in points
+        }
 
     @classmethod
     async def delete_by_source(cls, source_id: UUID) -> None:

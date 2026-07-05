@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useStreamingChat } from "../hooks/useStreamingChat.js";
 import ChatMessage from "../components/ChatMessage.jsx";
 
 export default function GlobalChatPage() {
   const [input, setInput] = useState("");
+  const bottomRef = useRef(null);
   const { messages, isStreaming, send, clear } = useStreamingChat({
     mode: "global",
   });
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = () => {
     if (!input.trim() || isStreaming) return;
@@ -34,6 +39,7 @@ export default function GlobalChatPage() {
         {messages.map((m) => (
           <ChatMessage key={m.id} msg={m} />
         ))}
+        <div ref={bottomRef} />
       </div>
 
       <div className="flex gap-2">

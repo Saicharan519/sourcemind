@@ -103,6 +103,14 @@ export function useStreamingChat({ mode = "source", sourceId = null } = {}) {
         es.close();
         esRef.current = null;
         setIsStreaming(false);
+        // Surface dropped/failed connections instead of leaving a blank bubble.
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === asstId && !m.content
+              ? { ...m, content: "[connection lost — please try again]" }
+              : m
+          )
+        );
       };
     },
     [mode, sourceId, isStreaming, messages]

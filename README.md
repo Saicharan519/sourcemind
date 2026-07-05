@@ -31,9 +31,9 @@ Built as a portfolio project demonstrating production-grade RAG engineering — 
 | Relational DB | PostgreSQL 16 (parent chunks, BM25 corpus, eval results, chat history) |
 | Embeddings | sentence-transformers `all-MiniLM-L6-v2` (local, 384 dims) |
 | LLM | Groq API — Llama 3.3 70B (answers), Llama 3.1 8B (auxiliary) |
-| Transcription | OpenAI Whisper (`small`, local) |
-| RAG | LangChain + LangGraph-style state machine |
-| Evaluation | RAGAS |
+| Transcription | faster-whisper (`small`, local, CTranslate2 int8) |
+| RAG | LangChain + a compiled LangGraph `StateGraph` router |
+| Evaluation | RAGAS (Mistral evaluator LLM) |
 | Infra | Docker Compose |
 
 ---
@@ -44,6 +44,7 @@ Built as a portfolio project demonstrating production-grade RAG engineering — 
 
 - Docker + Docker Compose
 - A free Groq API key from [console.groq.com](https://console.groq.com/keys)
+- (Optional) A free Mistral API key from [console.mistral.ai](https://console.mistral.ai) — used as the RAGAS evaluator LLM; without it, evaluation falls back to Groq 8B
 
 ### 2. Clone and configure
 
@@ -183,9 +184,9 @@ Already followed in this codebase, but for reference:
 | Multi-query rephrasing | Groq Llama 3.1 8B |
 | HyDE generation | Groq Llama 3.1 8B |
 | Query classification | Groq Llama 3.1 8B |
-| RAGAS evaluator LLM | Groq Llama 3.1 8B |
+| RAGAS evaluator LLM | Mistral `mistral-small-latest` (falls back to Groq 8B if no key) |
 | Embeddings | local `all-MiniLM-L6-v2` (CPU) |
-| Audio transcription | local Whisper `small` (CPU) |
+| Audio transcription | local faster-whisper `small` (CPU, int8) |
 
 Groq free tier provides ~30K TPM for 8B and ~6K TPM for 70B — effectively unlimited for portfolio/demo use.
 

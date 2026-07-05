@@ -31,6 +31,8 @@ npm run build      # production build
 - **`.env` must live in `backend/`, not the repo root.** `config.py` loads `env_file=".env"` relative to the current working directory, and the backend is always run from `backend/`. A root-only `.env` will silently leave `GROQ_API_KEY` empty.
 - **Use `python -m uvicorn` / `python -m pip`, not the bare `uvicorn` / `pip` launchers,** if the venv was ever moved between folders. The `.exe` launcher stubs hardcode the original absolute path to `python.exe` and fail with "Unable to create process". `python -m ...` invokes the interpreter directly and always works. To fix permanently, recreate the venv in place.
 - **`yt-dlp` goes stale.** YouTube changes formats often; an old pin produces `Requested format is not available`. `requirements.txt` uses `yt-dlp>=...` intentionally — keep it unpinned-upward and `pip install -U yt-dlp` when video ingest breaks.
+- **Don't let `langchain-mistralai` float.** It's pinned to `0.2.4` (needs `langchain-core>=0.3.27,<0.4`). The current 1.x releases pull `langchain-core` 1.x, which breaks the whole langchain stack (groq, huggingface, text-splitters, langgraph). `langchain-core==0.3.27` and `langsmith==0.1.147` are pinned alongside it for the same reason.
+- **faster-whisper is CPU/int8 by default.** `_whisper_model()` in `core/video_pipeline.py` keys off `EMBEDDING_DEVICE`; it only uses CUDA (float16) if that's `cuda`. GPU needs the CUDA 12 / cuDNN 9 runtime libs installed — parked for v2.
 - `--reload` watches source files only. After upgrading a package, restart uvicorn manually.
 
 ## Tests / lint
@@ -45,7 +47,9 @@ There is no test suite, linter config, or CI in this repo despite the PRD mentio
 
 ### The agentic router (`core/agent_router.py`)
 
-Despite the PRD calling it "LangGraph", this is **not** a compiled LangGraph graph — it's plain async generators. `classify_query` (Groq 8B) labels the question `simple | comparative | multi_hop`, then dispatches to `_simple_path`, `_comparative_path`, or `_multi_hop_path`. Comparative decomposes into 2 sub-queries retrieved in parallel then synthesized; multi-hop does retrieve → intermediate answer (8B) → follow-up query → second retrieve → final synthesis. All three converge on `stream_answer` (Groq 70B) for the final streamed answer.
+This is a **real compiled LangGraph `StateGraph`** (`GRAPH = _build_graph()`, compiled once at import): `START → classify → conditional edge → {simple | comparative | multi_hop} → END`. `classify_query` (Groq 8B) labels the question and drives the conditional edge. Comparative decomposes into 2 sub-queries retrieved in parallel then synthesized; multi-hop does retrieve → intermediate answer (8B) → follow-up query → second retrieve → final synthesis. All three converge on `stream_answer` (Groq 70B).
+
+**Streaming out of graph nodes:** LangGraph nodes mutate state and return — they can't be async generators. To keep the token stream, each node pushes SSE event dicts into an `asyncio.Queue` via an `emit` callable carried in the graph state; `route_and_stream` runs `GRAPH.ainvoke()` as a background task and drains the queue, yielding the same events the API layer expects. Gotcha: LangGraph 0.2.34 requires every node to write ≥1 state channel, so `simple_node` returns `{"query_type": ...}` even though it has nothing else to update.
 
 ### The retrieval pipeline (`core/rag_engine.py` + `core/hybrid_search.py`)
 
@@ -64,9 +68,11 @@ Key structural facts:
 
 ### Ingestion (async, non-blocking)
 
-`api/routes/ingest.py` writes the uploaded PDF to `UPLOAD_DIR`, creates a `sources` row with `status='processing'`, returns `202` immediately, and runs the pipeline in a FastAPI `BackgroundTask`. `core/document_pipeline.py` (PyMuPDF → hierarchical chunk → embed → Qdrant upsert + BM25 rows → auto title/summary) and `core/video_pipeline.py` (yt-dlp via `utils/audio.py` → local Whisper → segment chunks) do the work and flip status to `ready`.
+`api/routes/ingest.py` writes the uploaded PDF to `UPLOAD_DIR`, creates a `sources` row with `status='processing'`, returns `202` immediately, and runs the pipeline in a FastAPI `BackgroundTask`. `core/document_pipeline.py` (PyMuPDF → hierarchical chunk → embed → Qdrant upsert + BM25 rows → auto title) and `core/video_pipeline.py` (yt-dlp via `utils/audio.py` → local **faster-whisper** transcription → segment chunks) do the work and flip status to `ready`.
 
-**RAGAS auto-eval is currently disabled.** The `evaluate_source(...)` calls in `_ingest_doc_and_eval` / `_ingest_video_and_eval` are commented out, so eval only runs when manually triggered via `POST /api/evaluate/{id}`. `RAGAS_NUM_QUESTIONS` defaults to 10 in `config.py` but the sample `.env` sets it to 3.
+**Blocking work is offloaded.** Whisper transcription, PyMuPDF extraction, and sentence-transformers embedding are synchronous CPU-bound calls — they run via `asyncio.to_thread(...)` so ingestion (and RAGAS) never freezes the async API server. Preserve this when adding CPU-heavy steps.
+
+**RAGAS auto-eval runs after ingestion.** `_ingest_doc_and_eval` / `_ingest_video_and_eval` call `evaluate_source(...)` once the source reaches `ready` (skipped for `failed`). The evaluator LLM is **Mistral** (`_build_ragas_llm` in `core/evaluator.py`), which falls back to Groq 8B only if `MISTRAL_API_KEY` is unset — this was the fix for Groq's low-TPM 429→NaN cascade. `ragas.evaluate()` itself is sync, so it's wrapped in `asyncio.to_thread`. `RAGAS_NUM_QUESTIONS` defaults to 10 in `config.py`; the sample `.env` uses 3.
 
 ### Frontend (`frontend/src`)
 
@@ -74,4 +80,4 @@ React Router pages: Dashboard (upload + source list), ChatPage (`/chat/:sourceId
 
 ## Model routing convention
 
-Groq 70B (`GROQ_MODEL_MAIN`) is used **only** for final answer generation and comparative synthesis where quality matters. Everything auxiliary — classification, multi-query, HyDE, decomposition, follow-up queries, multi-hop intermediate answers, RAGAS QA generation, and the RAGAS evaluator LLM — uses the fast/cheap 8B (`GROQ_MODEL_FAST`). Preserve this split when adding LLM calls; it's what keeps the project within free-tier rate limits.
+Groq 70B (`GROQ_MODEL_MAIN`) is used **only** for final answer generation and comparative synthesis where quality matters. Everything auxiliary — classification, multi-query, HyDE, decomposition, follow-up queries, multi-hop intermediate answers, and RAGAS QA generation — uses the fast/cheap Groq 8B (`GROQ_MODEL_FAST`). The one exception is the **RAGAS evaluator LLM, which is Mistral** (`MISTRAL_MODEL_EVAL`), moved off Groq to avoid rate-limit failures during scoring. Preserve this split when adding LLM calls; it's what keeps the project within free-tier limits.

@@ -12,6 +12,7 @@ export default function Dashboard() {
   const nav = useNavigate();
   const qc = useQueryClient();
   const [url, setUrl] = useState("");
+  const [dragging, setDragging] = useState(false);
 
   const { data: sources = [], refetch } = useQuery({
     queryKey: ["sources"],
@@ -39,6 +40,16 @@ export default function Dashboard() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["sources"] }),
   });
 
+  const handleFiles = (fileList) => {
+    const f = fileList?.[0];
+    if (!f) return;
+    if (f.type !== "application/pdf" && !f.name.toLowerCase().endsWith(".pdf")) {
+      alert("Only PDF files are accepted.");
+      return;
+    }
+    docMut.mutate(f);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
       {/* Upload column */}
@@ -47,16 +58,36 @@ export default function Dashboard() {
           <h2 className="text-sm font-semibold tracking-wider text-muted uppercase mb-3">
             Upload PDF
           </h2>
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) docMut.mutate(f);
+          <label
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
             }}
-            disabled={docMut.isPending}
-            className="block w-full text-sm text-muted file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-2 file:text-white hover:file:bg-accent-glow"
-          />
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              handleFiles(e.dataTransfer.files);
+            }}
+            className={`flex flex-col items-center justify-center gap-1 w-full cursor-pointer rounded-lg border-2 border-dashed px-4 py-6 text-center transition ${
+              dragging
+                ? "border-accent bg-accent/10"
+                : "border-border hover:border-accent/60"
+            } ${docMut.isPending ? "opacity-60 pointer-events-none" : ""}`}
+          >
+            <span className="text-2xl">📄</span>
+            <span className="text-sm text-muted">
+              Drag & drop a PDF here, or{" "}
+              <span className="text-accent-glow">browse</span>
+            </span>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => handleFiles(e.target.files)}
+              disabled={docMut.isPending}
+              className="hidden"
+            />
+          </label>
           {docMut.isPending && <p className="mt-2 text-xs text-cyan">Uploading…</p>}
           {docMut.isError && (
             <p className="mt-2 text-xs text-red-400">
@@ -85,6 +116,11 @@ export default function Dashboard() {
               {vidMut.isPending ? "Adding…" : "Add"}
             </button>
           </div>
+          {vidMut.isError && (
+            <p className="mt-2 text-xs text-red-400">
+              {vidMut.error.response?.data?.detail || "Could not add video"}
+            </p>
+          )}
         </div>
       </section>
 
@@ -102,14 +138,14 @@ export default function Dashboard() {
             {sources.map((s) => (
               <li
                 key={s.id}
-                className="bg-surface border border-border rounded-xl p-4 flex items-center justify-between hover:border-accent transition"
+                className="bg-surface border border-border rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 hover:border-accent transition"
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-lg">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="text-lg shrink-0">
                     {s.source_type === "video" ? "🎬" : "📄"}
                   </span>
-                  <div>
-                    <div className="font-medium">{s.title}</div>
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{s.title}</div>
                     <div className="text-xs text-muted flex gap-2 mt-1">
                       <StatusPill status={s.status} />
                       {typeof s.eval_score === "number" && (

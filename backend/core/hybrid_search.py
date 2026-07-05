@@ -10,6 +10,7 @@ plus the original payload, so downstream code can fetch parent chunks if needed.
 """
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 from uuid import UUID
 
@@ -17,7 +18,7 @@ import numpy as np
 
 from config import settings
 from core.bm25_index import bm25_search
-from core.embedder import embed_text
+from core.embedder import embed_text, embed_texts
 from db.qdrant import QdrantStore
 
 
@@ -118,40 +119,59 @@ async def hybrid_search(
     final_k = final_k or settings.MMR_FINAL_K
     lambda_mult = lambda_mult if lambda_mult is not None else settings.MMR_LAMBDA
 
-    query_vec = embed_text(query)
+    # Embedding is CPU-bound — keep it off the event loop.
+    query_vec = await asyncio.to_thread(embed_text, query)
 
-    # Dense
+    # Dense — ask Qdrant for the stored vectors so we don't have to re-embed later.
     dense_results = await QdrantStore.search(
         query_vector=query_vec,
         source_id=source_id,
         top_k=settings.DENSE_TOP_K,
+        with_vectors=True,
     )
-    # Normalize shape: ensure each has `id`, `content`
     for r in dense_results:
         r["content"] = r["payload"].get("content", "")
 
-    # Sparse (BM25)
+    # Sparse (BM25) — these carry no Qdrant payload/vector yet.
     sparse_results = await bm25_search(query, source_id=source_id, top_k=settings.BM25_TOP_K)
     for r in sparse_results:
         r["id"] = r["chunk_id"]
-        # BM25 row carries source_id; we won't have a full payload — leave payload empty
         r.setdefault("payload", {})
+        r.setdefault("vector", None)
 
-    # RRF fuse
+    # RRF fuse (dense first, so shared chunks keep the dense payload+vector).
     fused = reciprocal_rank_fusion([dense_results, sparse_results])[:fetch_k]
-
     if not fused:
         return []
 
-    # Re-embed candidate contents for MMR diversity scoring.
-    # Dense candidates already have vectors implicitly (we discard them from Qdrant
-    # to keep traffic small). Embedding fused candidates' content is acceptable
-    # at fetch_k=20.
-    contents = [c.get("content") or c.get("payload", {}).get("content", "") for c in fused]
-    # filter out empty content
-    contents = [c if c else " " for c in contents]
-    from core.embedder import embed_texts
-    cand_vecs = embed_texts(contents)
+    # Backfill BM25-only hits: fetch their real payload + vector from Qdrant so
+    # citations (source_type/title/page/segment), parent hydration, and MMR all
+    # work for keyword-only matches instead of degrading to "unknown"/[Source].
+    missing_ids = [
+        c["id"] for c in fused
+        if not c.get("payload") or c.get("vector") is None
+    ]
+    backfill = await QdrantStore.retrieve(missing_ids) if missing_ids else {}
+    for c in fused:
+        b = backfill.get(c["id"])
+        if b:
+            if not c.get("payload"):
+                c["payload"] = b["payload"]
+            if c.get("vector") is None:
+                c["vector"] = b["vector"]
+        if not c.get("content"):
+            c["content"] = c.get("payload", {}).get("content", "")
+
+    # Candidate vectors for MMR: prefer the stored vector; only embed the (rare)
+    # leftovers that still lack one.
+    to_embed_idx = [i for i, c in enumerate(fused) if c.get("vector") is None]
+    if to_embed_idx:
+        texts = [(fused[i].get("content") or " ") for i in to_embed_idx]
+        embedded = await asyncio.to_thread(embed_texts, texts)
+        for i, vec in zip(to_embed_idx, embedded):
+            fused[i]["vector"] = vec
+
+    cand_vecs = [c["vector"] for c in fused]
 
     reranked = mmr_rerank(
         query_vector=query_vec,
@@ -160,5 +180,4 @@ async def hybrid_search(
         lambda_mult=lambda_mult,
         k=final_k,
     )
-
     return reranked
