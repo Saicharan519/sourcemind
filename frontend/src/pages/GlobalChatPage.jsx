@@ -1,10 +1,20 @@
 import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { listSources } from "../api/client";
 import { useStreamingChat } from "../hooks/useStreamingChat.js";
 import ChatMessage from "../components/ChatMessage.jsx";
 
 export default function GlobalChatPage() {
   const [input, setInput] = useState("");
   const bottomRef = useRef(null);
+
+  const { data: sources = [] } = useQuery({
+    queryKey: ["sources"],
+    queryFn: listSources,
+  });
+  const readyCount = sources.filter((s) => s.status === "ready").length;
+
   const { messages, isStreaming, send, clear } = useStreamingChat({
     mode: "global",
   });
@@ -20,21 +30,32 @@ export default function GlobalChatPage() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="bg-surface border border-border rounded-xl p-4">
-        <h2 className="text-sm font-semibold tracking-wider text-muted uppercase">
-          🌐 Global Chat
-        </h2>
-        <p className="text-xs text-muted mt-1">
-          Queries are answered across <em>all</em> ingested sources at once.
+    <div className="mx-auto max-w-3xl space-y-5">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl border border-line bg-paper-raised p-6 shadow-card"
+      >
+        <p className="eyebrow text-emerald">Cross-source</p>
+        <h1 className="font-display mt-1 text-3xl font-semibold text-ink">
+          Global chat
+        </h1>
+        <p className="mt-2 text-ink-soft">
+          One question, answered across{" "}
+          <span className="font-semibold text-ink">
+            {readyCount} source{readyCount !== 1 ? "s" : ""}
+          </span>{" "}
+          at once — citations name their origin.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="bg-surface border border-border rounded-xl p-4 min-h-[400px] max-h-[60vh] overflow-y-auto space-y-3">
+      <div className="min-h-[42vh] space-y-4">
         {messages.length === 0 && (
-          <p className="text-center text-muted text-sm py-10">
-            Ask a question that spans your entire library.
-          </p>
+          <div className="rounded-2xl border border-dashed border-line-strong bg-paper-raised/40 py-16 text-center">
+            <p className="font-display text-lg italic text-ink-soft">
+              Ask a question that spans your entire library.
+            </p>
+          </div>
         )}
         {messages.map((m) => (
           <ChatMessage key={m.id} msg={m} />
@@ -42,7 +63,7 @@ export default function GlobalChatPage() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="flex gap-2">
+      <div className="sticky bottom-4 flex gap-2 rounded-2xl border border-line bg-paper-raised/90 p-2 shadow-card backdrop-blur">
         <input
           type="text"
           value={input}
@@ -50,17 +71,21 @@ export default function GlobalChatPage() {
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Ask across all sources…"
           disabled={isStreaming}
-          className="flex-1 bg-surface-2 border border-border rounded-md px-4 py-2 focus:outline-none focus:border-accent"
+          className="flex-1 rounded-xl bg-transparent px-4 py-2.5 text-ink placeholder:text-ink-faint focus:outline-none"
         />
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={handleSend}
           disabled={isStreaming || !input.trim()}
-          className="bg-accent hover:bg-accent-glow text-white font-medium px-5 py-2 rounded-md disabled:opacity-40"
+          className="rounded-xl bg-emerald px-6 py-2.5 font-semibold text-paper transition-colors hover:bg-emerald-deep disabled:opacity-40"
         >
           {isStreaming ? "…" : "Send"}
-        </button>
+        </motion.button>
         {messages.length > 0 && (
-          <button onClick={clear} className="text-xs text-muted px-2">
+          <button
+            onClick={clear}
+            className="px-2 text-xs text-ink-faint hover:text-coral"
+          >
             clear
           </button>
         )}

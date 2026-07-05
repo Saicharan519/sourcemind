@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { getSource } from "../api/client";
 import { useStreamingChat } from "../hooks/useStreamingChat.js";
@@ -22,7 +23,6 @@ export default function ChatPage() {
     sourceId,
   });
 
-  // Follow the conversation as tokens stream in.
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -36,35 +36,53 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto max-w-3xl space-y-5">
       <div className="flex items-center justify-between">
-        <Link to="/" className="text-sm text-muted hover:text-white">
-          ← back
-        </Link>
-        <button
-          onClick={clear}
-          className="text-xs text-muted hover:text-red-400"
+        <Link
+          to="/"
+          className="text-sm text-ink-soft transition-colors hover:text-emerald"
         >
-          clear chat
-        </button>
+          ← Library
+        </Link>
+        {messages.length > 0 && (
+          <button
+            onClick={clear}
+            className="text-xs text-ink-faint transition-colors hover:text-coral"
+          >
+            clear conversation
+          </button>
+        )}
       </div>
 
       {source && (
-        <div className="bg-surface border border-border rounded-xl p-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span>{source.source_type === "video" ? "🎬" : "📄"}</span>
-            <span className="font-medium">{source.title}</span>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-line bg-paper-raised p-5 shadow-card"
+        >
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-paper-sunken text-lg">
+              {source.source_type === "video" ? "▶" : "❧"}
+            </span>
+            <div>
+              <p className="eyebrow text-ink-faint">
+                {source.source_type === "video" ? "Video" : "Document"}
+              </p>
+              <h1 className="font-display text-xl font-semibold leading-tight text-ink">
+                {source.title}
+              </h1>
+            </div>
           </div>
           {source.eval_results && <EvalScoreCard scores={source.eval_results} />}
-        </div>
+        </motion.div>
       )}
 
       {notReady && (
         <div
           className={`rounded-xl border p-3 text-sm ${
             source.status === "failed"
-              ? "border-red-500/30 bg-red-500/10 text-red-400"
-              : "border-yellow-500/30 bg-yellow-500/10 text-yellow-400"
+              ? "border-coral/40 bg-coral-soft text-coral"
+              : "border-gold/40 bg-gold/10 text-gold"
           }`}
         >
           {source.status === "failed"
@@ -73,11 +91,16 @@ export default function ChatPage() {
         </div>
       )}
 
-      <div className="bg-surface border border-border rounded-xl p-4 min-h-[400px] max-h-[60vh] overflow-y-auto space-y-3">
+      <div className="min-h-[42vh] space-y-4">
         {messages.length === 0 && (
-          <p className="text-center text-muted text-sm py-10">
-            Ask anything about this source.
-          </p>
+          <div className="rounded-2xl border border-dashed border-line-strong bg-paper-raised/40 py-16 text-center">
+            <p className="font-display text-lg italic text-ink-soft">
+              Ask anything about this source.
+            </p>
+            <p className="mt-1 text-sm text-ink-faint">
+              Answers arrive with page & timestamp citations.
+            </p>
+          </div>
         )}
         {messages.map((m) => (
           <ChatMessage key={m.id} msg={m} />
@@ -85,7 +108,7 @@ export default function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="flex gap-2">
+      <div className="sticky bottom-4 flex gap-2 rounded-2xl border border-line bg-paper-raised/90 p-2 shadow-card backdrop-blur">
         <input
           type="text"
           value={input}
@@ -93,15 +116,16 @@ export default function ChatPage() {
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder={notReady ? "Source not ready…" : "Ask a question…"}
           disabled={isStreaming || notReady}
-          className="flex-1 bg-surface-2 border border-border rounded-md px-4 py-2 focus:outline-none focus:border-accent disabled:opacity-50"
+          className="flex-1 rounded-xl bg-transparent px-4 py-2.5 text-ink placeholder:text-ink-faint focus:outline-none disabled:opacity-50"
         />
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={handleSend}
           disabled={isStreaming || notReady || !input.trim()}
-          className="bg-accent hover:bg-accent-glow text-white font-medium px-5 py-2 rounded-md disabled:opacity-40"
+          className="rounded-xl bg-emerald px-6 py-2.5 font-semibold text-paper transition-colors hover:bg-emerald-deep disabled:opacity-40"
         >
           {isStreaming ? "…" : "Send"}
-        </button>
+        </motion.button>
       </div>
     </div>
   );
