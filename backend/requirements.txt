@@ -40,6 +40,7 @@ ragas==0.2.1
 datasets==3.0.1
 
 # === PDF + audio ===
+langdetect==1.0.9                 # detect non-English PDFs to translate at ingestion
 pymupdf==1.24.10
 yt-dlp>=2026.6.9
 pydub==0.25.1

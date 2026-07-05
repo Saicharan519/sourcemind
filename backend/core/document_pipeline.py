@@ -13,6 +13,7 @@ import os
 from uuid import UUID
 
 import fitz  # pymupdf
+from langdetect import detect
 
 from config import settings
 from core.chunker import hierarchical_chunk
@@ -24,6 +25,52 @@ from db.postgres import (
     update_source_status,
 )
 from db.qdrant import QdrantStore
+
+
+# -- Translation (chat is English-only; translate non-English PDFs at ingest) ---
+
+def _detect_language(pages: list[dict]) -> str:
+    sample = " ".join(p["text"] for p in pages[:3])[:2000]
+    try:
+        return detect(sample) if sample.strip() else "en"
+    except Exception:
+        return "en"
+
+
+async def _translate_page_to_english(text: str) -> str:
+    prompt = (
+        "Translate the following text to English. Preserve the meaning, structure, "
+        "and any lists or headings. Return ONLY the translation — no preamble, "
+        "notes, or the original text.\n\n"
+        f"{text}"
+    )
+    try:
+        llm = get_fast_llm()
+        resp = await llm.ainvoke(prompt)
+        out = (resp.content if hasattr(resp, "content") else str(resp)).strip()
+        return out or text
+    except Exception as e:
+        print(f"[ingest_document] page translate failed, keeping original: {e}")
+        return text
+
+
+async def _maybe_translate_pages(pages: list[dict]) -> list[dict]:
+    """If the document isn't English, translate each page via Groq 8B, keeping
+    page numbers intact. Bounded concurrency to stay within rate limits."""
+    if not settings.TRANSLATE_TO_ENGLISH:
+        return pages
+    lang = _detect_language(pages)
+    if lang == "en":
+        return pages
+    print(f"[ingest_document] detected language '{lang}' — translating {len(pages)} pages to English")
+
+    sem = asyncio.Semaphore(4)
+
+    async def _one(p: dict) -> dict:
+        async with sem:
+            return {**p, "text": await _translate_page_to_english(p["text"])}
+
+    return list(await asyncio.gather(*(_one(p) for p in pages)))
 
 
 async def _generate_title(sample_text: str, filename: str) -> str:
@@ -65,6 +112,9 @@ async def ingest_document(source_id: UUID, pdf_path: str, original_filename: str
         pages = await asyncio.to_thread(extract_pdf_pages, pdf_path)
         if not pages:
             raise ValueError("No extractable text in PDF.")
+
+        # 1b. Translate to English if the document isn't already English.
+        pages = await _maybe_translate_pages(pages)
 
         # 2. Hierarchical chunking
         parents, children = hierarchical_chunk(pages)

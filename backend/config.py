@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     # Whisper
     WHISPER_MODEL: str = "small"
 
+    # Translate non-English sources to English at ingestion (chat is English-only).
+    # Videos use Whisper's built-in translate task; PDFs are translated via Groq 8B.
+    TRANSLATE_TO_ENGLISH: bool = True
+
     # Embeddings
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
     EMBEDDING_DEVICE: str = "cpu"

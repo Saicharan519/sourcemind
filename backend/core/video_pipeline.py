@@ -43,15 +43,22 @@ def transcribe_audio(wav_path: str) -> list[dict]:
     against the known audio duration (faster-whisper prints no progress bar).
     """
     model = _whisper_model()
+    # Whisper's "translate" task transcribes AND translates to English in one pass
+    # (it only ever targets English). Since chat is English-only, this gives an
+    # English transcript for any source language, with segment timings preserved.
+    task = "translate" if settings.TRANSLATE_TO_ENGLISH else "transcribe"
     segments, info = model.transcribe(
         wav_path,
-        task="transcribe",
+        task=task,
         beam_size=1,
         vad_filter=True,
         vad_parameters={"min_silence_duration_ms": 500},
     )
     total = float(getattr(info, "duration", 0.0)) or 0.0
-    print(f"[whisper] transcribing ~{int(total)}s of audio (lang={getattr(info, 'language', '?')})")
+    print(
+        f"[whisper] {task} ~{int(total)}s of audio "
+        f"(detected lang={getattr(info, 'language', '?')})"
+    )
 
     out: list[dict] = []
     next_mark = 0.10

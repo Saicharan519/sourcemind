@@ -72,6 +72,8 @@ Key structural facts:
 
 **Blocking work is offloaded.** Whisper transcription, PyMuPDF extraction, and sentence-transformers embedding are synchronous CPU-bound calls — they run via `asyncio.to_thread(...)` so ingestion (and RAGAS) never freezes the async API server. Preserve this when adding CPU-heavy steps.
 
+**Chat is English-only, so non-English sources are translated at ingestion** (`TRANSLATE_TO_ENGLISH`, default on). Videos use Whisper's built-in `task="translate"` (transcribe + translate to English in one pass, segment timings preserved). PDFs are language-detected with `langdetect`; if non-English, each page is translated via Groq 8B (bounded concurrency, page numbers kept) before chunking. This keeps the whole retrieval stack — MiniLM embeddings, the ASCII BM25 tokenizer, English prompts — unchanged. Citations therefore show the English translation, not the original text.
+
 **RAGAS auto-eval runs after ingestion.** `_ingest_doc_and_eval` / `_ingest_video_and_eval` call `evaluate_source(...)` once the source reaches `ready` (skipped for `failed`). The evaluator LLM is **Mistral** (`_build_ragas_llm` in `core/evaluator.py`), which falls back to Groq 8B only if `MISTRAL_API_KEY` is unset — this was the fix for Groq's low-TPM 429→NaN cascade. `ragas.evaluate()` itself is sync, so it's wrapped in `asyncio.to_thread`. `RAGAS_NUM_QUESTIONS` defaults to 10 in `config.py`; the sample `.env` uses 3.
 
 ### Frontend (`frontend/src`)
