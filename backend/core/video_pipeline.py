@@ -1,8 +1,9 @@
 """
 Video ingestion pipeline.
 
-YouTube URL → yt-dlp audio → Whisper transcription → segment-aware chunking →
-embed + Qdrant upsert + BM25 index → auto-title → status update.
+Audio source (YouTube/Drive URL via yt-dlp, or an uploaded video file via ffmpeg)
+→ Whisper transcription → segment-aware chunking → embed + Qdrant upsert +
+BM25 index → auto-title → status update.
 
 Designed to run as a FastAPI BackgroundTask.
 """
@@ -11,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import os
 from functools import lru_cache
+from pathlib import Path
 from uuid import UUID
 
 from faster_whisper import WhisperModel
@@ -21,7 +23,7 @@ from core.embedder import embed_texts
 from core.rag_engine import get_fast_llm
 from db.postgres import insert_bm25_rows, update_source_status
 from db.qdrant import QdrantStore
-from utils.audio import download_youtube_audio
+from utils.audio import download_audio_from_url, extract_audio_from_file
 
 
 @lru_cache(maxsize=1)
@@ -88,69 +90,102 @@ async def _generate_title(sample_text: str, fallback_title: str) -> str:
         return fallback_title
 
 
-async def ingest_video(source_id: UUID, youtube_url: str) -> None:
-    wav_path: str | None = None
+def _cleanup(path: str | None) -> None:
     try:
-        # 1. Download audio (network + ffmpeg — offload so the event loop stays free)
-        wav_path, meta = await asyncio.to_thread(download_youtube_audio, youtube_url)
-        duration = meta.get("duration", 0)
+        if path and os.path.exists(path):
+            os.remove(path)
+    except Exception:
+        pass
 
-        if duration > settings.MAX_VIDEO_DURATION_MIN * 60:
-            raise ValueError(f"Video exceeds max duration of {settings.MAX_VIDEO_DURATION_MIN} minutes.")
 
-        # 2. Transcribe (CPU-bound — offload so chat/polling stays responsive)
-        segments = await asyncio.to_thread(transcribe_audio, wav_path)
-        if not segments:
-            raise ValueError("Transcription produced no segments.")
-
-        # 3. Chunk by segments (~400 words)
-        chunks = segment_chunk(segments)
-        if not chunks:
-            raise ValueError("Chunking produced no chunks.")
-
-        # 4. Title from first few chunks
-        sample = " ".join(c.content for c in chunks[:3])
-        title = await _generate_title(sample, fallback_title=meta.get("title") or "Untitled video")
-
-        # 5. Embed + upsert
-        texts = [c.content for c in chunks]
-        embeddings = await asyncio.to_thread(embed_texts, texts)
-        payloads = [
-            {
-                "source_id": str(source_id),
-                "source_type": "video",
-                "source_title": title,
-                "content": c.content,
-                "segment_start": c.segment_start,
-                "segment_end": c.segment_end,
-                "chunk_index": c.chunk_index,
-            }
-            for c in chunks
-        ]
-        qdrant_ids = await QdrantStore.upsert(embeddings, payloads)
-
-        # 6. BM25 corpus
-        bm25_rows = [
-            {"chunk_id": qid, "content": c.content, "chunk_index": c.chunk_index}
-            for qid, c in zip(qdrant_ids, chunks)
-        ]
-        await insert_bm25_rows(source_id, bm25_rows)
-
-        # 7. Done
-        await update_source_status(
-            source_id,
-            status="ready",
-            duration_s=int(duration),
-            title=title,
+async def _transcribe_and_index(
+    source_id: UUID,
+    wav_path: str,
+    duration: int,
+    fallback_title: str,
+) -> None:
+    """Shared tail of both ingest paths: transcribe → chunk → embed → upsert →
+    BM25 → mark ready. Assumes `wav_path` is a ready-to-transcribe WAV."""
+    if duration and duration > settings.MAX_VIDEO_DURATION_MIN * 60:
+        raise ValueError(
+            f"Video exceeds max duration of {settings.MAX_VIDEO_DURATION_MIN} minutes."
         )
 
+    # Transcribe (CPU-bound — offload so chat/polling stays responsive)
+    segments = await asyncio.to_thread(transcribe_audio, wav_path)
+    if not segments:
+        raise ValueError("Transcription produced no segments.")
+
+    chunks = segment_chunk(segments)
+    if not chunks:
+        raise ValueError("Chunking produced no chunks.")
+
+    sample = " ".join(c.content for c in chunks[:3])
+    title = await _generate_title(sample, fallback_title=fallback_title)
+
+    texts = [c.content for c in chunks]
+    embeddings = await asyncio.to_thread(embed_texts, texts)
+    payloads = [
+        {
+            "source_id": str(source_id),
+            "source_type": "video",
+            "source_title": title,
+            "content": c.content,
+            "segment_start": c.segment_start,
+            "segment_end": c.segment_end,
+            "chunk_index": c.chunk_index,
+        }
+        for c in chunks
+    ]
+    qdrant_ids = await QdrantStore.upsert(embeddings, payloads)
+
+    bm25_rows = [
+        {"chunk_id": qid, "content": c.content, "chunk_index": c.chunk_index}
+        for qid, c in zip(qdrant_ids, chunks)
+    ]
+    await insert_bm25_rows(source_id, bm25_rows)
+
+    await update_source_status(
+        source_id,
+        status="ready",
+        duration_s=int(duration),
+        title=title,
+    )
+
+
+async def ingest_video(source_id: UUID, video_url: str) -> None:
+    """Ingest from a URL (YouTube or public Google Drive) via yt-dlp."""
+    wav_path: str | None = None
+    try:
+        # Network + ffmpeg — offload so the event loop stays free.
+        wav_path, meta = await asyncio.to_thread(download_audio_from_url, video_url)
+        await _transcribe_and_index(
+            source_id,
+            wav_path,
+            meta.get("duration", 0),
+            meta.get("title") or "Untitled video",
+        )
     except Exception as e:
         print(f"[ingest_video] FAILED for source_id={source_id}: {e}")
         await update_source_status(source_id, status="failed", error_message=str(e))
     finally:
-        # Clean up audio file
-        try:
-            if wav_path and os.path.exists(wav_path):
-                os.remove(wav_path)
-        except Exception:
-            pass
+        _cleanup(wav_path)
+
+
+async def ingest_video_file(source_id: UUID, video_path: str, filename: str) -> None:
+    """Ingest from an uploaded video file: ffmpeg-extract audio, then index."""
+    wav_path: str | None = None
+    try:
+        wav_path, meta = await asyncio.to_thread(extract_audio_from_file, video_path)
+        await _transcribe_and_index(
+            source_id,
+            wav_path,
+            meta.get("duration", 0),
+            Path(filename).stem or "Untitled video",
+        )
+    except Exception as e:
+        print(f"[ingest_video_file] FAILED for source_id={source_id}: {e}")
+        await update_source_status(source_id, status="failed", error_message=str(e))
+    finally:
+        _cleanup(wav_path)
+        _cleanup(video_path)  # remove the uploaded original once processed

@@ -53,6 +53,7 @@ class Settings(BaseSettings):
 
     # App
     MAX_PDF_SIZE_MB: int = 100
+    MAX_VIDEO_SIZE_MB: int = 500
     MAX_VIDEO_DURATION_MIN: int = 120
     UPLOAD_DIR: str = "./uploads"
     BACKEND_CORS_ORIGINS: str = "http://localhost:5173"

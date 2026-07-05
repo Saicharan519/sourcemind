@@ -6,15 +6,20 @@ import {
   deleteSource,
   ingestDocument,
   ingestVideo,
+  ingestVideoFile,
   listSources,
 } from "../api/client";
+
+const VIDEO_EXT = [".mp4", ".mov", ".mkv", ".webm", ".avi", ".m4v"];
 
 export default function Dashboard() {
   const nav = useNavigate();
   const qc = useQueryClient();
   const [url, setUrl] = useState("");
   const [dragging, setDragging] = useState(false);
+  const [vidDragging, setVidDragging] = useState(false);
   const [notice, setNotice] = useState("");
+  const [vidNotice, setVidNotice] = useState("");
 
   const { data: sources = [] } = useQuery({
     queryKey: ["sources"],
@@ -34,6 +39,10 @@ export default function Dashboard() {
       qc.invalidateQueries({ queryKey: ["sources"] });
     },
   });
+  const vidFileMut = useMutation({
+    mutationFn: ingestVideoFile,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["sources"] }),
+  });
   const delMut = useMutation({
     mutationFn: deleteSource,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["sources"] }),
@@ -48,6 +57,17 @@ export default function Dashboard() {
     }
     setNotice("");
     docMut.mutate(f);
+  };
+
+  const handleVideoFiles = (fileList) => {
+    const f = fileList?.[0];
+    if (!f) return;
+    if (!VIDEO_EXT.some((ext) => f.name.toLowerCase().endsWith(ext))) {
+      setVidNotice("Use mp4, mov, mkv, webm, avi, or m4v.");
+      return;
+    }
+    setVidNotice("");
+    vidFileMut.mutate(f);
   };
 
   return (
@@ -134,40 +154,72 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* YouTube */}
+        {/* Video: file drop OR link */}
         <div>
           <p className="eyebrow mb-2 text-ink-faint">Video</p>
-          <div className="flex h-[132px] flex-col justify-center gap-3 rounded-2xl border border-line bg-paper-raised px-5 shadow-card">
-            <div className="flex gap-2">
-              <input
-                type="url"
-                placeholder="Paste a YouTube link…"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && url.trim() && vidMut.mutate(url.trim())
-                }
-                className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2.5 font-mono text-sm text-ink placeholder:text-ink-faint focus:border-emerald focus:outline-none"
-              />
-              <motion.button
-                whileTap={{ scale: 0.96 }}
-                onClick={() => url.trim() && vidMut.mutate(url.trim())}
-                disabled={vidMut.isPending || !url.trim()}
-                className="rounded-lg bg-ink px-5 py-2.5 text-sm font-semibold text-paper transition-colors hover:bg-emerald disabled:opacity-40"
-              >
-                {vidMut.isPending ? "Adding…" : "Add"}
-              </motion.button>
-            </div>
-            {vidMut.isError ? (
-              <p className="text-xs text-coral">
-                {vidMut.error?.response?.data?.detail || "Could not add video"}
-              </p>
-            ) : (
-              <p className="text-xs text-ink-faint">
-                Transcribed locally, translated to English, then indexed.
-              </p>
-            )}
+          <motion.label
+            whileHover={{ y: -2 }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setVidDragging(true);
+            }}
+            onDragLeave={() => setVidDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setVidDragging(false);
+              handleVideoFiles(e.dataTransfer.files);
+            }}
+            className={`flex h-[76px] cursor-pointer flex-col items-center justify-center gap-0.5 rounded-2xl border-2 border-dashed px-4 text-center shadow-card transition-colors ${
+              vidDragging
+                ? "border-emerald bg-emerald-soft"
+                : "border-line-strong bg-paper-raised hover:border-emerald/60"
+            } ${vidFileMut.isPending ? "pointer-events-none opacity-60" : ""}`}
+          >
+            <span className="text-sm font-medium text-ink">
+              Drop a video, or <span className="text-emerald underline">browse</span>
+            </span>
+            <span className="text-xs text-ink-faint">mp4 · mov · mkv · webm — up to 500 MB</span>
+            <input
+              type="file"
+              accept="video/*,.mkv"
+              onChange={(e) => handleVideoFiles(e.target.files)}
+              disabled={vidFileMut.isPending}
+              className="hidden"
+            />
+          </motion.label>
+
+          <div className="mt-2 flex items-center gap-2">
+            <input
+              type="url"
+              placeholder="…or paste a YouTube / Google Drive link"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && url.trim() && vidMut.mutate(url.trim())
+              }
+              className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 font-mono text-xs text-ink placeholder:text-ink-faint focus:border-emerald focus:outline-none"
+            />
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              onClick={() => url.trim() && vidMut.mutate(url.trim())}
+              disabled={vidMut.isPending || !url.trim()}
+              className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-paper transition-colors hover:bg-emerald disabled:opacity-40"
+            >
+              {vidMut.isPending ? "…" : "Add"}
+            </motion.button>
           </div>
+
+          {vidFileMut.isPending && (
+            <p className="mt-2 text-xs text-emerald">Uploading & transcribing…</p>
+          )}
+          {(vidNotice || vidMut.isError || vidFileMut.isError) && (
+            <p className="mt-2 text-xs text-coral">
+              {vidNotice ||
+                vidMut.error?.response?.data?.detail ||
+                vidFileMut.error?.response?.data?.detail ||
+                "Could not add video"}
+            </p>
+          )}
         </div>
       </motion.section>
 

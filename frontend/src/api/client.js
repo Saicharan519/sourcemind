@@ -35,9 +35,18 @@ export const ingestDocument = async (file) => {
   return data;
 };
 
-export const ingestVideo = async (youtubeUrl) => {
+export const ingestVideo = async (videoUrl) => {
   const { data } = await api.post("/api/ingest/video", {
-    youtube_url: youtubeUrl,
+    youtube_url: videoUrl,
+  });
+  return data;
+};
+
+export const ingestVideoFile = async (file) => {
+  const fd = new FormData();
+  fd.append("file", file);
+  const { data } = await api.post("/api/ingest/video-file", fd, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
   return data;
 };
