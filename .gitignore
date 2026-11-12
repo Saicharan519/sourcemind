@@ -60,3 +60,9 @@ Thumbs.db
 # Personal notes (not part of the project)
 instructions_to_run.md
 .claude/
+
+# Eval scratch / caches (corpus PDFs are covered by *.pdf; transcripts and results ARE committed)
+eval/.work/
+eval/cache/
+eval/corpus/files/
+.worktrees/

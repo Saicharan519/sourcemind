@@ -1,7 +1,6 @@
 """Ingestion endpoints: PDF documents and YouTube videos."""
 from __future__ import annotations
 
-import asyncio
 import os
 import uuid
 from pathlib import Path

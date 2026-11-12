@@ -225,8 +225,8 @@ sourcemind/
 
 Being honest about what the code does today (all are being addressed in 2.0):
 
-- **No benchmark yet.** The RAGAS scores are a synthetic self-check, not evidence of retrieval quality.
-- **No tests or CI.**
+- **Benchmark in progress.** The RAGAS scores are a synthetic self-check, not evidence of retrieval quality. A reproducible benchmark (hash-locked corpus, page-level gold labels, frozen test split) lives in [`eval/`](eval/); see [docs/EVALUATION.md](docs/EVALUATION.md). Results will appear in `eval/REPORT.md`.
+- **No backend tests yet.** CI currently runs lint, the eval unit tests, dataset validation and the frontend build.
 - **Single-user, local only.** There is no authentication; run it on your own machine, not on a public server.
 - **Citations list every retrieved chunk**, not only the ones the answer used.
 - **No abstention.** If the answer is not in your sources, the model may still attempt one.
@@ -253,6 +253,10 @@ Being honest about what the code does today (all are being addressed in 2.0):
 - **Scanned PDF returns empty pages** → PyMuPDF can't read image-only PDFs; OCR them first (`ocrmypdf`).
 
 ---
+
+## Project docs
+
+[docs/](docs/) holds the 2.0 roadmap, the decision log, a progress log and the evaluation methodology.
 
 ## License
 

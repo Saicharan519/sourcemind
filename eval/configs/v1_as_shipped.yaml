@@ -1,0 +1,11 @@
+# Ablation arm 1: the code exactly as shipped before SourceMind 2.0.
+#
+# backend_dir points at a git worktree of the `v1-as-shipped` tag, created with:
+#   git worktree add .worktrees/v1-as-shipped v1-as-shipped
+# (Until Phase 2 changes backend code, HEAD's backend is identical to the tag.)
+name: v1_as_shipped
+description: "Pre-2.0 pipeline: char-based parent/child chunks, multi-query + HyDE, dense+BM25 RRF, MMR, LangGraph router."
+backend_dir: .worktrees/v1-as-shipped/backend
+dataset: eval/datasets/pilot.jsonl
+throttle_s: 4
+overrides: {}

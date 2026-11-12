@@ -37,9 +37,19 @@ npm run build      # production build
 - **faster-whisper is CPU/int8 by default.** `_whisper_model()` in `core/video_pipeline.py` keys off `EMBEDDING_DEVICE`; it only uses CUDA (float16) if that's `cuda`. GPU needs the CUDA 12 / cuDNN 9 runtime libs installed — parked for v2.
 - `--reload` watches source files only. After upgrading a package, restart uvicorn manually.
 
-## Tests / lint
+## Tests / lint / evaluation
 
-There is no test suite, linter config, or CI in this repo despite the PRD mentioning GitHub Actions. Manual verification is done through `http://localhost:8000/docs` and curl (SSE endpoints don't work well in Swagger — use `curl -N`). Don't claim tests pass; there are none to run.
+- **Unit tests + lint:** `python -m pytest eval/tests -q` and `python -m ruff check eval backend` (dev tools: `python -m pip install -r requirements-dev.txt` into the backend venv). CI (`.github/workflows/ci.yml`) runs these, validates every `eval/datasets/*.jsonl`, checks the frozen test-set hash, and builds the frontend. There are no backend tests yet (they arrive in Phase 2).
+- **Benchmark** (`eval/`, design in `docs/EVALUATION.md`): run everything from the repo root with the backend venv's python:
+  ```bash
+  python -m eval.corpus.download                               # fetch + hash-verify corpus PDFs
+  python -m eval.run_eval --config eval/configs/<arm>.yaml     # ask every question (needs Docker DBs)
+  python -m eval.score --arm <arm>                             # score (Mistral judge)
+  python -m eval.report                                        # rebuild eval/REPORT.md
+  ```
+  The harness uses an **isolated** Postgres DB and Qdrant collection, both named `sourcemind_eval`, and never touches the app's `sourcemind` data. `eval/bootstrap.py` must run before any backend import: it copies keys from `backend/.env`, overrides DB/collection, and chdirs to `eval/.work` so the stale root `.env` is never read. An arm's `backend_dir` can point at `.worktrees/v1-as-shipped/backend` to measure old code.
+- **Rules:** never edit `eval/datasets/test.jsonl` (sha256-locked, never used for tuning). Tune on `dev.jsonl` only. Any README or resume number must come from a committed `eval/results/*/scores.json`.
+- Manual API checks still go through http://localhost:8000/docs and `curl -N` for SSE.
 
 ## Architecture
 

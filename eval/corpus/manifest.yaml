@@ -1,0 +1,121 @@
+# SourceMind evaluation corpus.
+#
+# Every file must be redistributable. PDFs are NOT committed (*.pdf is gitignored);
+# `python -m eval.corpus.download` fetches them and verifies the sha256 below.
+# Run with --lock once to record hashes; after that any change fails the check.
+#
+# `group` is used to build cross-document unanswerable questions: a question
+# generated from one group is asked against a document from a *different* group.
+
+documents:
+  - key: ragas
+    type: pdf
+    title: "Ragas: Automated Evaluation of Retrieval Augmented Generation"
+    url: https://arxiv.org/pdf/2309.15217v2
+    license: CC BY 4.0
+    license_source: arXiv metadata (oai:arXiv.org:2309.15217)
+    group: rag_papers
+    sha256: 6c24762a3f277fd120ed1adf34b01420ecf92f18ff6d1b5435fa0a09cb804ecb
+
+  - key: self_rag
+    type: pdf
+    title: "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"
+    url: https://arxiv.org/pdf/2310.11511v1
+    license: CC BY 4.0
+    license_source: arXiv metadata (oai:arXiv.org:2310.11511)
+    group: rag_papers
+    sha256: d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978
+
+  - key: beir
+    type: pdf
+    title: "BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models"
+    url: https://arxiv.org/pdf/2104.08663v4
+    license: CC BY-SA 4.0
+    license_source: arXiv metadata (oai:arXiv.org:2104.08663)
+    group: rag_papers
+    sha256: 1925755aeb627123d1a63c66f02e5aa2432f7e92751a02bea7c8c3b6bbb6ec33
+
+  - key: nist_ai_rmf
+    type: pdf
+    title: "NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0)"
+    url: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf
+    license: US Government work (public domain in the US)
+    license_source: NIST publication
+    group: nist_ai
+    sha256: 7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1
+
+  - key: nist_genai_profile
+    type: pdf
+    title: "NIST AI 600-1: AI RMF Generative AI Profile"
+    url: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf
+    license: US Government work (public domain in the US)
+    license_source: NIST publication
+    group: nist_ai
+    sha256: 6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a
+
+  - key: nist_csf
+    type: pdf
+    title: "NIST CSWP 29: The NIST Cybersecurity Framework (CSF) 2.0"
+    url: https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf
+    license: US Government work (public domain in the US)
+    license_source: NIST publication
+    group: nist_security
+    sha256: 3c31f46fee98cac0c4323453e5109291a213b4de7fef8c058af9bf67f717433c
+
+  - key: nist_800_63b
+    type: pdf
+    title: "NIST SP 800-63B: Digital Identity Guidelines, Authentication and Lifecycle Management"
+    url: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b.pdf
+    license: US Government work (public domain in the US)
+    license_source: NIST publication
+    group: nist_security
+    sha256: ccfce7510a1267933f912d023306c6e7d485f21be63d271108b61aad6139127e
+
+  - key: census_income
+    type: pdf
+    title: "US Census Bureau P60-282: Income in the United States: 2023"
+    url: https://www2.census.gov/library/publications/2024/demo/p60-282.pdf
+    license: US Government work (public domain in the US)
+    license_source: US Census Bureau publication
+    group: economics
+    sha256: e6cf145cb10b5d037f5e77fa199d2e558bfe24f76273f385e9767c2eabba1cbf
+
+  - key: fed_fsr
+    type: pdf
+    title: "Federal Reserve Board: Financial Stability Report, April 2024"
+    url: https://www.federalreserve.gov/publications/files/financial-stability-report-20240419.pdf
+    license: US federal government publication (treated as public domain; verify before redistributing)
+    license_source: Federal Reserve Board publication
+    group: economics
+    sha256: b3e96ba451939e901b7f6473f48697037cf5f6291fd94a48c0bf62f849c16d6c
+
+videos:
+  - key: mit_ai_lec1
+    type: video
+    title: "MIT 6.034 Artificial Intelligence (Fall 2010), Lecture 1: Introduction and Scope"
+    url: https://www.youtube.com/watch?v=TjZBTDzGeGg
+    duration_s: 2839
+    license: CC BY-NC-SA 4.0 (MIT OpenCourseWare)
+    license_source: MIT OpenCourseWare terms of use
+    group: lectures
+    transcript: transcripts/mit_ai_lec1.json
+
+  - key: mit_linalg_lec1
+    type: video
+    title: "MIT 18.06 Linear Algebra, Lecture 1: The Geometry of Linear Equations"
+    url: https://www.youtube.com/watch?v=J7DzL2_Na80
+    duration_s: 2389
+    license: CC BY-NC-SA 4.0 (MIT OpenCourseWare)
+    license_source: MIT OpenCourseWare terms of use
+    group: lectures
+    transcript: transcripts/mit_linalg_lec1.json
+
+  - key: mit_algo_lec1
+    type: video
+    title: "MIT 6.006 Introduction to Algorithms (Fall 2011), Lecture 1: Algorithmic Thinking, Peak Finding"
+    url: https://www.youtube.com/watch?v=HtSuA80QTyo
+    duration_s: 3201
+    license: CC BY-NC-SA 4.0 (MIT OpenCourseWare)
+    license_source: MIT OpenCourseWare terms of use
+    group: lectures
+    transcript: transcripts/mit_algo_lec1.json
