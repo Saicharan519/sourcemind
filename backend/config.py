@@ -11,8 +11,8 @@ class Settings(BaseSettings):
 
     # Groq
     GROQ_API_KEY: str = ""
-    GROQ_MODEL_MAIN: str = "llama-3.3-70b-versatile"
-    GROQ_MODEL_FAST: str = "llama-3.1-8b-instant"
+    GROQ_MODEL_MAIN: str = "openai/gpt-oss-120b"
+    GROQ_MODEL_FAST: str = "openai/gpt-oss-20b"
 
     # Mistral (used as the RAGAS evaluator LLM — higher free-tier limits than Groq)
     MISTRAL_API_KEY: str = ""
