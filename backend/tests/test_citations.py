@@ -175,5 +175,13 @@ def test_graph_error_is_reported_not_swallowed(monkeypatch):
         return [ev async for ev in agent_router.route_and_stream("q?", "s1", [])]
 
     events = asyncio.run(run())
-    assert any(e["type"] == "error" and "qdrant" in e["value"] for e in events)
+    errors = [e["value"] for e in events if e["type"] == "error"]
+    assert errors and "RuntimeError" in errors[0]
     assert events[-1]["type"] == "done"
+
+
+def test_rate_limit_error_is_short_and_hides_account_details():
+    err = RuntimeError("Error code: 429 - {'error': {'message': 'Rate limit reached for model "
+                       "`openai/gpt-oss-120b` in organization `org_01secret` on tokens per day'}}")
+    msg = agent_router.user_facing_error(err)
+    assert "rate limit" in msg and "org_01secret" not in msg

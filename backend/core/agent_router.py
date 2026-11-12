@@ -245,6 +245,24 @@ async def multi_hop_node(state: QueryState) -> dict[str, Any]:
     return {"sub_queries": [question, followup]}
 
 
+def user_facing_error(e: Exception) -> str:
+    """A short, actionable message for the chat UI. Raw provider errors can be long
+    and include account identifiers, so they are only written to the server log."""
+    from core.llm_providers import ProviderConfigError, active_provider
+
+    text = str(e)
+    if isinstance(e, ProviderConfigError):
+        return f"LLM provider is not configured: {text}"
+    if "429" in text or "rate limit" in text.lower() or "rate_limit" in text:
+        return (f"The LLM provider ({active_provider()}) rate limit was reached. "
+                "Try again later, or set LLM_PROVIDER to another configured provider.")
+    if "401" in text or "invalid api key" in text.lower() or "authentication" in text.lower():
+        return f"The LLM provider ({active_provider()}) rejected the API key. Check backend/.env."
+    if any(s in text for s in ("Connection", "connect", "Timeout", "timed out")):
+        return "Connection problem: could not reach the LLM provider, Postgres or Qdrant. Please retry."
+    return f"Something went wrong while answering ({type(e).__name__}). Check the server log."
+
+
 # -- Graph assembly --------------------------------------------------------
 
 def _route(state: QueryState) -> str:
@@ -305,7 +323,7 @@ async def route_and_stream(
             await queue.put({"type": "done", "value": None})
         except Exception as e:
             print(f"[route_and_stream] graph run failed: {e}")
-            await queue.put({"type": "error", "value": str(e)})
+            await queue.put({"type": "error", "value": user_facing_error(e)})
             await queue.put({"type": "done", "value": None})
         finally:
             await queue.put(_SENTINEL)

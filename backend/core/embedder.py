@@ -1,15 +1,26 @@
 """HuggingFace embedding wrapper (sentence-transformers all-MiniLM-L6-v2)."""
 from __future__ import annotations
 
+import threading
 from functools import lru_cache
+
 from sentence_transformers import SentenceTransformer
 
 from config import settings
 
 
-@lru_cache(maxsize=1)
+_LOAD_LOCK = threading.Lock()
+
+
 def get_embedder() -> SentenceTransformer:
-    """Load the embedding model once and cache it."""
+    """Load the embedding model once. The first query embeds several query variants
+    in parallel threads; without the lock each one loaded its own copy of the model."""
+    with _LOAD_LOCK:
+        return _load_embedder()
+
+
+@lru_cache(maxsize=1)
+def _load_embedder() -> SentenceTransformer:
     print(f"[embedder] loading model: {settings.EMBEDDING_MODEL} on {settings.EMBEDDING_DEVICE}")
     model = SentenceTransformer(settings.EMBEDDING_MODEL, device=settings.EMBEDDING_DEVICE)
     print("[embedder] model loaded.")

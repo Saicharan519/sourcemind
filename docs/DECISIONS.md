@@ -57,3 +57,15 @@ Question generation, cross-checking and one pilot run used up both models' daily
 
 ## 2026-11-12: Simple auth, ₹0 budget, no paid hosting
 Multi-user isolation (Phase 5) uses password + JWT, not emailed OTP: the project runs locally, so email infrastructure adds work without adding interview value. Deployment is Docker Compose + a static project page with a replay demo.
+
+## 2026-11-12: One LLM provider at a time, no automatic fallback
+`LLM_PROVIDER` selects groq, deepseek or cloudflare. If that provider fails or hits a rate limit, the user sees a clear error instead of an answer from a different model. A silent switch would make answers (and benchmark runs) incomparable, and the user would not know which model answered.
+
+## 2026-11-12: Citations are validated by the server, not trusted from the model
+Context passages are numbered. After the answer, the server keeps only the `[n]` refs that point at a passage the model was actually shown, and shows only those. Before this, every retrieved chunk was listed as a "citation" before the answer was even written.
+
+## 2026-11-12: MCP SDK pinned to 1.12.4
+mcp 2.x requires starlette 1.x, which breaks FastAPI 0.115. Upgrading FastAPI for this release was not worth the risk.
+
+## 2026-11-12: Release scope for the deadline
+Shipped: validated citations, insufficient-evidence answers, security fixes, MCP, tests. Deferred: the full agent loop, auth, the reranker ablation and the full benchmark run. The README claims no accuracy numbers until the benchmark has been run and committed.

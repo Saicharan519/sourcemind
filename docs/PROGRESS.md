@@ -34,3 +34,26 @@ Design: [EVALUATION.md](EVALUATION.md).
 **Blocked / open**
 - **No independent checker key yet.** Add `DEEPSEEK_API_KEY` to `backend/.env`.
 - **Groq free-tier quota** (200K tokens/day per model) ran out during the first pilot run. The pilot must be rerun after the quota resets, and a decision is needed on how to fund full benchmark runs.
+
+## Release push (2026-11-12): local demo release
+
+Scope cut to a stable local demo (no full agent, no auth). Commits `fe35185`, `76c0e7e` and the docs commit.
+
+**Done and tested**
+- Retrieval: RRF fusion across query variants; cached BM25 with fingerprint invalidation, built off the event loop; failed expansions surfaced as a `warning` event.
+- Citations: numbered context, server-side validation, only cited passages shown, `evidence` status; gpt-oss `【n】` citations accepted (found live).
+- Insufficient evidence: fixed "not found" answer; no LLM call on empty retrieval.
+- Security: SSRF-safe video URLs, server-chosen upload names, PDF magic bytes, no `nocheckcertificate`, interrupted jobs marked failed on startup.
+- Providers: `LLM_PROVIDER` groq / deepseek / cloudflare, no fallback. Groq and DeepSeek verified live (chat + streaming); Cloudflare unit-tested only (no keys).
+- MCP server with 4 tools, verified over real stdio against the app DB.
+- Bugs found and fixed: duplicate dashboard rows (a join on every eval run); the embedder loaded 5x on the first query; raw provider errors (with account ids) were shown in the chat.
+- 63 backend tests. Browser check: cited answer, citation cards, "not in sources" badge, no console or server errors.
+
+**Measured**
+5-question Groq vs DeepSeek comparison (`eval/results/v2_*_compare5`):
+- DeepSeek: about $0.004 total, 10.9 s median.
+- Groq: 17.8 s median, with about 4x the output tokens.
+
+**Not done**
+- The full benchmark (pilot rerun, full set, as-shipped vs 2.0).
+- Reranker ablation, corrective re-retrieval, auth, and backend tests in CI.
