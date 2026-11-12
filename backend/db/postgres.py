@@ -130,7 +130,12 @@ async def list_sources() -> list[dict[str, Any]]:
         """
         SELECT s.*, e.overall_score AS eval_score
         FROM sources s
-        LEFT JOIN eval_results e ON e.source_id = s.id
+        -- latest evaluation only: re-running an eval adds a row, and a plain join
+        -- listed the source once per evaluation
+        LEFT JOIN LATERAL (
+            SELECT overall_score FROM eval_results
+            WHERE source_id = s.id ORDER BY created_at DESC LIMIT 1
+        ) e ON TRUE
         ORDER BY s.created_at DESC
         """
     )
