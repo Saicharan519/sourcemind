@@ -44,7 +44,7 @@ Scope cut to a stable local demo (no full agent, no auth). Commits `fe35185`, `7
 - Citations: numbered context, server-side validation, only cited passages shown, `evidence` status; gpt-oss `【n】` citations accepted (found live).
 - Insufficient evidence: fixed "not found" answer; no LLM call on empty retrieval.
 - Security: SSRF-safe video URLs, server-chosen upload names, PDF magic bytes, no `nocheckcertificate`, interrupted jobs marked failed on startup.
-- Providers: `LLM_PROVIDER` groq / deepseek / cloudflare, no fallback. Groq and DeepSeek verified live (chat + streaming); Cloudflare unit-tested only (no keys).
+- Providers: `LLM_PROVIDER` groq / deepseek / cloudflare, no fallback. Groq, DeepSeek and Cloudflare all verified live (chat + streaming).
 - MCP server with 4 tools, verified over real stdio against the app DB.
 - Bugs found and fixed: duplicate dashboard rows (a join on every eval run); the embedder loaded 5x on the first query; raw provider errors (with account ids) were shown in the chat.
 - 63 backend tests. Browser check: cited answer, citation cards, "not in sources" badge, no console or server errors.
@@ -57,3 +57,5 @@ Scope cut to a stable local demo (no full agent, no auth). Commits `fe35185`, `7
 **Not done**
 - The full benchmark (pilot rerun, full set, as-shipped vs 2.0).
 - Reranker ablation, corrective re-retrieval, auth, and backend tests in CI.
+
+**Cloudflare check (2026-11-12):** keys added; plain calls, streaming (first token in about 1.5 s) and token usage all work. On the 5 questions: 4/5 handled correctly, the same as Groq. Multi-hop was refused, which is the honest outcome when the second page isn't retrieved. 33.2K in / 5.1K out tokens, about 750–1,400 Neurons, 22.1 s median latency. Results are in `eval/results/v2_cloudflare_compare5`.

@@ -1,0 +1,8 @@
+# 5-question provider check (factoid, exact ID, comparative, multi-hop, unanswerable).
+# Current 2.0 backend, one provider pinned for the whole run, no fallback.
+name: v2_cloudflare_compare5
+description: "2.0 backend (RRF fusion, numbered citations, evidence check) on cloudflare."
+dataset: eval/datasets/compare5.jsonl
+throttle_s: 2
+overrides:
+  LLM_PROVIDER: cloudflare
