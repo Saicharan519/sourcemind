@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-SourceMind is a multi-modal RAG platform: ingest PDFs or YouTube URLs, then chat with the content over SSE-streamed answers with citations (page numbers for docs, timestamp segments for videos). Backend is FastAPI (async), frontend is React/Vite, storage is Qdrant (vectors) + PostgreSQL (everything else). LLMs run on Groq (free tier); embeddings (`all-MiniLM-L6-v2`) and Whisper transcription run locally on CPU. See `README.md` and `sourcemind_prd.md` for the full design rationale.
+SourceMind is a multi-modal RAG platform: ingest PDFs or YouTube URLs, then chat with the content over SSE-streamed answers with citations (page numbers for docs, timestamp segments for videos). Backend is FastAPI (async), frontend is React/Vite, storage is Qdrant (vectors) + PostgreSQL (everything else). LLMs run on Groq (free tier: `openai/gpt-oss-120b` main, `openai/gpt-oss-20b` fast); embeddings (`all-MiniLM-L6-v2`) and Whisper transcription run locally on CPU. See `README.md` for current behavior; `sourcemind_prd.md` is the original design doc and diverges from the code in places (noted at its top).
+
+**SourceMind 2.0 is in progress** on branch `sourcemind-2.0`, executed phase by phase (evaluation benchmark → fixes → retrieval ablations → citations/abstention → isolation/security → MCP → observability → packaging). The pre-2.0 code is tagged `v1-as-shipped` and is ablation arm 1 — never move that tag. No metric goes into the README or resume unless a committed result file backs it.
 
 ## Running the project
 
@@ -45,18 +47,18 @@ There is no test suite, linter config, or CI in this repo despite the PRD mentio
 
 `GET /api/chat/stream` (`api/routes/chat.py`) → `route_and_stream` (`core/agent_router.py`) → `retrieve` (`core/rag_engine.py`) → `hybrid_search` (`core/hybrid_search.py`). The route persists the user message, streams events, buffers tokens, and persists the assistant reply after the stream closes. Everything below the route yields dict events (`{"type": ..., "value": ...}`) that `utils/streaming.py` serializes into SSE frames.
 
-### The agentic router (`core/agent_router.py`)
+### The query router (`core/agent_router.py`)
 
-This is a **real compiled LangGraph `StateGraph`** (`GRAPH = _build_graph()`, compiled once at import): `START → classify → conditional edge → {simple | comparative | multi_hop} → END`. `classify_query` (Groq 8B) labels the question and drives the conditional edge. Comparative decomposes into 2 sub-queries retrieved in parallel then synthesized; multi-hop does retrieve → intermediate answer (8B) → follow-up query → second retrieve → final synthesis. All three converge on `stream_answer` (Groq 70B).
+This is a **real compiled LangGraph `StateGraph`** (`GRAPH = _build_graph()`, compiled once at import): `START → classify → conditional edge → {simple | comparative | multi_hop} → END`. `classify_query` (fast model) labels the question and drives the conditional edge. Comparative decomposes into 2 sub-queries retrieved in parallel then synthesized; multi-hop does retrieve → intermediate answer (fast model) → follow-up query → second retrieve → final synthesis. All three converge on `stream_answer` (main model). It is a router with fixed strategies — no tool loop — so don't describe it as an autonomous agent.
 
 **Streaming out of graph nodes:** LangGraph nodes mutate state and return — they can't be async generators. To keep the token stream, each node pushes SSE event dicts into an `asyncio.Queue` via an `emit` callable carried in the graph state; `route_and_stream` runs `GRAPH.ainvoke()` as a background task and drains the queue, yielding the same events the API layer expects. Gotcha: LangGraph 0.2.34 requires every node to write ≥1 state channel, so `simple_node` returns `{"query_type": ...}` even though it has nothing else to update.
 
 ### The retrieval pipeline (`core/rag_engine.py` + `core/hybrid_search.py`)
 
-`retrieve()` expands the query with multi-query rephrasings + a HyDE hypothetical answer (both Groq 8B), runs `hybrid_search` for each variant in parallel, then dedupes by chunk id keeping the best RRF score. `hybrid_search` fuses **dense** (Qdrant cosine) and **sparse** (BM25) results via Reciprocal Rank Fusion, then MMR-reranks for diversity down to `MMR_FINAL_K` chunks.
+`retrieve()` expands the query with multi-query rephrasings + a HyDE hypothetical answer (both fast model), runs `hybrid_search` for each variant in parallel, then dedupes by chunk id keeping the best RRF score. `hybrid_search` fuses **dense** (Qdrant cosine) and **sparse** (BM25) results via Reciprocal Rank Fusion, then MMR-reranks for diversity down to `MMR_FINAL_K` chunks.
 
 Key structural facts:
-- **Hierarchical chunking.** Child chunks (~300 tokens) are what's embedded and searched; parent chunks (~1500 tokens) live in Postgres. After retrieval, `hydrate_contexts()` swaps each child's content for its **parent** content (via `parent_chunk_id` in the Qdrant payload) before the LLM sees it. Video chunks have no parent and pass through unchanged.
+- **Hierarchical chunking.** Child chunks (~300 **characters** — `length_function=len`, despite older docs saying tokens) are what's embedded and searched; parent chunks (~1500 characters) live in Postgres. After retrieval, `hydrate_contexts()` swaps each child's content for its **parent** content (via `parent_chunk_id` in the Qdrant payload) before the LLM sees it. Video chunks have no parent and pass through unchanged.
 - **Sparse vectors are NOT stored in Qdrant.** Contrary to the PRD's "sparse vectors enabled" claim, `db/qdrant.py` creates a dense-only collection. BM25 is a separate path: `core/bm25_index.py` pulls the text corpus from the Postgres `bm25_index` table and builds a fresh `BM25Okapi` index **per query**. Simple and fine at this scale; the place to change if retrieval gets slow.
 - **Source isolation via metadata filter.** Every Qdrant/BM25 call filters by `source_id`. Passing `source_id=None` (the global-chat path, `api/routes/global_chat.py`) omits the filter and searches across all sources.
 
@@ -72,9 +74,9 @@ Key structural facts:
 
 **Blocking work is offloaded.** Whisper transcription, PyMuPDF extraction, and sentence-transformers embedding are synchronous CPU-bound calls — they run via `asyncio.to_thread(...)` so ingestion (and RAGAS) never freezes the async API server. Preserve this when adding CPU-heavy steps.
 
-**Chat is English-only, so non-English sources are translated at ingestion** (`TRANSLATE_TO_ENGLISH`, default on). Videos use Whisper's built-in `task="translate"` (transcribe + translate to English in one pass, segment timings preserved). PDFs are language-detected with `langdetect`; if non-English, each page is translated via Groq 8B (bounded concurrency, page numbers kept) before chunking. This keeps the whole retrieval stack — MiniLM embeddings, the ASCII BM25 tokenizer, English prompts — unchanged. Citations therefore show the English translation, not the original text.
+**Chat is English-only, so non-English sources are translated at ingestion** (`TRANSLATE_TO_ENGLISH`, default on). Videos use Whisper's built-in `task="translate"` (transcribe + translate to English in one pass, segment timings preserved). PDFs are language-detected with `langdetect`; if non-English, each page is translated via the fast model (bounded concurrency, page numbers kept) before chunking. This keeps the whole retrieval stack — MiniLM embeddings, the ASCII BM25 tokenizer, English prompts — unchanged. Citations therefore show the English translation, not the original text.
 
-**RAGAS auto-eval runs after ingestion.** `_ingest_doc_and_eval` / `_ingest_video_and_eval` call `evaluate_source(...)` once the source reaches `ready` (skipped for `failed`). The evaluator LLM is **Mistral** (`_build_ragas_llm` in `core/evaluator.py`), which falls back to Groq 8B only if `MISTRAL_API_KEY` is unset — this was the fix for Groq's low-TPM 429→NaN cascade. `ragas.evaluate()` itself is sync, so it's wrapped in `asyncio.to_thread`. `RAGAS_NUM_QUESTIONS` defaults to 10 in `config.py`; the sample `.env` uses 3.
+**RAGAS auto-eval runs after ingestion.** `_ingest_doc_and_eval` / `_ingest_video_and_eval` call `evaluate_source(...)` once the source reaches `ready` (skipped for `failed`). The evaluator LLM is **Mistral** (`_build_ragas_llm` in `core/evaluator.py`), which falls back to the Groq fast model only if `MISTRAL_API_KEY` is unset — this was the fix for Groq's low-TPM 429→NaN cascade. `ragas.evaluate()` itself is sync, so it's wrapped in `asyncio.to_thread`. `RAGAS_NUM_QUESTIONS` defaults to 10 in `config.py`; the sample `.env` uses 3. Its questions are generated from the source's *opening chunks* only, so treat the scores as a synthetic self-check, not a benchmark.
 
 ### Frontend (`frontend/src`)
 
@@ -82,4 +84,4 @@ React Router pages: Dashboard (upload + source list), ChatPage (`/chat/:sourceId
 
 ## Model routing convention
 
-Groq 70B (`GROQ_MODEL_MAIN`) is used **only** for final answer generation and comparative synthesis where quality matters. Everything auxiliary — classification, multi-query, HyDE, decomposition, follow-up queries, multi-hop intermediate answers, and RAGAS QA generation — uses the fast/cheap Groq 8B (`GROQ_MODEL_FAST`). The one exception is the **RAGAS evaluator LLM, which is Mistral** (`MISTRAL_MODEL_EVAL`), moved off Groq to avoid rate-limit failures during scoring. Preserve this split when adding LLM calls; it's what keeps the project within free-tier limits.
+The main model (`GROQ_MODEL_MAIN`, `openai/gpt-oss-120b`) is used **only** for final answer generation and comparative synthesis where quality matters. Everything auxiliary — classification, multi-query, HyDE, decomposition, follow-up queries, multi-hop intermediate answers, and RAGAS QA generation — uses the fast/cheap model (`GROQ_MODEL_FAST`, `openai/gpt-oss-20b`). Avoid Groq *preview* models (e.g. `qwen/qwen3.8-27b`) — they can be withdrawn at short notice, which would invalidate eval results. The one exception is the **RAGAS evaluator LLM, which is Mistral** (`MISTRAL_MODEL_EVAL`), moved off Groq to avoid rate-limit failures during scoring. Preserve this split when adding LLM calls; it's what keeps the project within free-tier limits.

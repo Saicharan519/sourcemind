@@ -7,8 +7,6 @@ pydantic-settings==2.5.2
 
 # === Database ===
 asyncpg==0.29.0
-sqlalchemy==2.0.35
-psycopg2-binary==2.9.9
 
 # === Vector DB ===
 qdrant-client==1.12.0

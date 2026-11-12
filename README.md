@@ -4,7 +4,9 @@
 
 **Chat with your documents and videos — in any language — with answers cited back to the exact page or timestamp.**
 
-A production-grade, multi-modal **RAG** platform: ingest PDFs or videos (YouTube, Google Drive, or a file upload), then interrogate them in natural language over real-time streamed answers with page/segment citations.
+A multi-modal **RAG** platform: ingest PDFs or videos (YouTube, Google Drive, or a file upload — video is handled via transcription), then interrogate them in natural language over real-time streamed answers with page/segment citations.
+
+> **Status:** SourceMind 2.0 is in progress on the `sourcemind-2.0` branch — a reproducible evaluation benchmark, retrieval fixes, validated citations, abstention ("not found in your sources"), multi-user isolation and an MCP server. See [Current limitations](#current-limitations) for what is *not* done yet. The pre-2.0 code is tagged `v1-as-shipped`.
 
 <br>
 
@@ -31,8 +33,8 @@ Most RAG demos split a document into fixed chunks, embed them, retrieve the top-
 | Vector search misses exact keywords | Hybrid search (BM25 + dense) via Reciprocal Rank Fusion |
 | Redundant retrieved chunks | MMR reranking for diversity |
 | Cross-source contamination | Per-source metadata filtering in Qdrant |
-| Complex / comparative questions | LangGraph agentic router (simple / comparative / multi-hop) |
-| "Is my retrieval any good?" | Automated RAGAS evaluation per source |
+| Complex / comparative questions | LangGraph query router (simple / comparative / multi-hop) |
+| "Is my retrieval any good?" | Automated RAGAS self-check per source (a hand-reviewed benchmark is being built in 2.0) |
 
 ---
 
@@ -45,15 +47,15 @@ Most RAG demos split a document into fixed chunks, embed them, retrieve the top-
 - ⚡ **Non-blocking** — ingestion runs in FastAPI background tasks; CPU-heavy work (Whisper, embeddings, PDF parsing) is offloaded to threads so the API never freezes
 
 **Retrieval & generation**
-- **Hierarchical chunking** — small 300-token children are embedded/searched; full 1500-token parents are what the LLM actually reads
+- **Hierarchical chunking** — small ~300-*character* children are embedded/searched; larger ~1500-character parents are what the LLM actually reads (token-aware sizing is a 2.0 fix)
 - **Hybrid search** — dense (Qdrant cosine) + sparse (BM25) fused with **Reciprocal Rank Fusion**, then **MMR**-reranked for diversity
 - **Multi-query + HyDE** — the query is auto-expanded with rephrasings and a hypothetical answer before retrieval
-- **Agentic router** — a compiled **LangGraph `StateGraph`** classifies each question and dispatches to `simple`, `comparative` (decompose → parallel retrieve → synthesize), or `multi_hop` (retrieve → reason → retrieve → synthesize)
+- **Query router** — a compiled **LangGraph `StateGraph`** classifies each question and dispatches to `simple`, `comparative` (decompose → parallel retrieve → synthesize), or `multi_hop` (retrieve → reason → retrieve → synthesize)
 - **Streaming** — tokens stream to the UI over Server-Sent Events in real time
 - **Cross-document chat** — a global endpoint answers across your *entire* library at once
 
 **Evaluation & UX**
-- 📊 **RAGAS** auto-evaluates each source (faithfulness, answer relevancy, context recall, context precision) — evaluator LLM is Mistral to stay within free-tier limits
+- 📊 **RAGAS self-check** runs after each ingestion (faithfulness, answer relevancy, context recall, context precision), scored by Mistral to stay within free-tier limits. The questions are LLM-generated from the source's *opening chunks*, so treat these scores as a smoke test, not a benchmark
 - ✨ **Editorial UI** — a warm, light "library" theme (React + Tailwind + Framer Motion) with Markdown-rendered answers and collapsible, numbered citations
 - 💸 **100% free model stack** — Groq LLMs + local HuggingFace embeddings + local faster-whisper
 
@@ -68,8 +70,8 @@ Most RAG demos split a document into fixed chunks, embed them, retrieve the top-
 | Vector DB | Qdrant (cosine, metadata-filtered) |
 | Relational DB | PostgreSQL 16 (parent chunks · BM25 corpus · eval results · chat history) |
 | Embeddings | sentence-transformers `all-MiniLM-L6-v2` — local, 384-dim, CPU |
-| LLMs | Groq — Llama 3.3 70B (answers), Llama 3.1 8B (auxiliary) |
-| Evaluator LLM | Mistral `mistral-small-latest` (falls back to Groq 8B) |
+| LLMs | Groq — `openai/gpt-oss-120b` (answers), `openai/gpt-oss-20b` (auxiliary) |
+| Evaluator LLM | Mistral `mistral-small-latest` (falls back to the Groq fast model) |
 | Transcription | faster-whisper `small` — local, CTranslate2 int8 |
 | Agent / RAG | LangChain + a compiled LangGraph `StateGraph` |
 | Evaluation | RAGAS |
@@ -100,13 +102,13 @@ flowchart TD
     ROUTER --> RETR["retrieve()<br/>multi-query + HyDE → hybrid search (RRF) → MMR → parent hydrate"]
     RETR --> QD
     RETR --> PG
-    ROUTER --> LLM["Groq Llama 3.3 70B<br/>(streamed)"]
+    ROUTER --> LLM["Groq gpt-oss-120b<br/>(streamed)"]
     LLM -->|SSE tokens + citations| UI
 
     API -.->|after ingest| RAGAS["RAGAS eval<br/>(Mistral)"] --> PG
 ```
 
-**Request path for a chat query:** `GET /api/chat/stream` → LangGraph router → `retrieve()` → hybrid search → Groq 70B, streamed back as SSE. Retrieved child chunks are swapped for their full parent chunks before the model sees them, and every retrieval is filtered by `source_id` (omitted for global chat).
+**Request path for a chat query:** `GET /api/chat/stream` → LangGraph router → `retrieve()` → hybrid search → Groq main model, streamed back as SSE. Retrieved child chunks are swapped for their full parent chunks before the model sees them, and every retrieval is filtered by `source_id` (omitted for global chat).
 
 ---
 
@@ -190,9 +192,9 @@ Quality where it matters, speed everywhere else — this split is what keeps the
 
 | Task | Model |
 |---|---|
-| Final answer + comparative synthesis | Groq **Llama 3.3 70B** |
-| Classification · multi-query · HyDE · decomposition · multi-hop reasoning · titles · QA generation | Groq **Llama 3.1 8B** |
-| RAGAS evaluator | **Mistral** `mistral-small-latest` (→ Groq 8B fallback) |
+| Final answer + comparative synthesis | Groq **`openai/gpt-oss-120b`** |
+| Classification · multi-query · HyDE · decomposition · multi-hop reasoning · titles · QA generation | Groq **`openai/gpt-oss-20b`** |
+| RAGAS evaluator | **Mistral** `mistral-small-latest` (→ Groq fast-model fallback) |
 | Embeddings | local `all-MiniLM-L6-v2` (CPU) |
 | Transcription | local faster-whisper `small` (CPU, int8) |
 
@@ -208,8 +210,9 @@ sourcemind/
 │   ├── core/
 │   │   ├── document_pipeline.py   video_pipeline.py   chunker.py
 │   │   ├── embedder.py            bm25_index.py       hybrid_search.py
-│   │   ├── rag_engine.py          agent_router.py     evaluator.py
-│   │   ├── db/ (postgres.py · qdrant.py)  utils/ (audio.py · streaming.py)
+│   │   └── rag_engine.py          agent_router.py     evaluator.py
+│   ├── db/                   # postgres.py · qdrant.py
+│   ├── utils/                # audio.py · streaming.py
 │   └── requirements.txt
 ├── frontend/src/             # pages · components · hooks · api client
 ├── scripts/init_db.sql
@@ -218,11 +221,26 @@ sourcemind/
 
 ---
 
-## Roadmap
+## Current limitations
 
-- **GPU transcription** + a local/Groq transcription mode toggle (auto-detect CUDA)
-- One-command cloud deploy (Render/Railway · Neon · Qdrant Cloud · Vercel)
-- Postgres full-text search to replace the per-query BM25 rebuild at scale
+Being honest about what the code does today (all are being addressed in 2.0):
+
+- **No benchmark yet.** The RAGAS scores are a synthetic self-check, not evidence of retrieval quality.
+- **No tests or CI.**
+- **Single-user, local only.** There is no authentication; run it on your own machine, not on a public server.
+- **Citations list every retrieved chunk**, not only the ones the answer used.
+- **No abstention.** If the answer is not in your sources, the model may still attempt one.
+- **BM25 is rebuilt on every search**, which gets slow as the library grows.
+- **Ingestion jobs live in memory**, so a server restart loses in-flight jobs.
+
+## Roadmap (SourceMind 2.0)
+
+1. Reproducible evaluation benchmark (page-level gold labels, frozen test split) and an eval gate in CI
+2. Retrieval fixes (token-aware chunking, variant fusion, cached BM25) and safer ingestion
+3. Measured retrieval ablations — reranker, embedders, query expansion, chunking — keeping only what helps
+4. Validated citations, abstention, and a confidence-gated corrective cascade
+5. Multi-user isolation with security tests
+6. Read-only MCP server so AI clients can query your library
 
 ---
 
@@ -238,4 +256,4 @@ sourcemind/
 
 ## License
 
-MIT — do what you want.
+MIT — see [LICENSE](LICENSE).

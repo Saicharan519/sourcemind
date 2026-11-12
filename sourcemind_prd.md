@@ -2,10 +2,22 @@
 ### Multi-Modal Document & Video Intelligence Platform
 
 **Version:** 2.0  
-**Author:** Tarun  
+**Author:** Sai Charan  
 **Stack:** React + FastAPI + LangChain + Qdrant + Whisper + PostgreSQL + Docker  
-**LLM:** Groq API (Llama 3.1 / 3.3 70B) — Free Tier  
+**LLM:** Groq API (originally Llama 3.1 8B / 3.3 70B; now `openai/gpt-oss-20b` / `openai/gpt-oss-120b`) — Free Tier  
 **Embeddings:** HuggingFace all-MiniLM-L6-v2 — Local, Free  
+
+> **Note — this is the original design document, not a description of current behavior.**
+> Where it differs from the code, the code and `README.md` win. Known divergences:
+> - Chunk sizes are measured in **characters**, not tokens (`length_function=len` in `core/chunker.py`).
+> - Sparse vectors are **not** stored in Qdrant; BM25 is built from a Postgres table on each search.
+> - The LangGraph component is a **query router** (classify → one of three fixed strategies), not an autonomous agent.
+> - There is **no GitHub Actions CI** and no test suite yet.
+> - It is not production-grade: no authentication, single-user, intended to run locally.
+> - The RAGAS evaluator is Mistral, not Groq 8B; its scores are a synthetic self-check, not a benchmark.
+> - LLMs moved from Llama 3.x to `gpt-oss-120b` / `gpt-oss-20b` on Groq.
+>
+> The SourceMind 2.0 work (branch `sourcemind-2.0`) addresses these.
 
 ---
 
