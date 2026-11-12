@@ -29,7 +29,6 @@ def download_audio_from_url(url: str, out_dir: str | None = None) -> tuple[str, 
         "outtmpl": out_template,
         "quiet": True,
         "no_warnings": True,
-        "nocheckcertificate": True,
         "extractor_retries": 3,
         "postprocessors": [
             {

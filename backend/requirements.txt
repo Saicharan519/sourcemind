@@ -17,6 +17,7 @@ langchain-core==0.3.27
 langchain-community==0.3.2
 langchain-text-splitters==0.3.0
 langchain-groq==0.2.0
+langchain-openai==0.2.2           # DeepSeek / Cloudflare (OpenAI-compatible APIs)
 langchain-huggingface==0.1.0
 langchain-mistralai==0.2.4        # RAGAS evaluator LLM (higher free-tier limits than Groq)
 langgraph==0.2.34

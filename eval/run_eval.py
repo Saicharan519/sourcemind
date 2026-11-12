@@ -51,6 +51,16 @@ def load_config(path: str) -> dict:
 
 # -- database reset --------------------------------------------------------
 
+def _llm_models(settings) -> dict:
+    """Provider + model ids the run used. 2.0 backends pick one provider via
+    LLM_PROVIDER (never a silent fallback); v1 backends are Groq-only."""
+    try:
+        from core.llm_providers import describe
+        return describe()
+    except ImportError:
+        return {"provider": "groq", "main": settings.GROQ_MODEL_MAIN, "fast": settings.GROQ_MODEL_FAST}
+
+
 async def reset_stores(backend: Path) -> None:
     import asyncpg
     from qdrant_client import AsyncQdrantClient
@@ -80,6 +90,24 @@ async def reset_stores(backend: Path) -> None:
 
 
 # -- ingestion -------------------------------------------------------------
+
+async def mapping_from_db() -> dict[str, str]:
+    """{doc_key: source_id} for corpus sources already ingested in the eval DB
+    (documents by '<key>.pdf' filename, videos by URL); used by --skip-ingest."""
+    from db.postgres import Database
+    from eval.corpus.download import load_manifest
+
+    manifest = load_manifest()
+    rows = await Database.fetch("SELECT id, filename, youtube_url FROM sources WHERE status = 'ready'")
+    by_file = {r["filename"]: str(r["id"]) for r in rows if r["filename"]}
+    by_url = {r["youtube_url"]: str(r["id"]) for r in rows if r["youtube_url"]}
+    mapping = {d["key"]: by_file[f"{d['key']}.pdf"] for d in manifest["documents"]
+               if f"{d['key']}.pdf" in by_file}
+    mapping.update({v["key"]: by_url[v["url"]] for v in manifest.get("videos", []) if v["url"] in by_url})
+    if not mapping:
+        raise RuntimeError("--skip-ingest: no corpus sources in the eval DB; run once without it")
+    return mapping
+
 
 async def ingest_corpus() -> dict[str, str]:
     """Ingest every available corpus source; return {doc_key: source_id}."""
@@ -148,6 +176,62 @@ def _to_retrieved(citation: dict, sid_to_doc: dict[str, str]) -> dict:
     return item
 
 
+class TokenMeter:
+    """Sums LLM token usage (input / output / cached input) across every call the
+    system makes for one question. Installed by wrapping core.llm_providers.make_llm
+    (2.0 backends only; v1 records no usage)."""
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.usage = {"input": 0, "output": 0, "cached": 0, "calls": 0}
+
+    def handler(self):
+        from langchain_core.callbacks import BaseCallbackHandler
+        meter = self
+
+        class _H(BaseCallbackHandler):
+            def on_llm_end(self, response, **kw):
+                meter.usage["calls"] += 1
+                um = None
+                try:
+                    um = response.generations[0][0].message.usage_metadata
+                except (AttributeError, IndexError):
+                    pass
+                if um:
+                    meter.usage["input"] += um.get("input_tokens", 0) or 0
+                    meter.usage["output"] += um.get("output_tokens", 0) or 0
+                    meter.usage["cached"] += (um.get("input_token_details") or {}).get("cache_read", 0) or 0
+                    return
+                tu = (response.llm_output or {}).get("token_usage") or {}
+                meter.usage["input"] += tu.get("prompt_tokens", 0) or 0
+                meter.usage["output"] += tu.get("completion_tokens", 0) or 0
+        return _H()
+
+
+METER = TokenMeter()
+
+
+def install_token_meter() -> bool:
+    try:
+        import core.llm_providers as lp
+        import core.rag_engine as re_
+    except ImportError:
+        return False
+    original = lp.make_llm
+    h = METER.handler()
+
+    def metered(*a, **kw):
+        llm = original(*a, **kw)
+        llm.callbacks = [h]
+        return llm
+
+    lp.make_llm = metered
+    re_.make_llm = metered
+    return True
+
+
 async def ask(question: dict, source_id: str, sid_to_doc: dict, retries: int = 6) -> dict:
     from uuid import UUID
     from core.agent_router import route_and_stream
@@ -155,8 +239,9 @@ async def ask(question: dict, source_id: str, sid_to_doc: dict, retries: int = 6
     delay = 10.0
     for attempt in range(1, retries + 1):
         t0 = time.time()
-        tokens, citations, sub_queries = [], [], []
-        query_type, error = None, None
+        METER.reset()
+        tokens, citations, context, sub_queries = [], [], [], []
+        query_type, error, evidence = None, None, None
         log = io.StringIO()  # the backend reports helper failures via print()
         with contextlib.redirect_stdout(log):
           async for ev in route_and_stream(question["question"], UUID(source_id),
@@ -166,6 +251,10 @@ async def ask(question: dict, source_id: str, sid_to_doc: dict, retries: int = 6
                 tokens.append(ev.get("value") or "")
             elif t == "citations":
                 citations.extend(ev.get("value") or [])
+            elif t == "context":       # 2.0+: every passage shown to the model
+                context.extend(ev.get("value") or [])
+            elif t == "evidence":
+                evidence = ev.get("value")
             elif t == "query_type":
                 query_type = ev.get("value")
             elif t == "sub_queries":
@@ -192,7 +281,11 @@ async def ask(question: dict, source_id: str, sid_to_doc: dict, retries: int = 6
             "query_type": query_type,
             "sub_queries": sub_queries,
             "citations": citations,
-            "retrieved": [_to_retrieved(c, sid_to_doc) for c in citations],
+            # v1 sent every retrieved chunk as `citations`; 2.0 sends them as `context`
+            # and `citations` holds only the passages the answer actually cited.
+            "retrieved": [_to_retrieved(c, sid_to_doc) for c in (context or citations)],
+            "evidence": evidence,
+            "usage": dict(METER.usage),
             "latency_s": round(latency, 3),
             "attempts": attempt,
             "degraded": degraded,
@@ -227,9 +320,12 @@ async def run(cfg: dict, args, backend: Path) -> int:
     # Cache the system's non-streamed helper calls (classify, multi-query, HyDE...)
     # so reruns are cheaper; streamed final answers are always generated live.
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    set_llm_cache(SQLiteCache(database_path=str(CACHE_DIR / "sut_llm.sqlite")))
+    if not args.no_cache:  # --no-cache: every call is live, so token/cost numbers are complete
+        set_llm_cache(SQLiteCache(database_path=str(CACHE_DIR / "sut_llm.sqlite")))
 
     meta_prev = json.loads(run_path.read_text()) if run_path.exists() else {}
+    if install_token_meter():
+        print("token metering on")
     if not args.skip_ingest:
         print("resetting eval database + collection ...", flush=True)
         await reset_stores(backend)
@@ -239,6 +335,9 @@ async def run(cfg: dict, args, backend: Path) -> int:
         if args.skip_ingest and meta_prev.get("source_ids"):
             mapping = meta_prev["source_ids"]
             print("reusing ingested corpus from previous run")
+        elif args.skip_ingest:
+            mapping = await mapping_from_db()
+            print(f"reusing the {len(mapping)} source(s) already in the eval database")
         else:
             print("ingesting corpus ...", flush=True)
             t0 = time.time()
@@ -258,8 +357,7 @@ async def run(cfg: dict, args, backend: Path) -> int:
             "dataset": str(dataset.relative_to(REPO_DIR)),
             "dataset_sha256": sha256_file(dataset),
             "n_questions": len(questions),
-            "models": {"main": settings.GROQ_MODEL_MAIN, "fast": settings.GROQ_MODEL_FAST,
-                       "embedding": settings.EMBEDDING_MODEL},
+            "models": {**_llm_models(settings), "embedding": settings.EMBEDDING_MODEL},
             "settings": {k: getattr(settings, k) for k in (
                 "MMR_LAMBDA", "MMR_FETCH_K", "MMR_FINAL_K", "BM25_TOP_K", "DENSE_TOP_K",
                 "PARENT_CHUNK_SIZE", "CHILD_CHUNK_SIZE", "VIDEO_CHUNK_WORDS")},
@@ -307,6 +405,7 @@ def main() -> int:
     ap.add_argument("--dataset", help="override the config's dataset (repo-relative path)")
     ap.add_argument("--limit", type=int)
     ap.add_argument("--skip-ingest", action="store_true")
+    ap.add_argument("--no-cache", action="store_true", help="disable the LLM response cache")
     args = ap.parse_args()
 
     cfg = load_config(args.config)

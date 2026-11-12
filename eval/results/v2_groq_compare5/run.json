@@ -1,0 +1,45 @@
+{
+  "arm": "v2_groq_compare5",
+  "description": "2.0 backend (RRF fusion, numbered citations, evidence check) on groq.",
+  "started_at": "2026-11-12T17:21:24+00:00",
+  "backend_dir": "C:\\Users\\Sai Charan\\OneDrive\\Desktop\\P\\sourcemind\\backend",
+  "backend_git_sha": "d8ab582121851e374707be74894dc63be840669d",
+  "backend_dirty": true,
+  "dataset": "eval\\datasets\\compare5.jsonl",
+  "dataset_sha256": "6d1167ee0390f7767b58bba2d8a309aa169e0a265a6305a1bf2aae6cb15b7f3d",
+  "n_questions": 5,
+  "models": {
+    "provider": "groq",
+    "main": "openai/gpt-oss-120b",
+    "fast": "openai/gpt-oss-20b",
+    "embedding": "sentence-transformers/all-MiniLM-L6-v2"
+  },
+  "settings": {
+    "MMR_LAMBDA": 0.5,
+    "MMR_FETCH_K": 20,
+    "MMR_FINAL_K": 6,
+    "BM25_TOP_K": 10,
+    "DENSE_TOP_K": 10,
+    "PARENT_CHUNK_SIZE": 1500,
+    "CHILD_CHUNK_SIZE": 300,
+    "VIDEO_CHUNK_WORDS": 400
+  },
+  "overrides": {
+    "LLM_PROVIDER": "groq"
+  },
+  "source_ids": {
+    "ragas": "660d02e8-1d48-47ed-9a77-6931b2c89b8e",
+    "self_rag": "9d7c8b22-de72-41b5-826a-4d10364d3425",
+    "beir": "8bd95fc7-35ac-4b0e-a4b5-608f81eced4b",
+    "nist_ai_rmf": "b89ca466-7691-4429-96f6-96634ff4c584",
+    "nist_genai_profile": "05c00101-9c3c-4b88-8a34-66e00a9a3e7e",
+    "nist_csf": "2598da31-2663-40c7-a6ce-010192aed824",
+    "nist_800_63b": "fe3a055f-defb-456c-8db9-01ddde065fb6",
+    "census_income": "51b716b5-94c8-40ea-9cd1-bb3097f08752",
+    "fed_fsr": "1b3d7a45-bb1a-492d-838f-bd1bd9ca4689",
+    "mit_ai_lec1": "436a5138-2e66-46cd-b680-a497e98c6b20",
+    "mit_linalg_lec1": "71b3ebe7-5c05-44af-8703-d94ccb7836fb",
+    "mit_algo_lec1": "fd207b35-8cda-47f9-95f3-0a3f59bb301e"
+  },
+  "finished_at": "2026-11-12T17:23:01+00:00"
+}

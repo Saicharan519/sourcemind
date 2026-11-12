@@ -42,6 +42,8 @@ export function useStreamingChat({ mode = "source", sourceId = null } = {}) {
           citations: [],
           queryType: null,
           subQueries: null,
+          evidence: null,
+          warning: null,
         },
       ]);
 
@@ -79,6 +81,14 @@ export function useStreamingChat({ mode = "source", sourceId = null } = {}) {
         } else if (data.type === "query_type") {
           setMessages((prev) =>
             prev.map((m) => (m.id === asstId ? { ...m, queryType: data.value } : m))
+          );
+        } else if (data.type === "evidence") {
+          setMessages((prev) =>
+            prev.map((m) => (m.id === asstId ? { ...m, evidence: data.value } : m))
+          );
+        } else if (data.type === "warning") {
+          setMessages((prev) =>
+            prev.map((m) => (m.id === asstId ? { ...m, warning: data.value } : m))
           );
         } else if (data.type === "sub_queries") {
           setMessages((prev) =>
