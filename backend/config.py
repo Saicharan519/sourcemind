@@ -9,10 +9,28 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False, extra="ignore")
 
+    # LLM provider for the app: "groq" | "deepseek" | "cloudflare".
+    # Exactly one provider is used; there is no automatic fallback, so answers never
+    # silently come from a different model.
+    LLM_PROVIDER: str = "groq"
+
     # Groq
     GROQ_API_KEY: str = ""
-    GROQ_MODEL_MAIN: str = "llama-3.3-70b-versatile"
-    GROQ_MODEL_FAST: str = "llama-3.1-8b-instant"
+    GROQ_MODEL_MAIN: str = "openai/gpt-oss-120b"
+    GROQ_MODEL_FAST: str = "openai/gpt-oss-20b"
+
+    # DeepSeek (OpenAI-compatible API). Thinking mode is turned off: it adds latency
+    # and billed reasoning tokens that a RAG answer does not need.
+    DEEPSEEK_API_KEY: str = ""
+    DEEPSEEK_BASE_URL: str = "https://api.deepseek.com"
+    DEEPSEEK_MODEL_MAIN: str = "deepseek-flash"
+    DEEPSEEK_MODEL_FAST: str = "deepseek-flash"
+
+    # Cloudflare Workers AI (OpenAI-compatible API, free daily Neuron allowance)
+    CLOUDFLARE_ACCOUNT_ID: str = ""
+    CLOUDFLARE_API_TOKEN: str = ""
+    CLOUDFLARE_MODEL_MAIN: str = "@cf/openai/gpt-oss-120b"
+    CLOUDFLARE_MODEL_FAST: str = "@cf/openai/gpt-oss-20b"
 
     # Mistral (used as the RAGAS evaluator LLM — higher free-tier limits than Groq)
     MISTRAL_API_KEY: str = ""

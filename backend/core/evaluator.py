@@ -210,7 +210,7 @@ async def score_with_ragas(records: list[dict[str, Any]]) -> dict[str, float]:
                 llm=ragas_llm,
                 embeddings=ragas_emb,
                 raise_exceptions=False,
-                run_config=RunConfig(timeout=120, max_retries=3, max_wait=60),
+                run_config=RunConfig(timeout=180, max_retries=10, max_wait=120, max_workers=1),
             )
             return result.to_pandas()
 

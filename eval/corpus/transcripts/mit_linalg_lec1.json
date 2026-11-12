@@ -1,0 +1,3235 @@
+{
+ "key": "mit_linalg_lec1",
+ "url": "https://www.youtube.com/watch?v=J7DzL2_Na80",
+ "title": "MIT 18.06 Linear Algebra, Lecture 1: The Geometry of Linear Equations",
+ "duration_s": 2389,
+ "whisper_model": "small",
+ "translate_to_english": true,
+ "segments": [
+  {
+   "text": " This is the first lecture in MIT's course, 1806, linear",
+   "start": 8.91,
+   "end": 14.71
+  },
+  {
+   "text": " algebra.",
+   "start": 14.71,
+   "end": 15.95
+  },
+  {
+   "text": " And I'm Gilbert Strang.",
+   "start": 15.95,
+   "end": 19.31
+  },
+  {
+   "text": " The text for the course is this book, Introduction to",
+   "start": 19.31,
+   "end": 24.47
+  },
+  {
+   "text": " Linear Algebra.",
+   "start": 24.47,
+   "end": 26.18
+  },
+  {
+   "text": " And the course web page, which has got a lot of",
+   "start": 26.18,
+   "end": 31.65
+  },
+  {
+   "text": " exercises from the past, MATLAB codes, the syllabus for",
+   "start": 31.65,
+   "end": 37.45
+  },
+  {
+   "text": " the course, is web.mit.edu slash 18.06.",
+   "start": 37.45,
+   "end": 44.38
+  },
+  {
+   "text": " And this is the first lecture, lecture one.",
+   "start": 44.38,
+   "end": 48.94
+  },
+  {
+   "text": " And later we'll say which will give the web address for",
+   "start": 48.94,
+   "end": 54.22
+  },
+  {
+   "text": " viewing these videotapes.",
+   "start": 54.22,
+   "end": 57.22
+  },
+  {
+   "text": " OK, so what's in the first lecture?",
+   "start": 57.22,
+   "end": 62.59
+  },
+  {
+   "text": " This is my plan, the fundamental problem of linear",
+   "start": 62.59,
+   "end": 68.42
+  },
+  {
+   "text": " algebra, which is to solve a system of linear equations.",
+   "start": 68.42,
+   "end": 73.82
+  },
+  {
+   "text": " So let's start with a case when we have some number of",
+   "start": 73.82,
+   "end": 77.66
+  },
+  {
+   "text": " equations, say n equations and n unknowns.",
+   "start": 77.66,
+   "end": 81.42
+  },
+  {
+   "text": " So an equal number of equations and unknowns.",
+   "start": 81.42,
+   "end": 83.78
+  },
+  {
+   "text": " That's the normal, nice case.",
+   "start": 83.78,
+   "end": 86.74
+  },
+  {
+   "text": " And what I want to do is, with examples, of course, to",
+   "start": 86.74,
+   "end": 91.93
+  },
+  {
+   "text": " describe first what I call the row picture.",
+   "start": 91.93,
+   "end": 97.29
+  },
+  {
+   "text": " That's the picture of one equation at a time.",
+   "start": 97.29,
+   "end": 100.85
+  },
+  {
+   "text": " It's the picture you've seen before in two by two equations",
+   "start": 100.85,
+   "end": 105.29
+  },
+  {
+   "text": " where lines meet.",
+   "start": 105.29,
+   "end": 106.33
+  },
+  {
+   "text": " So in a minute you'll see lines meeting.",
+   "start": 106.33,
+   "end": 109.48
+  },
+  {
+   "text": " The second picture, I'll put a star beside that, because",
+   "start": 109.48,
+   "end": 113.16
+  },
+  {
+   "text": " that's such an important one.",
+   "start": 113.16,
+   "end": 115.04
+  },
+  {
+   "text": " And maybe new to you is the picture a column at a time.",
+   "start": 115.04,
+   "end": 121.55
+  },
+  {
+   "text": " And those are the rows and columns of a matrix.",
+   "start": 121.55,
+   "end": 125.39
+  },
+  {
+   "text": " So the third, the algebra way to look at the problem, is the",
+   "start": 125.43,
+   "end": 129.07
+  },
+  {
+   "text": " matrix form, using a matrix that I'll call a.",
+   "start": 129.07,
+   "end": 133.74
+  },
+  {
+   "text": " OK, so can I do an example?",
+   "start": 133.74,
+   "end": 137.46
+  },
+  {
+   "text": " The whole semester will be examples, and then see what's",
+   "start": 137.46,
+   "end": 143.38
+  },
+  {
+   "text": " going on with the example.",
+   "start": 143.38,
+   "end": 145.1
+  },
+  {
+   "text": " So take an example.",
+   "start": 145.1,
+   "end": 147.91
+  },
+  {
+   "text": " Two equations, two unknowns.",
+   "start": 147.91,
+   "end": 150.38
+  },
+  {
+   "text": " So let me take 2x minus y equals 0, let's say, and minus x",
+   "start": 150.38,
+   "end": 160.54
+  },
+  {
+   "text": " plus say 2y equals 3.",
+   "start": 160.54,
+   "end": 165.27
+  },
+  {
+   "text": " OK.",
+   "start": 165.27,
+   "end": 167.95
+  },
+  {
+   "text": " I can even say right away, what's the matrix that is,",
+   "start": 167.95,
+   "end": 175.26
+  },
+  {
+   "text": " what's the coefficient matrix?",
+   "start": 175.26,
+   "end": 177.54
+  },
+  {
+   "text": " The matrix that involves these numbers?",
+   "start": 177.54,
+   "end": 180.54
+  },
+  {
+   "text": " A matrix is just a rectangular array of numbers.",
+   "start": 180.54,
+   "end": 184.5
+  },
+  {
+   "text": " Here it's two rows and two columns.",
+   "start": 184.5,
+   "end": 187.82
+  },
+  {
+   "text": " So 2 and minus 1 in the first row, minus 1 and 2 in the",
+   "start": 187.82,
+   "end": 193.82
+  },
+  {
+   "text": " second row, that's the matrix.",
+   "start": 193.82,
+   "end": 196.62
+  },
+  {
+   "text": " And the unknown, well, we've got two unknowns.",
+   "start": 196.62,
+   "end": 202.93
+  },
+  {
+   "text": " So we've got a vector, with two components, x and y.",
+   "start": 202.93,
+   "end": 207.53
+  },
+  {
+   "text": " And we've got two right-hand sides that go into a vector 0,",
+   "start": 207.53,
+   "end": 211.57
+  },
+  {
+   "text": " 3.",
+   "start": 211.57,
+   "end": 213.82
+  },
+  {
+   "text": " I couldn't resist writing the matrix form right even before",
+   "start": 213.82,
+   "end": 220.02
+  },
+  {
+   "text": " the pictures.",
+   "start": 220.02,
+   "end": 221.02
+  },
+  {
+   "text": " So I always will think of this as the matrix A, the",
+   "start": 221.02,
+   "end": 225.9
+  },
+  {
+   "text": " matrix of coefficients.",
+   "start": 225.9,
+   "end": 228.14
+  },
+  {
+   "text": " Then there's a vector of unknowns.",
+   "start": 228.14,
+   "end": 229.98
+  },
+  {
+   "text": " Here we've only got two unknowns.",
+   "start": 229.98,
+   "end": 231.74
+  },
+  {
+   "text": " Later we'll have any number of unknowns.",
+   "start": 231.74,
+   "end": 234.06
+  },
+  {
+   "text": " And that vector of unknowns, well, I'll often, I'll",
+   "start": 234.06,
+   "end": 237.86
+  },
+  {
+   "text": " make that extra bold.",
+   "start": 237.86,
+   "end": 242.46
+  },
+  {
+   "text": " And the right-hand side is also a vector that I'll always",
+   "start": 242.46,
+   "end": 245.78
+  },
+  {
+   "text": " call b.",
+   "start": 245.78,
+   "end": 248.14
+  },
+  {
+   "text": " So linear equations are Ax equal b.",
+   "start": 248.14,
+   "end": 250.94
+  },
+  {
+   "text": " And the idea now is to solve this particular example and",
+   "start": 250.94,
+   "end": 257.1
+  },
+  {
+   "text": " then step back to see the bigger picture.",
+   "start": 257.1,
+   "end": 260.9
+  },
+  {
+   "text": " OK, what's the picture for this example?",
+   "start": 260.9,
+   "end": 263.02
+  },
+  {
+   "text": " The row picture.",
+   "start": 263.02,
+   "end": 264.94
+  },
+  {
+   "text": " So here comes the row picture.",
+   "start": 264.94,
+   "end": 270.2
+  },
+  {
+   "text": " So that means I take one row at a time and I'm drawing here",
+   "start": 270.24,
+   "end": 274.64
+  },
+  {
+   "text": " the x, y plane.",
+   "start": 274.64,
+   "end": 279.28
+  },
+  {
+   "text": " And I'm going to put, plot all the points that satisfy",
+   "start": 279.28,
+   "end": 284.76
+  },
+  {
+   "text": " that first equation.",
+   "start": 284.76,
+   "end": 287.87
+  },
+  {
+   "text": " So I'm looking at all the points that satisfy 2x",
+   "start": 287.87,
+   "end": 291.07
+  },
+  {
+   "text": " minus y equals 0.",
+   "start": 291.07,
+   "end": 293.91
+  },
+  {
+   "text": " It's often good to start with which point on the",
+   "start": 293.91,
+   "end": 298.15
+  },
+  {
+   "text": " horizontal line?",
+   "start": 298.15,
+   "end": 299.51
+  },
+  {
+   "text": " On this horizontal line, y is 0.",
+   "start": 299.51,
+   "end": 302.47
+  },
+  {
+   "text": " The x-axis has y is 0.",
+   "start": 302.47,
+   "end": 304.99
+  },
+  {
+   "text": " And that, in this case, actually, then x is 0.",
+   "start": 304.99,
+   "end": 307.71
+  },
+  {
+   "text": " So the point, the origin, the point with coordinates 0, 0,",
+   "start": 307.71,
+   "end": 314.73
+  },
+  {
+   "text": " is on the line.",
+   "start": 314.73,
+   "end": 316.57
+  },
+  {
+   "text": " It solves that equation.",
+   "start": 316.57,
+   "end": 318.29
+  },
+  {
+   "text": " OK, tell me, well, I guess I have to tell you, another",
+   "start": 318.29,
+   "end": 323.25
+  },
+  {
+   "text": " point that solves this same equation.",
+   "start": 323.25,
+   "end": 326.93
+  },
+  {
+   "text": " Let me suppose x is 1.",
+   "start": 326.93,
+   "end": 330.13
+  },
+  {
+   "text": " So I'll take x to be 1.",
+   "start": 330.13,
+   "end": 332.33
+  },
+  {
+   "text": " Then y should be 2, right?",
+   "start": 332.33,
+   "end": 334.97
+  },
+  {
+   "text": " So there's the point 1, 2 that also solves this equation.",
+   "start": 334.97,
+   "end": 340.24
+  },
+  {
+   "text": " And I could put in more points.",
+   "start": 340.24,
+   "end": 343.58
+  },
+  {
+   "text": " But let me put in all the points at once, because they all",
+   "start": 343.58,
+   "end": 347.9
+  },
+  {
+   "text": " lie on a straight line.",
+   "start": 347.9,
+   "end": 350.82
+  },
+  {
+   "text": " This is a linear equation, and that word linear got the",
+   "start": 350.82,
+   "end": 354.02
+  },
+  {
+   "text": " letters for line in it.",
+   "start": 354.02,
+   "end": 356.75
+  },
+  {
+   "text": " That's the equation.",
+   "start": 356.75,
+   "end": 358.55
+  },
+  {
+   "text": " This is the line of solutions to 2x minus y equals 0, my first",
+   "start": 358.55,
+   "end": 365.43
+  },
+  {
+   "text": " row, first equation.",
+   "start": 365.43,
+   "end": 368.65
+  },
+  {
+   "text": " So typically, maybe x equal 1 half, y equal 1 will work.",
+   "start": 368.65,
+   "end": 374.06
+  },
+  {
+   "text": " And it's sure enough it does.",
+   "start": 374.06,
+   "end": 375.66
+  },
+  {
+   "text": " OK, that's the first one.",
+   "start": 375.66,
+   "end": 377.62
+  },
+  {
+   "text": " Now the second one is not going to go through the origin.",
+   "start": 377.62,
+   "end": 382.72
+  },
+  {
+   "text": " It's always important, do we go through the origin or not?",
+   "start": 382.72,
+   "end": 387.08
+  },
+  {
+   "text": " In this case, yes, because there's a 0 over there.",
+   "start": 387.12,
+   "end": 390.0
+  },
+  {
+   "text": " In this case, we don't go through the origin, because if",
+   "start": 390.0,
+   "end": 393.44
+  },
+  {
+   "text": " x and y are 0, we don't get 3.",
+   "start": 393.44,
+   "end": 396.24
+  },
+  {
+   "text": " So let me again say, suppose y is 0, what x do we actually",
+   "start": 396.24,
+   "end": 402.2
+  },
+  {
+   "text": " get?",
+   "start": 402.2,
+   "end": 402.56
+  },
+  {
+   "text": " If y is 0, then I get x is minus 3.",
+   "start": 402.56,
+   "end": 408.24
+  },
+  {
+   "text": " So if y is 0, I go along minus 3.",
+   "start": 408.24,
+   "end": 412.63
+  },
+  {
+   "text": " So there's one point on this second line.",
+   "start": 412.63,
+   "end": 416.34
+  },
+  {
+   "text": " Now let me say, well, suppose x is minus 1, just to take",
+   "start": 416.34,
+   "end": 424.0
+  },
+  {
+   "text": " another x.",
+   "start": 424.0,
+   "end": 425.4
+  },
+  {
+   "text": " If x is minus 1, then this is a 1.",
+   "start": 425.4,
+   "end": 430.12
+  },
+  {
+   "text": " And I think y should be a 1.",
+   "start": 430.12,
+   "end": 433.12
+  },
+  {
+   "text": " Because if x is minus 1, then I think y should be a 1, and",
+   "start": 433.12,
+   "end": 438.0
+  },
+  {
+   "text": " we'll get that point.",
+   "start": 438.0,
+   "end": 439.77
+  },
+  {
+   "text": " Is that right?",
+   "start": 439.77,
+   "end": 440.89
+  },
+  {
+   "text": " If x is minus 1, that's a 1.",
+   "start": 440.89,
+   "end": 443.33
+  },
+  {
+   "text": " If y is a 1, that's a 2.",
+   "start": 443.33,
+   "end": 445.21
+  },
+  {
+   "text": " And the 1 and the 2 make 3.",
+   "start": 445.21,
+   "end": 446.81
+  },
+  {
+   "text": " And that points on the equation.",
+   "start": 446.81,
+   "end": 448.53
+  },
+  {
+   "text": " Now I should just draw the line, right?",
+   "start": 449.25,
+   "end": 452.15
+  },
+  {
+   "text": " Connecting those two points, that will give me the whole line.",
+   "start": 452.15,
+   "end": 456.39
+  },
+  {
+   "text": " And if I've done this reasonably well, I think it's",
+   "start": 456.39,
+   "end": 461.03
+  },
+  {
+   "text": " going to happen to go through, well, not happen.",
+   "start": 461.03,
+   "end": 463.23
+  },
+  {
+   "text": " It was arranged to go through that point.",
+   "start": 463.23,
+   "end": 466.55
+  },
+  {
+   "text": " So I think that the second line is this one.",
+   "start": 466.55,
+   "end": 470.75
+  },
+  {
+   "text": " And this is the all-important point that",
+   "start": 470.75,
+   "end": 473.07
+  },
+  {
+   "text": " lies on both lines.",
+   "start": 473.07,
+   "end": 476.02
+  },
+  {
+   "text": " Shall we just check that that point, which is the point x",
+   "start": 476.02,
+   "end": 479.86
+  },
+  {
+   "text": " equal 1, and y was 2, right?",
+   "start": 479.86,
+   "end": 483.7
+  },
+  {
+   "text": " That's the point there.",
+   "start": 483.7,
+   "end": 486.1
+  },
+  {
+   "text": " And that, I believe, solves both equations.",
+   "start": 486.1,
+   "end": 490.5
+  },
+  {
+   "text": " Let's just check this.",
+   "start": 490.5,
+   "end": 491.5
+  },
+  {
+   "text": " If x is 1, I have a minus 1 plus 4 equals 3.",
+   "start": 491.5,
+   "end": 497.3
+  },
+  {
+   "text": " OK.",
+   "start": 497.3,
+   "end": 498.59
+  },
+  {
+   "text": " Apologies for drawing this picture that you've seen",
+   "start": 498.59,
+   "end": 503.55
+  },
+  {
+   "text": " before.",
+   "start": 503.55,
+   "end": 505.6
+  },
+  {
+   "text": " But this seeing the row picture, first of all, for n",
+   "start": 505.6,
+   "end": 510.78
+  },
+  {
+   "text": " equal 2, two equations and two unknowns, it's the right place",
+   "start": 510.78,
+   "end": 513.9
+  },
+  {
+   "text": " to start.",
+   "start": 513.9,
+   "end": 515.45
+  },
+  {
+   "text": " OK.",
+   "start": 515.45,
+   "end": 516.29
+  },
+  {
+   "text": " So we've got the solution, the point that lies on both lines.",
+   "start": 516.29,
+   "end": 519.69
+  },
+  {
+   "text": " Now can I come to the column picture?",
+   "start": 519.69,
+   "end": 523.6
+  },
+  {
+   "text": " Pay attention.",
+   "start": 523.6,
+   "end": 524.36
+  },
+  {
+   "text": " This is the key point.",
+   "start": 524.36,
+   "end": 527.91
+  },
+  {
+   "text": " So the column picture.",
+   "start": 527.91,
+   "end": 529.94
+  },
+  {
+   "text": " I'm now going to look at the columns of the matrix.",
+   "start": 529.94,
+   "end": 533.54
+  },
+  {
+   "text": " I'm going to look at this part and this part.",
+   "start": 533.54,
+   "end": 536.78
+  },
+  {
+   "text": " I'm going to say that the x part is really x times, you see,",
+   "start": 536.78,
+   "end": 545.34
+  },
+  {
+   "text": " I'm putting the two, I'm kind of getting the two equations",
+   "start": 545.34,
+   "end": 548.74
+  },
+  {
+   "text": " at once.",
+   "start": 548.74,
+   "end": 550.13
+  },
+  {
+   "text": " That part, and then I have a y.",
+   "start": 550.13,
+   "end": 553.41
+  },
+  {
+   "text": " And in the first equation, it's multiplying a minus 1.",
+   "start": 553.41,
+   "end": 557.29
+  },
+  {
+   "text": " And in the second equation, a 2.",
+   "start": 557.29,
+   "end": 559.41
+  },
+  {
+   "text": " And on the right-hand side, 0 and 3.",
+   "start": 559.41,
+   "end": 566.49
+  },
+  {
+   "text": " You see the columns of the matrix, the columns of A",
+   "start": 566.49,
+   "end": 569.85
+  },
+  {
+   "text": " are here, and the right-hand side, B is there.",
+   "start": 569.85,
+   "end": 573.09
+  },
+  {
+   "text": " And now what is the equation asking for?",
+   "start": 573.09,
+   "end": 576.94
+  },
+  {
+   "text": " It's asking us to find, somehow to combine that vector",
+   "start": 576.94,
+   "end": 582.86
+  },
+  {
+   "text": " and this one in the right amounts to get that one.",
+   "start": 582.86,
+   "end": 587.42
+  },
+  {
+   "text": " It's asking us to find the right linear combination.",
+   "start": 587.42,
+   "end": 591.82
+  },
+  {
+   "text": " This is called a linear combination.",
+   "start": 591.82,
+   "end": 595.45
+  },
+  {
+   "text": " And it's the most fundamental operation",
+   "start": 595.45,
+   "end": 597.89
+  },
+  {
+   "text": " in the whole course.",
+   "start": 597.89,
+   "end": 601.72
+  },
+  {
+   "text": " It's a linear combination of the columns.",
+   "start": 601.72,
+   "end": 606.37
+  },
+  {
+   "text": " That's what we're seeing on the left side.",
+   "start": 606.37,
+   "end": 609.6
+  },
+  {
+   "text": " Again, I don't want to write down a big definition.",
+   "start": 609.6,
+   "end": 613.0
+  },
+  {
+   "text": " You can see what it is.",
+   "start": 613.0,
+   "end": 615.0
+  },
+  {
+   "text": " There's column 1.",
+   "start": 615.0,
+   "end": 616.0
+  },
+  {
+   "text": " There's column 2.",
+   "start": 616.0,
+   "end": 617.48
+  },
+  {
+   "text": " I multiply by some numbers and I add.",
+   "start": 617.48,
+   "end": 622.34
+  },
+  {
+   "text": " That's a combination, a linear combination,",
+   "start": 622.34,
+   "end": 624.98
+  },
+  {
+   "text": " and I want to make those numbers, the right numbers,",
+   "start": 624.98,
+   "end": 628.22
+  },
+  {
+   "text": " to produce 0, 3.",
+   "start": 628.22,
+   "end": 630.87
+  },
+  {
+   "text": " OK.",
+   "start": 630.87,
+   "end": 632.07
+  },
+  {
+   "text": " Now I want to draw a picture that represents what this is.",
+   "start": 632.07,
+   "end": 637.07
+  },
+  {
+   "text": " This is algebra.",
+   "start": 637.07,
+   "end": 638.43
+  },
+  {
+   "text": " What's the geometry?",
+   "start": 638.43,
+   "end": 639.51
+  },
+  {
+   "text": " What's the picture that goes with it?",
+   "start": 639.51,
+   "end": 641.71
+  },
+  {
+   "text": " OK.",
+   "start": 641.71,
+   "end": 642.35
+  },
+  {
+   "text": " So again, these vectors have two components,",
+   "start": 642.35,
+   "end": 645.19
+  },
+  {
+   "text": " so I better draw a picture like that.",
+   "start": 645.19,
+   "end": 650.73
+  },
+  {
+   "text": " So can I put down these columns?",
+   "start": 650.73,
+   "end": 652.69
+  },
+  {
+   "text": " I'll draw these columns as they are,",
+   "start": 652.69,
+   "end": 655.41
+  },
+  {
+   "text": " and then I'll do a combination of them.",
+   "start": 655.41,
+   "end": 658.69
+  },
+  {
+   "text": " So the first column is over 2 and down 1, right?",
+   "start": 658.69,
+   "end": 663.93
+  },
+  {
+   "text": " So there's the first column.",
+   "start": 663.93,
+   "end": 666.4
+  },
+  {
+   "text": " The first column, column 1, it's the vector 2 minus 1.",
+   "start": 666.4,
+   "end": 673.82
+  },
+  {
+   "text": " The second column is, let's see, I go over minus 1",
+   "start": 673.82,
+   "end": 679.46
+  },
+  {
+   "text": " is the first component and up 2, it's here.",
+   "start": 679.46,
+   "end": 684.92
+  },
+  {
+   "text": " There's column 2.",
+   "start": 684.92,
+   "end": 687.71
+  },
+  {
+   "text": " So this, again, you see what its components are.",
+   "start": 687.71,
+   "end": 692.19
+  },
+  {
+   "text": " Its components are minus 1, 2.",
+   "start": 692.23,
+   "end": 695.57
+  },
+  {
+   "text": " Good.",
+   "start": 695.57,
+   "end": 696.17
+  },
+  {
+   "text": " That's this guy.",
+   "start": 696.17,
+   "end": 697.29
+  },
+  {
+   "text": " Now, what is what?",
+   "start": 697.29,
+   "end": 699.65
+  },
+  {
+   "text": " Now I have to take a combination.",
+   "start": 699.65,
+   "end": 703.77
+  },
+  {
+   "text": " What combination shall I take?",
+   "start": 703.77,
+   "end": 707.28
+  },
+  {
+   "text": " Why not the right combination?",
+   "start": 707.28,
+   "end": 709.4
+  },
+  {
+   "text": " What the hell?",
+   "start": 709.4,
+   "end": 710.52
+  },
+  {
+   "text": " OK.",
+   "start": 710.52,
+   "end": 711.16
+  },
+  {
+   "text": " So the combination I'm going to take",
+   "start": 711.16,
+   "end": 714.24
+  },
+  {
+   "text": " is the right one to produce 0, 3,",
+   "start": 714.24,
+   "end": 717.08
+  },
+  {
+   "text": " and then we'll see it happen in the picture.",
+   "start": 717.08,
+   "end": 719.64
+  },
+  {
+   "text": " So the right combination is to take x as one of those",
+   "start": 719.64,
+   "end": 724.9
+  },
+  {
+   "text": " and two of these.",
+   "start": 724.9,
+   "end": 729.28
+  },
+  {
+   "text": " It's because we already know that that's the right x and y,",
+   "start": 729.28,
+   "end": 732.88
+  },
+  {
+   "text": " so why not take the correct combination here",
+   "start": 732.88,
+   "end": 735.24
+  },
+  {
+   "text": " and see it happen?",
+   "start": 735.24,
+   "end": 736.44
+  },
+  {
+   "text": " OK.",
+   "start": 736.44,
+   "end": 737.04
+  },
+  {
+   "text": " So how do I picture this linear combination?",
+   "start": 737.04,
+   "end": 741.84
+  },
+  {
+   "text": " So I start with this vector that's already here.",
+   "start": 741.84,
+   "end": 745.12
+  },
+  {
+   "text": " So that's 1 of column 1.",
+   "start": 745.12,
+   "end": 746.76
+  },
+  {
+   "text": " That's 1 times column 1 right there.",
+   "start": 746.76,
+   "end": 750.4
+  },
+  {
+   "text": " And now I want to add on.",
+   "start": 750.4,
+   "end": 752.28
+  },
+  {
+   "text": " So I'm going to hook the next vector on",
+   "start": 752.28,
+   "end": 755.44
+  },
+  {
+   "text": " to the front of the arrow.",
+   "start": 755.44,
+   "end": 757.77
+  },
+  {
+   "text": " We'll start the next vector and it'll go this way.",
+   "start": 757.77,
+   "end": 760.61
+  },
+  {
+   "text": " So let's see.",
+   "start": 760.61,
+   "end": 761.45
+  },
+  {
+   "text": " Can I do it right?",
+   "start": 761.45,
+   "end": 764.21
+  },
+  {
+   "text": " If I added on one of these vectors,",
+   "start": 764.21,
+   "end": 766.25
+  },
+  {
+   "text": " it would go left 1 and up 2.",
+   "start": 766.25,
+   "end": 768.53
+  },
+  {
+   "text": " So it would go left 1 and up 2.",
+   "start": 768.53,
+   "end": 770.69
+  },
+  {
+   "text": " So it would probably get us to there.",
+   "start": 770.69,
+   "end": 772.13
+  },
+  {
+   "text": " Maybe I'll do dotted line for that.",
+   "start": 772.13,
+   "end": 775.65
+  },
+  {
+   "text": " That's 1 of column 2 tucked on to the end.",
+   "start": 775.65,
+   "end": 779.69
+  },
+  {
+   "text": " But I wanted to tuck on 2 of column 2.",
+   "start": 779.69,
+   "end": 783.41
+  },
+  {
+   "text": " So the second one will go up left 1 and up 2 also.",
+   "start": 783.41,
+   "end": 787.77
+  },
+  {
+   "text": " It'll probably end there.",
+   "start": 787.77,
+   "end": 789.45
+  },
+  {
+   "text": " And there's another one.",
+   "start": 789.45,
+   "end": 790.53
+  },
+  {
+   "text": " So what I put in here is 2 of column 2 added on.",
+   "start": 790.53,
+   "end": 799.32
+  },
+  {
+   "text": " And where did I end up?",
+   "start": 799.32,
+   "end": 803.32
+  },
+  {
+   "text": " What are the coordinates of this result?",
+   "start": 803.32,
+   "end": 808.27
+  },
+  {
+   "text": " What do I get when I take 1 of this plus 2 of that?",
+   "start": 808.27,
+   "end": 812.41
+  },
+  {
+   "text": " I do get that, of course.",
+   "start": 812.41,
+   "end": 814.82
+  },
+  {
+   "text": " There it is.",
+   "start": 814.82,
+   "end": 815.38
+  },
+  {
+   "text": " There it is.",
+   "start": 815.38,
+   "end": 816.02
+  },
+  {
+   "text": " x is 0, y is 3.",
+   "start": 816.02,
+   "end": 817.74
+  },
+  {
+   "text": " That's b.",
+   "start": 817.74,
+   "end": 818.86
+  },
+  {
+   "text": " That's the answer we wanted.",
+   "start": 818.86,
+   "end": 821.54
+  },
+  {
+   "text": " And how do I do it?",
+   "start": 821.54,
+   "end": 823.5
+  },
+  {
+   "text": " You see, I do it just like the first component.",
+   "start": 823.5,
+   "end": 826.86
+  },
+  {
+   "text": " I have a 2 and a minus 2 that produces a 0.",
+   "start": 826.86,
+   "end": 830.86
+  },
+  {
+   "text": " And in the second component, I have a minus 1 and a 4.",
+   "start": 830.86,
+   "end": 834.66
+  },
+  {
+   "text": " They combine to give the 3.",
+   "start": 834.66,
+   "end": 837.82
+  },
+  {
+   "text": " But look at this picture.",
+   "start": 837.82,
+   "end": 841.21
+  },
+  {
+   "text": " So here's our key picture.",
+   "start": 841.21,
+   "end": 842.93
+  },
+  {
+   "text": " I combine this column and this column to get, maybe I better,",
+   "start": 842.93,
+   "end": 848.99
+  },
+  {
+   "text": " to get this guy.",
+   "start": 848.99,
+   "end": 850.27
+  },
+  {
+   "text": " That was the b.",
+   "start": 850.27,
+   "end": 851.55
+  },
+  {
+   "text": " That's the 0, 3.",
+   "start": 851.55,
+   "end": 853.66
+  },
+  {
+   "text": " OK.",
+   "start": 853.66,
+   "end": 854.91
+  },
+  {
+   "text": " So that idea of linear combinations is crucial.",
+   "start": 854.91,
+   "end": 858.75
+  },
+  {
+   "text": " And also, do we want to think about this question?",
+   "start": 858.75,
+   "end": 865.27
+  },
+  {
+   "text": " Sure, why not?",
+   "start": 865.27,
+   "end": 866.99
+  },
+  {
+   "text": " What are all the combinations?",
+   "start": 866.99,
+   "end": 869.79
+  },
+  {
+   "text": " If I took, can I go back to x's and y's?",
+   "start": 869.79,
+   "end": 873.67
+  },
+  {
+   "text": " This is a question for really, it's",
+   "start": 873.67,
+   "end": 879.84
+  },
+  {
+   "text": " going to come up over and over.",
+   "start": 879.84,
+   "end": 881.44
+  },
+  {
+   "text": " But why don't we see it once now?",
+   "start": 881.44,
+   "end": 885.33
+  },
+  {
+   "text": " If I took all the x's and all the y's, all the combinations,",
+   "start": 885.33,
+   "end": 891.16
+  },
+  {
+   "text": " what would be all the results?",
+   "start": 891.16,
+   "end": 893.76
+  },
+  {
+   "text": " And actually, the result would be that I could get any right",
+   "start": 893.76,
+   "end": 897.68
+  },
+  {
+   "text": " hand side at all.",
+   "start": 897.68,
+   "end": 899.7
+  },
+  {
+   "text": " The combinations of this and this would fill the whole plane.",
+   "start": 899.7,
+   "end": 906.21
+  },
+  {
+   "text": " You can tuck that away.",
+   "start": 906.21,
+   "end": 908.49
+  },
+  {
+   "text": " We'll explore it further.",
+   "start": 908.49,
+   "end": 914.27
+  },
+  {
+   "text": " But this idea of what linear combination gives b and what do",
+   "start": 914.27,
+   "end": 919.59
+  },
+  {
+   "text": " all the linear combinations give?",
+   "start": 919.59,
+   "end": 921.59
+  },
+  {
+   "text": " What are all the possible achievable right hand sides b?",
+   "start": 921.59,
+   "end": 925.03
+  },
+  {
+   "text": " That's going to be basic.",
+   "start": 925.03,
+   "end": 926.51
+  },
+  {
+   "text": " OK.",
+   "start": 926.51,
+   "end": 927.15
+  },
+  {
+   "text": " Can I move to three equations and three unknowns?",
+   "start": 927.15,
+   "end": 931.94
+  },
+  {
+   "text": " Because it's easy to picture the 2 by 2 case.",
+   "start": 931.94,
+   "end": 938.55
+  },
+  {
+   "text": " Let me do a 3 by 3 example.",
+   "start": 938.55,
+   "end": 940.93
+  },
+  {
+   "text": " OK.",
+   "start": 940.93,
+   "end": 941.41
+  },
+  {
+   "text": " I'll sort of start it the same way.",
+   "start": 941.41,
+   "end": 943.29
+  },
+  {
+   "text": " Just say maybe 2x minus y.",
+   "start": 943.29,
+   "end": 946.33
+  },
+  {
+   "text": " And maybe I'll take no z's as a 0.",
+   "start": 946.33,
+   "end": 949.77
+  },
+  {
+   "text": " And maybe a minus x and a 2y.",
+   "start": 949.77,
+   "end": 953.01
+  },
+  {
+   "text": " And maybe a minus z is a, oh, let me make that a minus 1.",
+   "start": 953.01,
+   "end": 958.89
+  },
+  {
+   "text": " And just for variety, let me take minus 3z.",
+   "start": 958.89,
+   "end": 965.85
+  },
+  {
+   "text": " It's minus 3 y's.",
+   "start": 965.85,
+   "end": 967.65
+  },
+  {
+   "text": " I should keep the y's in that line.",
+   "start": 967.65,
+   "end": 970.13
+  },
+  {
+   "text": " And 4z's is, say, 4.",
+   "start": 970.13,
+   "end": 974.94
+  },
+  {
+   "text": " OK.",
+   "start": 974.94,
+   "end": 976.48
+  },
+  {
+   "text": " That's three equations.",
+   "start": 976.48,
+   "end": 979.09
+  },
+  {
+   "text": " I'm in three dimensions, x, y, z.",
+   "start": 979.09,
+   "end": 982.37
+  },
+  {
+   "text": " And I don't have a solution yet.",
+   "start": 982.37,
+   "end": 987.19
+  },
+  {
+   "text": " So I want to understand the equations and then solve them.",
+   "start": 987.19,
+   "end": 992.18
+  },
+  {
+   "text": " OK.",
+   "start": 992.18,
+   "end": 992.98
+  },
+  {
+   "text": " So how do you understand them?",
+   "start": 992.98,
+   "end": 995.54
+  },
+  {
+   "text": " The row picture is one way.",
+   "start": 995.54,
+   "end": 997.5
+  },
+  {
+   "text": " The column picture is another very important way.",
+   "start": 997.5,
+   "end": 1001.1
+  },
+  {
+   "text": " Just let's remember the matrix form here, because that's easy.",
+   "start": 1001.1,
+   "end": 1005.06
+  },
+  {
+   "text": " The matrix form, what's our matrix A?",
+   "start": 1005.06,
+   "end": 1009.1
+  },
+  {
+   "text": " Our matrix A is this right-hand side, the 2 and the minus 1",
+   "start": 1009.1,
+   "end": 1014.26
+  },
+  {
+   "text": " and the 0 from the first row, the minus 1 and the 2",
+   "start": 1014.26,
+   "end": 1018.58
+  },
+  {
+   "text": " and the minus 1 from the second row, the 0, the minus 3,",
+   "start": 1018.58,
+   "end": 1023.38
+  },
+  {
+   "text": " and the 4 from the third row.",
+   "start": 1023.38,
+   "end": 1028.5
+  },
+  {
+   "text": " So it's a 3 by 3 matrix.",
+   "start": 1028.5,
+   "end": 1031.0
+  },
+  {
+   "text": " Three equations, three unknowns.",
+   "start": 1031.0,
+   "end": 1032.92
+  },
+  {
+   "text": " And what's our right-hand side?",
+   "start": 1032.96,
+   "end": 1034.68
+  },
+  {
+   "text": " Of course, it's the vector 0 minus 1, 4.",
+   "start": 1034.68,
+   "end": 1040.17
+  },
+  {
+   "text": " OK.",
+   "start": 1040.17,
+   "end": 1041.21
+  },
+  {
+   "text": " So that's the way, well, that's the shorthand to write out",
+   "start": 1041.21,
+   "end": 1046.93
+  },
+  {
+   "text": " the three equations.",
+   "start": 1046.93,
+   "end": 1048.69
+  },
+  {
+   "text": " But it's the picture that I'm looking for today.",
+   "start": 1048.69,
+   "end": 1052.01
+  },
+  {
+   "text": " OK.",
+   "start": 1052.01,
+   "end": 1052.69
+  },
+  {
+   "text": " So the row picture.",
+   "start": 1052.69,
+   "end": 1058.37
+  },
+  {
+   "text": " All right.",
+   "start": 1058.37,
+   "end": 1058.65
+  },
+  {
+   "text": " So I'm in three dimensions, x, y, and z.",
+   "start": 1058.65,
+   "end": 1065.9
+  },
+  {
+   "text": " And I want to take those equations one at a time",
+   "start": 1065.9,
+   "end": 1069.85
+  },
+  {
+   "text": " and ask and make a picture of all the points that satisfy.",
+   "start": 1069.85,
+   "end": 1075.21
+  },
+  {
+   "text": " Let's take equation number two.",
+   "start": 1075.21,
+   "end": 1077.94
+  },
+  {
+   "text": " If I make a picture of all the points that satisfy,",
+   "start": 1077.94,
+   "end": 1080.78
+  },
+  {
+   "text": " all the x, y, z points that solve this equation, well,",
+   "start": 1080.78,
+   "end": 1086.01
+  },
+  {
+   "text": " first of all, the origin is not one of them.",
+   "start": 1086.01,
+   "end": 1089.53
+  },
+  {
+   "text": " x, y, z being 0, 0, 0 would not solve that equation.",
+   "start": 1089.53,
+   "end": 1094.85
+  },
+  {
+   "text": " What are some points that do solve the equation?",
+   "start": 1094.85,
+   "end": 1097.77
+  },
+  {
+   "text": " Let's see.",
+   "start": 1097.77,
+   "end": 1098.13
+  },
+  {
+   "text": " Maybe if x is 1, y and z could be 0.",
+   "start": 1098.13,
+   "end": 1103.76
+  },
+  {
+   "text": " That would work, right?",
+   "start": 1103.76,
+   "end": 1104.72
+  },
+  {
+   "text": " So there's one point.",
+   "start": 1104.72,
+   "end": 1106.82
+  },
+  {
+   "text": " I'm looking at this second equation here just to start with.",
+   "start": 1106.82,
+   "end": 1113.12
+  },
+  {
+   "text": " Let's see.",
+   "start": 1113.12,
+   "end": 1113.68
+  },
+  {
+   "text": " Also, I guess if z could be 1, x and y could be 0.",
+   "start": 1113.68,
+   "end": 1117.88
+  },
+  {
+   "text": " So that would just go straight up that axis.",
+   "start": 1117.88,
+   "end": 1121.94
+  },
+  {
+   "text": " And probably I want a third point here.",
+   "start": 1121.94,
+   "end": 1126.82
+  },
+  {
+   "text": " Let me take x to be 0.",
+   "start": 1126.82,
+   "end": 1132.42
+  },
+  {
+   "text": " Let's say x to be 0, z to be 0, then y would be minus 1 half.",
+   "start": 1132.42,
+   "end": 1140.33
+  },
+  {
+   "text": " So there's a third point somewhere.",
+   "start": 1140.33,
+   "end": 1143.85
+  },
+  {
+   "text": " OK.",
+   "start": 1143.85,
+   "end": 1146.39
+  },
+  {
+   "text": " Let's see.",
+   "start": 1146.39,
+   "end": 1148.71
+  },
+  {
+   "text": " I want to put in all the points that satisfy that",
+   "start": 1148.71,
+   "end": 1151.95
+  },
+  {
+   "text": " equation.",
+   "start": 1151.95,
+   "end": 1152.95
+  },
+  {
+   "text": " Do you know what that bunch of points will be?",
+   "start": 1152.95,
+   "end": 1157.89
+  },
+  {
+   "text": " It's a plane.",
+   "start": 1157.89,
+   "end": 1159.25
+  },
+  {
+   "text": " If we have a linear equation, then fortunately, the graph",
+   "start": 1159.25,
+   "end": 1163.25
+  },
+  {
+   "text": " of the thing, the plot of all the points that solve it, are",
+   "start": 1163.25,
+   "end": 1167.37
+  },
+  {
+   "text": " a plane.",
+   "start": 1167.37,
+   "end": 1169.02
+  },
+  {
+   "text": " So these three points determine a plane, but your",
+   "start": 1169.02,
+   "end": 1175.75
+  },
+  {
+   "text": " lecture is not Rembrandt.",
+   "start": 1175.75,
+   "end": 1177.55
+  },
+  {
+   "text": " And the art is going to be the weak point here.",
+   "start": 1177.55,
+   "end": 1183.31
+  },
+  {
+   "text": " So I'm just going to draw a plane.",
+   "start": 1183.31,
+   "end": 1186.39
+  },
+  {
+   "text": " There's a plane somewhere.",
+   "start": 1186.39,
+   "end": 1188.27
+  },
+  {
+   "text": " That's my plane.",
+   "start": 1188.27,
+   "end": 1190.87
+  },
+  {
+   "text": " That plane is all the points that solve this graph.",
+   "start": 1190.87,
+   "end": 1194.9
+  },
+  {
+   "text": " Then what about this one?",
+   "start": 1194.9,
+   "end": 1199.95
+  },
+  {
+   "text": " 2x minus y plus 0z.",
+   "start": 1199.95,
+   "end": 1202.67
+  },
+  {
+   "text": " So z actually can be anything.",
+   "start": 1202.67,
+   "end": 1205.35
+  },
+  {
+   "text": " Again, it's going to be another plane.",
+   "start": 1205.35,
+   "end": 1208.3
+  },
+  {
+   "text": " Each row in a 3 by 3 problem gives us a plane in",
+   "start": 1208.3,
+   "end": 1212.94
+  },
+  {
+   "text": " three dimensions.",
+   "start": 1212.94,
+   "end": 1214.42
+  },
+  {
+   "text": " So this one is going to be some other plane.",
+   "start": 1214.46,
+   "end": 1216.94
+  },
+  {
+   "text": " Maybe I'll try to draw it like this.",
+   "start": 1216.94,
+   "end": 1220.19
+  },
+  {
+   "text": " And those two planes meet in a line.",
+   "start": 1220.19,
+   "end": 1225.18
+  },
+  {
+   "text": " So if I have two equations, just the first two equations in",
+   "start": 1225.18,
+   "end": 1230.61
+  },
+  {
+   "text": " three dimensions, those give me a line.",
+   "start": 1230.61,
+   "end": 1233.33
+  },
+  {
+   "text": " The line where those two planes meet.",
+   "start": 1233.33,
+   "end": 1235.29
+  },
+  {
+   "text": " And now the third guy is a third plane.",
+   "start": 1235.29,
+   "end": 1242.1
+  },
+  {
+   "text": " And it goes somewhere.",
+   "start": 1242.1,
+   "end": 1249.18
+  },
+  {
+   "text": " OK, those three things meet in a point.",
+   "start": 1249.18,
+   "end": 1251.74
+  },
+  {
+   "text": " Now I don't know where that point is, frankly.",
+   "start": 1251.74,
+   "end": 1255.02
+  },
+  {
+   "text": " But linear algebra will find it.",
+   "start": 1255.02,
+   "end": 1258.26
+  },
+  {
+   "text": " The main point is that the three planes, because they're",
+   "start": 1258.26,
+   "end": 1265.21
+  },
+  {
+   "text": " not parallel, they're not special, they do meet in",
+   "start": 1265.21,
+   "end": 1269.53
+  },
+  {
+   "text": " one point, and that's the solution.",
+   "start": 1269.53,
+   "end": 1271.77
+  },
+  {
+   "text": " But maybe you can see that this row picture is getting a",
+   "start": 1271.77,
+   "end": 1277.8
+  },
+  {
+   "text": " little hard to see.",
+   "start": 1277.8,
+   "end": 1279.36
+  },
+  {
+   "text": " The row picture was a cinch when we looked at two lines",
+   "start": 1279.36,
+   "end": 1284.48
+  },
+  {
+   "text": " meeting.",
+   "start": 1284.48,
+   "end": 1285.4
+  },
+  {
+   "text": " When we look at three planes meeting, it's not so clear.",
+   "start": 1285.4,
+   "end": 1289.2
+  },
+  {
+   "text": " And in four dimensions, probably a little less clear.",
+   "start": 1289.2,
+   "end": 1294.73
+  },
+  {
+   "text": " So can I quit on the row picture?",
+   "start": 1294.73,
+   "end": 1298.81
+  },
+  {
+   "text": " I'll quit on the row picture before I've successfully found",
+   "start": 1298.81,
+   "end": 1302.37
+  },
+  {
+   "text": " the point where the three planes meet.",
+   "start": 1302.37,
+   "end": 1305.89
+  },
+  {
+   "text": " All I really want to see is that the row picture",
+   "start": 1305.89,
+   "end": 1310.85
+  },
+  {
+   "text": " consists of three planes.",
+   "start": 1310.85,
+   "end": 1313.05
+  },
+  {
+   "text": " And if everything works right, three planes meet in one",
+   "start": 1313.05,
+   "end": 1317.41
+  },
+  {
+   "text": " point, and that's the solution.",
+   "start": 1317.41,
+   "end": 1319.29
+  },
+  {
+   "text": " Now you can tell I prefer the column picture.",
+   "start": 1319.29,
+   "end": 1325.36
+  },
+  {
+   "text": " So let me take the column picture.",
+   "start": 1325.36,
+   "end": 1326.96
+  },
+  {
+   "text": " That's x times, so there were two x's in the first",
+   "start": 1326.96,
+   "end": 1331.92
+  },
+  {
+   "text": " equation, minus one x's.",
+   "start": 1331.92,
+   "end": 1334.0
+  },
+  {
+   "text": " And no x's in the third.",
+   "start": 1334.84,
+   "end": 1336.64
+  },
+  {
+   "text": " It's just the first column of that.",
+   "start": 1336.64,
+   "end": 1338.96
+  },
+  {
+   "text": " And how many y's are there?",
+   "start": 1338.96,
+   "end": 1341.24
+  },
+  {
+   "text": " There's minus one in the first equation, two in the second,",
+   "start": 1341.24,
+   "end": 1344.68
+  },
+  {
+   "text": " and maybe minus three in the third.",
+   "start": 1344.68,
+   "end": 1347.4
+  },
+  {
+   "text": " Just the second column of my matrix.",
+   "start": 1347.4,
+   "end": 1349.72
+  },
+  {
+   "text": " And z times no z's, minus one z's, and four z's.",
+   "start": 1349.72,
+   "end": 1357.75
+  },
+  {
+   "text": " And it's those three columns, right, that I have to",
+   "start": 1357.75,
+   "end": 1362.19
+  },
+  {
+   "text": " combine to produce the right-hand side, which is zero",
+   "start": 1362.19,
+   "end": 1367.62
+  },
+  {
+   "text": " minus one four.",
+   "start": 1367.62,
+   "end": 1372.74
+  },
+  {
+   "text": " OK.",
+   "start": 1372.74,
+   "end": 1374.86
+  },
+  {
+   "text": " So what have we got on this left-hand side?",
+   "start": 1374.86,
+   "end": 1377.86
+  },
+  {
+   "text": " A linear combination.",
+   "start": 1377.86,
+   "end": 1379.38
+  },
+  {
+   "text": " It's a linear combination now of three vectors, and they",
+   "start": 1379.38,
+   "end": 1382.9
+  },
+  {
+   "text": " happen to be, each one is a three-dimensional vector.",
+   "start": 1382.9,
+   "end": 1386.54
+  },
+  {
+   "text": " So we want to know what combination of those three",
+   "start": 1386.54,
+   "end": 1389.94
+  },
+  {
+   "text": " vectors produces that one.",
+   "start": 1389.94,
+   "end": 1392.02
+  },
+  {
+   "text": " Shall I try to draw the column picture then?",
+   "start": 1392.02,
+   "end": 1395.7
+  },
+  {
+   "text": " Since these vectors have three components, so it's some",
+   "start": 1396.22,
+   "end": 1399.58
+  },
+  {
+   "text": " multiple, let me draw in the first column as before.",
+   "start": 1399.58,
+   "end": 1402.7
+  },
+  {
+   "text": " So x is two, and y is minus one.",
+   "start": 1402.7,
+   "end": 1406.5
+  },
+  {
+   "text": " Maybe there's the first column.",
+   "start": 1406.5,
+   "end": 1412.37
+  },
+  {
+   "text": " y, the second column has maybe a minus one and a two in the",
+   "start": 1412.37,
+   "end": 1418.21
+  },
+  {
+   "text": " y's and minus three somewhere there, possibly.",
+   "start": 1418.21,
+   "end": 1421.89
+  },
+  {
+   "text": " Column two.",
+   "start": 1421.89,
+   "end": 1424.15
+  },
+  {
+   "text": " And the third column has no zero minus one four.",
+   "start": 1424.15,
+   "end": 1431.02
+  },
+  {
+   "text": " So how shall I draw that?",
+   "start": 1431.02,
+   "end": 1432.7
+  },
+  {
+   "text": " So nothing in, this was the first component.",
+   "start": 1432.7,
+   "end": 1436.98
+  },
+  {
+   "text": " The second component was a minus one.",
+   "start": 1436.98,
+   "end": 1439.18
+  },
+  {
+   "text": " Maybe up here.",
+   "start": 1439.18,
+   "end": 1441.23
+  },
+  {
+   "text": " That's column three.",
+   "start": 1441.23,
+   "end": 1444.38
+  },
+  {
+   "text": " That's the column zero, minus one, and four.",
+   "start": 1444.38,
+   "end": 1449.02
+  },
+  {
+   "text": " This guy.",
+   "start": 1449.02,
+   "end": 1452.04
+  },
+  {
+   "text": " So again, what's my problem?",
+   "start": 1452.04,
+   "end": 1455.4
+  },
+  {
+   "text": " What this equation is asking me to do is to combine these three",
+   "start": 1455.4,
+   "end": 1460.52
+  },
+  {
+   "text": " vectors with the right combination to produce this one.",
+   "start": 1460.52,
+   "end": 1467.85
+  },
+  {
+   "text": " Well, you can see what the right combination is.",
+   "start": 1467.85,
+   "end": 1473.15
+  },
+  {
+   "text": " Because in this special problem, especially chosen by the",
+   "start": 1473.15,
+   "end": 1478.48
+  },
+  {
+   "text": " lecturer, that right-hand side that I'm trying to get is",
+   "start": 1478.48,
+   "end": 1482.88
+  },
+  {
+   "text": " actually one of these columns.",
+   "start": 1482.88,
+   "end": 1485.0
+  },
+  {
+   "text": " So I know how to get that one.",
+   "start": 1485.0,
+   "end": 1486.6
+  },
+  {
+   "text": " So what's the solution?",
+   "start": 1486.6,
+   "end": 1488.4
+  },
+  {
+   "text": " What combination will work?",
+   "start": 1488.4,
+   "end": 1490.77
+  },
+  {
+   "text": " I just want one of these and none of these.",
+   "start": 1490.77,
+   "end": 1493.85
+  },
+  {
+   "text": " So x should be zero, y should be zero, and z should be one.",
+   "start": 1493.85,
+   "end": 1501.59
+  },
+  {
+   "text": " That's the combination.",
+   "start": 1501.59,
+   "end": 1502.87
+  },
+  {
+   "text": " None of that, none of that, one of those is obviously the",
+   "start": 1502.87,
+   "end": 1506.23
+  },
+  {
+   "text": " right one.",
+   "start": 1506.23,
+   "end": 1506.79
+  },
+  {
+   "text": " So this column three is actually the same as b in this",
+   "start": 1506.79,
+   "end": 1511.07
+  },
+  {
+   "text": " particular problem.",
+   "start": 1511.07,
+   "end": 1515.93
+  },
+  {
+   "text": " I made it work that way just so we would get an answer.",
+   "start": 1515.93,
+   "end": 1519.21
+  },
+  {
+   "text": " Zero, zero, one.",
+   "start": 1519.25,
+   "end": 1520.17
+  },
+  {
+   "text": " So somehow that's the point where those three planes met,",
+   "start": 1520.17,
+   "end": 1525.86
+  },
+  {
+   "text": " and I couldn't see it before.",
+   "start": 1525.86,
+   "end": 1528.68
+  },
+  {
+   "text": " Of course, I won't always be able to see it from the",
+   "start": 1528.68,
+   "end": 1531.44
+  },
+  {
+   "text": " column picture either.",
+   "start": 1531.44,
+   "end": 1533.16
+  },
+  {
+   "text": " It's the next lecture, actually, which is about",
+   "start": 1533.16,
+   "end": 1538.4
+  },
+  {
+   "text": " elimination, which is the systematic way that",
+   "start": 1538.4,
+   "end": 1542.24
+  },
+  {
+   "text": " everybody, every bit of software, too, production,",
+   "start": 1542.24,
+   "end": 1552.58
+  },
+  {
+   "text": " large-scale software would solve the equations.",
+   "start": 1552.58,
+   "end": 1556.78
+  },
+  {
+   "text": " So the lecture that's coming up, if I was to add that to",
+   "start": 1556.78,
+   "end": 1561.5
+  },
+  {
+   "text": " the syllabus, will be about how to find x, y, z in all",
+   "start": 1561.5,
+   "end": 1567.35
+  },
+  {
+   "text": " cases.",
+   "start": 1567.35,
+   "end": 1569.02
+  },
+  {
+   "text": " Can I just think again, though, about the big picture?",
+   "start": 1569.02,
+   "end": 1574.62
+  },
+  {
+   "text": " By the big picture, I mean, let's keep this same matrix on",
+   "start": 1575.18,
+   "end": 1579.06
+  },
+  {
+   "text": " the left, but imagine that we have a",
+   "start": 1579.06,
+   "end": 1582.07
+  },
+  {
+   "text": " different right-hand side.",
+   "start": 1582.07,
+   "end": 1584.24
+  },
+  {
+   "text": " Oh, let me take a different right-hand side.",
+   "start": 1584.24,
+   "end": 1587.39
+  },
+  {
+   "text": " So I'll change that right-hand side to something that",
+   "start": 1587.39,
+   "end": 1589.99
+  },
+  {
+   "text": " actually is also pretty special.",
+   "start": 1589.99,
+   "end": 1594.62
+  },
+  {
+   "text": " Let me change it to, suppose I, if I add those first two",
+   "start": 1594.62,
+   "end": 1598.34
+  },
+  {
+   "text": " columns, that would give me a one and a one and a minus",
+   "start": 1598.34,
+   "end": 1602.06
+  },
+  {
+   "text": " three.",
+   "start": 1602.06,
+   "end": 1603.22
+  },
+  {
+   "text": " There's a very special right-hand side.",
+   "start": 1603.22,
+   "end": 1606.15
+  },
+  {
+   "text": " I just cooked it up by adding this one to this one.",
+   "start": 1606.15,
+   "end": 1611.39
+  },
+  {
+   "text": " Now, what's the solution with this new right-hand side?",
+   "start": 1611.39,
+   "end": 1615.83
+  },
+  {
+   "text": " The solution with this new right-hand side is clear.",
+   "start": 1615.83,
+   "end": 1618.71
+  },
+  {
+   "text": " It took, now I took one of these, one of these, and none",
+   "start": 1618.71,
+   "end": 1623.99
+  },
+  {
+   "text": " of those, so actually it just changed around to this, when",
+   "start": 1623.99,
+   "end": 1628.51
+  },
+  {
+   "text": " I took this new right-hand side.",
+   "start": 1628.51,
+   "end": 1631.08
+  },
+  {
+   "text": " OK.",
+   "start": 1631.08,
+   "end": 1632.59
+  },
+  {
+   "text": " So in the row picture, I have three different planes,",
+   "start": 1632.59,
+   "end": 1639.0
+  },
+  {
+   "text": " three new planes meeting now at this point.",
+   "start": 1639.88,
+   "end": 1643.8
+  },
+  {
+   "text": " In the column picture, I have the same three columns, but now",
+   "start": 1643.8,
+   "end": 1648.08
+  },
+  {
+   "text": " I'm combining them to produce this guy.",
+   "start": 1648.08,
+   "end": 1650.88
+  },
+  {
+   "text": " And it turned out that column one plus column two, which",
+   "start": 1650.88,
+   "end": 1653.96
+  },
+  {
+   "text": " would be somewhere there, there is the right column.",
+   "start": 1653.96,
+   "end": 1658.44
+  },
+  {
+   "text": " One of this and one of this would give me the new B.",
+   "start": 1658.44,
+   "end": 1665.27
+  },
+  {
+   "text": " OK.",
+   "start": 1665.27,
+   "end": 1665.79
+  },
+  {
+   "text": " So that's like we squeezed in an extra example.",
+   "start": 1665.79,
+   "end": 1668.67
+  },
+  {
+   "text": " But now think about all B's, all right-hand sides.",
+   "start": 1668.67,
+   "end": 1674.6
+  },
+  {
+   "text": " Could I get, can I solve these equations for every right-hand",
+   "start": 1674.6,
+   "end": 1678.56
+  },
+  {
+   "text": " side?",
+   "start": 1678.56,
+   "end": 1683.22
+  },
+  {
+   "text": " Can I say that, ask that question?",
+   "start": 1683.22,
+   "end": 1684.94
+  },
+  {
+   "text": " So that's the algebra question.",
+   "start": 1684.94,
+   "end": 1686.98
+  },
+  {
+   "text": " Can I solve Ax equal B for every B?",
+   "start": 1686.98,
+   "end": 1691.83
+  },
+  {
+   "text": " Let me write that down.",
+   "start": 1691.83,
+   "end": 1693.39
+  },
+  {
+   "text": " Can I solve Ax equal B for every right-hand side B?",
+   "start": 1693.39,
+   "end": 1704.25
+  },
+  {
+   "text": " I mean, is there a solution?",
+   "start": 1704.25,
+   "end": 1706.37
+  },
+  {
+   "text": " And then if there is, elimination will give me a way to find it.",
+   "start": 1706.37,
+   "end": 1711.33
+  },
+  {
+   "text": " I'm just, I really wanted to ask, is there a solution",
+   "start": 1711.33,
+   "end": 1714.73
+  },
+  {
+   "text": " for every right-hand side?",
+   "start": 1714.73,
+   "end": 1716.83
+  },
+  {
+   "text": " So now can I put that in different words,",
+   "start": 1716.83,
+   "end": 1720.56
+  },
+  {
+   "text": " in this linear combination words?",
+   "start": 1720.56,
+   "end": 1723.12
+  },
+  {
+   "text": " So in linear combination words, do the linear combinations",
+   "start": 1723.12,
+   "end": 1733.22
+  },
+  {
+   "text": " of the columns fill three-dimensional space?",
+   "start": 1733.22,
+   "end": 1745.68
+  },
+  {
+   "text": " Every B means all the B's in three-dimensional space.",
+   "start": 1745.68,
+   "end": 1752.37
+  },
+  {
+   "text": " So do you see that I'm just asking the same question",
+   "start": 1752.37,
+   "end": 1756.01
+  },
+  {
+   "text": " in different words?",
+   "start": 1756.01,
+   "end": 1759.56
+  },
+  {
+   "text": " Solving Ax, oh, that's very important.",
+   "start": 1759.56,
+   "end": 1764.97
+  },
+  {
+   "text": " A times x, when I multiply a matrix by a vector,",
+   "start": 1764.97,
+   "end": 1771.74
+  },
+  {
+   "text": " I get a combination of the columns.",
+   "start": 1771.74,
+   "end": 1774.9
+  },
+  {
+   "text": " I'll write that down in a moment.",
+   "start": 1774.9,
+   "end": 1780.55
+  },
+  {
+   "text": " But in my column picture, that's really what I'm doing.",
+   "start": 1780.55,
+   "end": 1783.51
+  },
+  {
+   "text": " I'm taking linear combinations of these three columns,",
+   "start": 1783.51,
+   "end": 1787.23
+  },
+  {
+   "text": " and I'm trying to find B. And actually, the answer",
+   "start": 1787.23,
+   "end": 1792.25
+  },
+  {
+   "text": " for this matrix will be yes.",
+   "start": 1792.25,
+   "end": 1795.01
+  },
+  {
+   "text": " For this matrix A, for these columns,",
+   "start": 1795.01,
+   "end": 1801.32
+  },
+  {
+   "text": " the answer is yes.",
+   "start": 1801.32,
+   "end": 1808.78
+  },
+  {
+   "text": " This matrix is, this matrix that I chose for an example",
+   "start": 1808.78,
+   "end": 1817.26
+  },
+  {
+   "text": " is a good matrix, a non-singular matrix,",
+   "start": 1817.26,
+   "end": 1821.74
+  },
+  {
+   "text": " an invertible matrix.",
+   "start": 1821.74,
+   "end": 1823.18
+  },
+  {
+   "text": " Those will be the matrices that we like best.",
+   "start": 1823.18,
+   "end": 1826.66
+  },
+  {
+   "text": " There could be other, and we will see other matrices,",
+   "start": 1826.66,
+   "end": 1832.42
+  },
+  {
+   "text": " where the answer becomes no.",
+   "start": 1832.42,
+   "end": 1834.86
+  },
+  {
+   "text": " Oh, actually, you can see when it would become no.",
+   "start": 1834.86,
+   "end": 1838.66
+  },
+  {
+   "text": " When could, what could go wrong?",
+   "start": 1838.66,
+   "end": 1843.87
+  },
+  {
+   "text": " How could it go wrong that out of these, out of three columns",
+   "start": 1843.87,
+   "end": 1848.75
+  },
+  {
+   "text": " and all their combinations, when would I not be able to produce",
+   "start": 1848.75,
+   "end": 1854.58
+  },
+  {
+   "text": " some B off here?",
+   "start": 1854.58,
+   "end": 1858.36
+  },
+  {
+   "text": " When could it go wrong?",
+   "start": 1858.36,
+   "end": 1860.78
+  },
+  {
+   "text": " Do you see that the combinations, let me say when it goes wrong.",
+   "start": 1860.78,
+   "end": 1866.37
+  },
+  {
+   "text": " If these three columns all lie in the same plane,",
+   "start": 1866.37,
+   "end": 1872.28
+  },
+  {
+   "text": " then their combinations will lie in that same plane.",
+   "start": 1872.28,
+   "end": 1878.1
+  },
+  {
+   "text": " So then we're in trouble.",
+   "start": 1878.1,
+   "end": 1879.62
+  },
+  {
+   "text": " If the three columns of my matrix,",
+   "start": 1879.62,
+   "end": 1883.85
+  },
+  {
+   "text": " if those three vectors happen to lie in the same plane,",
+   "start": 1883.85,
+   "end": 1888.14
+  },
+  {
+   "text": " for example, if column three is just the sum of column one",
+   "start": 1888.14,
+   "end": 1892.3
+  },
+  {
+   "text": " and column two, I would be in trouble.",
+   "start": 1892.3,
+   "end": 1896.32
+  },
+  {
+   "text": " That would be a matrix A, where the answer would be no.",
+   "start": 1896.32,
+   "end": 1900.36
+  },
+  {
+   "text": " Because the combinations, if column three is in the same",
+   "start": 1900.36,
+   "end": 1906.39
+  },
+  {
+   "text": " plane as column one and two, I don't get anything new from that.",
+   "start": 1906.39,
+   "end": 1910.27
+  },
+  {
+   "text": " All the combinations are in the plane,",
+   "start": 1910.27,
+   "end": 1912.67
+  },
+  {
+   "text": " and the only right-hand sides B that I could get",
+   "start": 1912.67,
+   "end": 1916.71
+  },
+  {
+   "text": " would be the ones in that plane.",
+   "start": 1916.71,
+   "end": 1920.02
+  },
+  {
+   "text": " So I could solve it for some right-hand sides",
+   "start": 1920.02,
+   "end": 1923.49
+  },
+  {
+   "text": " when B is in the plane, but most right-hand sides",
+   "start": 1923.49,
+   "end": 1928.3
+  },
+  {
+   "text": " would be out of the plane and unreachable.",
+   "start": 1928.3,
+   "end": 1931.22
+  },
+  {
+   "text": " So that would be a singular case.",
+   "start": 1931.22,
+   "end": 1934.14
+  },
+  {
+   "text": " The matrix would be not invertible.",
+   "start": 1934.14,
+   "end": 1936.78
+  },
+  {
+   "text": " There would not be a solution for every B.",
+   "start": 1936.78,
+   "end": 1939.78
+  },
+  {
+   "text": " The answer would become no for that.",
+   "start": 1939.78,
+   "end": 1942.53
+  },
+  {
+   "text": " OK.",
+   "start": 1942.53,
+   "end": 1945.69
+  },
+  {
+   "text": " I don't know.",
+   "start": 1945.69,
+   "end": 1946.93
+  },
+  {
+   "text": " Shall we take just a little shot at thinking about nine",
+   "start": 1946.93,
+   "end": 1951.86
+  },
+  {
+   "text": " dimensions?",
+   "start": 1951.86,
+   "end": 1954.45
+  },
+  {
+   "text": " Imagine that we have vectors with nine components.",
+   "start": 1954.45,
+   "end": 1961.1
+  },
+  {
+   "text": " Well, it's going to be hard to visualize those.",
+   "start": 1961.1,
+   "end": 1964.86
+  },
+  {
+   "text": " I don't pretend to do it.",
+   "start": 1964.86,
+   "end": 1966.78
+  },
+  {
+   "text": " But somehow pretend you do.",
+   "start": 1966.78,
+   "end": 1971.9
+  },
+  {
+   "text": " Pretend we have, if this was nine equations in nine unknowns,",
+   "start": 1971.9,
+   "end": 1976.3
+  },
+  {
+   "text": " then we would have nine columns, and each one would be a vector",
+   "start": 1976.3,
+   "end": 1981.15
+  },
+  {
+   "text": " in nine-dimensional space, and we would be looking",
+   "start": 1981.15,
+   "end": 1984.03
+  },
+  {
+   "text": " at their linear combinations.",
+   "start": 1984.03,
+   "end": 1986.9
+  },
+  {
+   "text": " So we would be having the linear combinations of nine",
+   "start": 1986.9,
+   "end": 1989.86
+  },
+  {
+   "text": " vectors in nine-dimensional space,",
+   "start": 1989.86,
+   "end": 1992.34
+  },
+  {
+   "text": " and we would be trying to find the combination that hit",
+   "start": 1992.34,
+   "end": 1995.42
+  },
+  {
+   "text": " the correct right-hand side B.",
+   "start": 1995.42,
+   "end": 1998.01
+  },
+  {
+   "text": " And we might also ask the question, can we always do it?",
+   "start": 1998.01,
+   "end": 2002.95
+  },
+  {
+   "text": " Can we get every right-hand side B?",
+   "start": 2002.95,
+   "end": 2005.39
+  },
+  {
+   "text": " And certainly it will depend on those nine columns.",
+   "start": 2005.39,
+   "end": 2009.26
+  },
+  {
+   "text": " Some, sometimes the answer will be yes.",
+   "start": 2009.26,
+   "end": 2012.42
+  },
+  {
+   "text": " If I picked a random matrix, it would be yes, actually.",
+   "start": 2012.42,
+   "end": 2015.46
+  },
+  {
+   "text": " If I used MATLAB and just used the random command,",
+   "start": 2015.46,
+   "end": 2019.33
+  },
+  {
+   "text": " picked out a nine-by-nine matrix, I guarantee it",
+   "start": 2019.33,
+   "end": 2023.77
+  },
+  {
+   "text": " would be good.",
+   "start": 2023.77,
+   "end": 2025.45
+  },
+  {
+   "text": " It would be non-singular.",
+   "start": 2025.49,
+   "end": 2026.89
+  },
+  {
+   "text": " It would be invertible, all beautiful.",
+   "start": 2026.89,
+   "end": 2029.29
+  },
+  {
+   "text": " But if I choose those columns so that they're not independent,",
+   "start": 2029.29,
+   "end": 2038.9
+  },
+  {
+   "text": " so that they're there, so that the ninth column is the same",
+   "start": 2038.9,
+   "end": 2043.9
+  },
+  {
+   "text": " as the eighth column, then it contributes nothing new,",
+   "start": 2043.9,
+   "end": 2048.51
+  },
+  {
+   "text": " and there would be right-hand sides B that I couldn't get.",
+   "start": 2048.51,
+   "end": 2053.1
+  },
+  {
+   "text": " Can you sort of think about nine vectors in nine-dimensional",
+   "start": 2053.1,
+   "end": 2059.25
+  },
+  {
+   "text": " space and take their combinations?",
+   "start": 2059.25,
+   "end": 2062.05
+  },
+  {
+   "text": " That's really the central thought that you get kind of used",
+   "start": 2062.05,
+   "end": 2068.41
+  },
+  {
+   "text": " to in linear algebra, even though you can't really",
+   "start": 2068.41,
+   "end": 2072.49
+  },
+  {
+   "text": " visualize it, you sort of think you can after a while.",
+   "start": 2072.49,
+   "end": 2076.17
+  },
+  {
+   "text": " Those nine columns and all their combinations",
+   "start": 2076.17,
+   "end": 2080.97
+  },
+  {
+   "text": " may very well fill out the whole nine-dimensional space.",
+   "start": 2080.97,
+   "end": 2085.31
+  },
+  {
+   "text": " But if the ninth column happened to be the same as the eighth",
+   "start": 2085.31,
+   "end": 2088.19
+  },
+  {
+   "text": " column and gave nothing new, then probably what it would",
+   "start": 2088.19,
+   "end": 2091.07
+  },
+  {
+   "text": " fill out would be, I hesitate even to say this,",
+   "start": 2091.07,
+   "end": 2098.35
+  },
+  {
+   "text": " it would be a sort of plane, an eight-dimensional plane",
+   "start": 2098.35,
+   "end": 2106.14
+  },
+  {
+   "text": " inside nine-dimensional space.",
+   "start": 2106.14,
+   "end": 2110.04
+  },
+  {
+   "text": " And it's those eight-dimensional planes",
+   "start": 2110.04,
+   "end": 2112.88
+  },
+  {
+   "text": " inside nine-dimensional space that we have to work with",
+   "start": 2112.88,
+   "end": 2117.36
+  },
+  {
+   "text": " eventually.",
+   "start": 2117.36,
+   "end": 2118.78
+  },
+  {
+   "text": " For now, let's stay with the nice case where the matrices work.",
+   "start": 2118.78,
+   "end": 2126.1
+  },
+  {
+   "text": " We can get every right-hand side B,",
+   "start": 2126.1,
+   "end": 2128.46
+  },
+  {
+   "text": " and here we see how to do it with columns.",
+   "start": 2128.46,
+   "end": 2132.3
+  },
+  {
+   "text": " OK, there was one step that I realized I was saying in words",
+   "start": 2132.3,
+   "end": 2137.94
+  },
+  {
+   "text": " that I now want to write in letters.",
+   "start": 2137.94,
+   "end": 2141.22
+  },
+  {
+   "text": " Because I'm coming back to the matrix form of the equation.",
+   "start": 2141.22,
+   "end": 2146.1
+  },
+  {
+   "text": " So let me write it here.",
+   "start": 2146.1,
+   "end": 2149.46
+  },
+  {
+   "text": " The matrix form about my equation of my system",
+   "start": 2149.46,
+   "end": 2154.26
+  },
+  {
+   "text": " is some matrix A times some vector x equals",
+   "start": 2154.26,
+   "end": 2158.9
+  },
+  {
+   "text": " some right-hand side B.",
+   "start": 2158.9,
+   "end": 2161.97
+  },
+  {
+   "text": " So this is a multiplication, A times x, matrix times vector.",
+   "start": 2161.97,
+   "end": 2166.25
+  },
+  {
+   "text": " And I just want to say, how do you multiply a matrix",
+   "start": 2166.25,
+   "end": 2169.57
+  },
+  {
+   "text": " by a vector?",
+   "start": 2169.57,
+   "end": 2171.63
+  },
+  {
+   "text": " So I'm just going to create a matrix.",
+   "start": 2171.83,
+   "end": 2176.47
+  },
+  {
+   "text": " Let me take 2, 5, 1, 3.",
+   "start": 2176.47,
+   "end": 2181.55
+  },
+  {
+   "text": " And let me take a vector x to be, say, 1 and 2.",
+   "start": 2181.55,
+   "end": 2188.86
+  },
+  {
+   "text": " How do I multiply a matrix by a vector?",
+   "start": 2188.86,
+   "end": 2191.34
+  },
+  {
+   "text": " Just think a little bit about matrix notation",
+   "start": 2197.96,
+   "end": 2200.48
+  },
+  {
+   "text": " and how to do that multiplication.",
+   "start": 2200.48,
+   "end": 2202.08
+  },
+  {
+   "text": " So let me say how I multiply a matrix by a vector.",
+   "start": 2202.08,
+   "end": 2205.32
+  },
+  {
+   "text": " Actually, there are two ways to do it.",
+   "start": 2205.36,
+   "end": 2207.74
+  },
+  {
+   "text": " Let me tell you my favorite way.",
+   "start": 2207.74,
+   "end": 2210.38
+  },
+  {
+   "text": " It's columns again.",
+   "start": 2210.38,
+   "end": 2212.7
+  },
+  {
+   "text": " It's a column at a time.",
+   "start": 2212.7,
+   "end": 2214.66
+  },
+  {
+   "text": " For me, this matrix multiplication",
+   "start": 2214.66,
+   "end": 2217.94
+  },
+  {
+   "text": " says I take one of that column and two of that column",
+   "start": 2217.94,
+   "end": 2221.98
+  },
+  {
+   "text": " and add.",
+   "start": 2221.98,
+   "end": 2223.26
+  },
+  {
+   "text": " So this is, in my, the way I would think of it,",
+   "start": 2223.26,
+   "end": 2227.02
+  },
+  {
+   "text": " is one of the first column and two of the second column.",
+   "start": 2227.02,
+   "end": 2232.86
+  },
+  {
+   "text": " And let's just see what we get.",
+   "start": 2232.86,
+   "end": 2237.26
+  },
+  {
+   "text": " So in the first component, I'm getting a 2 and a 10.",
+   "start": 2237.26,
+   "end": 2241.46
+  },
+  {
+   "text": " I'm getting a 12 there.",
+   "start": 2241.46,
+   "end": 2243.42
+  },
+  {
+   "text": " In the second component, I'm getting a 1 and a 6.",
+   "start": 2243.42,
+   "end": 2246.22
+  },
+  {
+   "text": " I'm getting a 7.",
+   "start": 2246.22,
+   "end": 2247.74
+  },
+  {
+   "text": " So that matrix times that vector is 12, 7.",
+   "start": 2247.74,
+   "end": 2253.58
+  },
+  {
+   "text": " Now you could do that another way.",
+   "start": 2253.58,
+   "end": 2257.4
+  },
+  {
+   "text": " You could do it a row at a time.",
+   "start": 2257.4,
+   "end": 2259.66
+  },
+  {
+   "text": " You could do, and you would get this 12.",
+   "start": 2259.66,
+   "end": 2262.26
+  },
+  {
+   "text": " And actually, I pretty much did it here.",
+   "start": 2262.26,
+   "end": 2264.9
+  },
+  {
+   "text": " This way.",
+   "start": 2264.9,
+   "end": 2265.78
+  },
+  {
+   "text": " 2, I could take that row times my vector.",
+   "start": 2265.78,
+   "end": 2268.46
+  },
+  {
+   "text": " This is all the time, this is the idea of a dot product.",
+   "start": 2268.46,
+   "end": 2273.12
+  },
+  {
+   "text": " This vector times this vector.",
+   "start": 2273.12,
+   "end": 2276.04
+  },
+  {
+   "text": " 2 times 1 plus 5 times 2 is the 12.",
+   "start": 2276.04,
+   "end": 2280.65
+  },
+  {
+   "text": " This vector times this vector.",
+   "start": 2280.65,
+   "end": 2282.69
+  },
+  {
+   "text": " 1 times 1 plus 3 times 2 is the 7.",
+   "start": 2282.69,
+   "end": 2285.97
+  },
+  {
+   "text": " So I can do it by rows.",
+   "start": 2285.97,
+   "end": 2288.33
+  },
+  {
+   "text": " And in each row, each row times my x is what I'll later",
+   "start": 2288.33,
+   "end": 2294.2
+  },
+  {
+   "text": " call a dot product.",
+   "start": 2294.2,
+   "end": 2296.4
+  },
+  {
+   "text": " But I also like to see it by columns.",
+   "start": 2296.4,
+   "end": 2299.36
+  },
+  {
+   "text": " I see this as a linear combination of the columns.",
+   "start": 2299.4,
+   "end": 2302.44
+  },
+  {
+   "text": " So here's my point.",
+   "start": 2302.44,
+   "end": 2304.08
+  },
+  {
+   "text": " A times x is a combination of the columns of A.",
+   "start": 2304.08,
+   "end": 2316.25
+  },
+  {
+   "text": " That's how I hope you'll think of A times x when we need it.",
+   "start": 2316.25,
+   "end": 2324.42
+  },
+  {
+   "text": " Right now, we've got, with small ones,",
+   "start": 2324.42,
+   "end": 2327.22
+  },
+  {
+   "text": " we can always do it in different ways.",
+   "start": 2327.22,
+   "end": 2329.66
+  },
+  {
+   "text": " But later, think of it that way.",
+   "start": 2329.66,
+   "end": 2333.91
+  },
+  {
+   "text": " OK, so that's the picture for a 2 by 2 system.",
+   "start": 2333.91,
+   "end": 2342.03
+  },
+  {
+   "text": " And if the right-hand side B happened to be 12.7,",
+   "start": 2342.03,
+   "end": 2346.11
+  },
+  {
+   "text": " then of course, the correct solution would be 1, 2.",
+   "start": 2346.11,
+   "end": 2352.18
+  },
+  {
+   "text": " OK, so let me come back next time to a systematic way,",
+   "start": 2352.18,
+   "end": 2358.02
+  },
+  {
+   "text": " using elimination to find the solution, if there is one,",
+   "start": 2358.02,
+   "end": 2366.09
+  },
+  {
+   "text": " to a system of any size and find out, if elimination fails,",
+   "start": 2366.09,
+   "end": 2376.17
+  },
+  {
+   "text": " find out when there isn't a solution.",
+   "start": 2376.17,
+   "end": 2379.34
+  },
+  {
+   "text": " OK, thanks.",
+   "start": 2379.34,
+   "end": 2381.26
+  }
+ ]
+}

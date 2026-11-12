@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import chat, evaluate, global_chat, ingest, sources
 from config import settings
-from db.postgres import Database
+from db.postgres import Database, fail_interrupted_sources
 from db.qdrant import QdrantStore
 
 
@@ -17,6 +17,9 @@ async def lifespan(app: FastAPI):
     # Startup
     print("[lifespan] connecting to Postgres...")
     await Database.connect()
+    stale = await fail_interrupted_sources()
+    if stale:
+        print(f"[lifespan] marked {stale} interrupted ingestion job(s) as failed")
     print("[lifespan] connecting to Qdrant...")
     await QdrantStore.connect()
     print("[lifespan] ready.")
@@ -62,4 +65,5 @@ async def root():
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    from core.llm_providers import describe
+    return {"status": "healthy", "llm": describe()}

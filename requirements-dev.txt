@@ -1,0 +1,4 @@
+# Dev / CI tooling (install into the backend venv: python -m pip install -r requirements-dev.txt)
+pytest==8.3.3
+ruff==0.7.4
+pyyaml>=6.0

@@ -105,6 +105,20 @@ async def update_source_status(
     )
 
 
+async def fail_interrupted_sources() -> int:
+    """Background ingestion runs in-process, so a restart kills any job in flight and
+    its source would show 'processing' forever. Called on startup: mark them failed."""
+    res = await Database.execute(
+        "UPDATE sources SET status = 'failed', "
+        "error_message = 'Interrupted by a server restart; please re-upload.' "
+        "WHERE status = 'processing'"
+    )
+    try:
+        return int(res.split()[-1])
+    except (ValueError, IndexError, AttributeError):
+        return 0
+
+
 async def get_source(source_id: UUID) -> Optional[dict[str, Any]]:
     row = await Database.fetchrow("SELECT * FROM sources WHERE id = $1", source_id)
     return dict(row) if row else None
@@ -116,7 +130,12 @@ async def list_sources() -> list[dict[str, Any]]:
         """
         SELECT s.*, e.overall_score AS eval_score
         FROM sources s
-        LEFT JOIN eval_results e ON e.source_id = s.id
+        -- latest evaluation only: re-running an eval adds a row, and a plain join
+        -- listed the source once per evaluation
+        LEFT JOIN LATERAL (
+            SELECT overall_score FROM eval_results
+            WHERE source_id = s.id ORDER BY created_at DESC LIMIT 1
+        ) e ON TRUE
         ORDER BY s.created_at DESC
         """
     )
@@ -190,6 +209,17 @@ async def fetch_bm25_corpus(source_id: UUID | None = None) -> list[dict[str, Any
             source_id,
         )
     return [dict(r) for r in rows]
+
+
+async def fetch_bm25_fingerprint(source_id: UUID | None = None) -> tuple[int, int]:
+    """Cheap (count, checksum) of the BM25 corpus, used to detect a stale cached index.
+    Changes whenever rows are added or removed (ingest / delete), in any process."""
+    sql = "SELECT count(*) AS n, coalesce(sum(hashtext(chunk_id)::bigint), 0) AS h FROM bm25_index"
+    if source_id is None:
+        row = await Database.fetchrow(sql)
+    else:
+        row = await Database.fetchrow(sql + " WHERE source_id = $1", source_id)
+    return int(row["n"]), int(row["h"])
 
 
 async def insert_eval_result(source_id: UUID, result: dict[str, Any]) -> None:

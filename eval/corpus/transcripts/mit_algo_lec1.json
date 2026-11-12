@@ -1,0 +1,4225 @@
+{
+ "key": "mit_algo_lec1",
+ "url": "https://www.youtube.com/watch?v=HtSuA80QTyo",
+ "title": "MIT 6.006 Introduction to Algorithms (Fall 2011), Lecture 1: Algorithmic Thinking, Peak Finding",
+ "duration_s": 3201,
+ "whisper_model": "small",
+ "translate_to_english": true,
+ "segments": [
+  {
+   "text": " The following content is provided under a Creative",
+   "start": 0.0,
+   "end": 2.48
+  },
+  {
+   "text": " Commons license.",
+   "start": 2.48,
+   "end": 3.88
+  },
+  {
+   "text": " Your support will help MIT OpenCourseWare continue to",
+   "start": 3.88,
+   "end": 6.92
+  },
+  {
+   "text": " offer high quality educational resources for free.",
+   "start": 6.92,
+   "end": 10.56
+  },
+  {
+   "text": " To make a donation or view additional materials from",
+   "start": 10.56,
+   "end": 13.48
+  },
+  {
+   "text": " hundreds of MIT courses, visit MIT OpenCourseWare at",
+   "start": 13.48,
+   "end": 17.4
+  },
+  {
+   "text": " ocw.mit.edu.",
+   "start": 17.4,
+   "end": 22.68
+  },
+  {
+   "text": " Hi, I'm Srinivas.",
+   "start": 22.68,
+   "end": 24.68
+  },
+  {
+   "text": " I'm a professor of Electroengineering and",
+   "start": 24.68,
+   "end": 26.68
+  },
+  {
+   "text": " Computer Science.",
+   "start": 26.68,
+   "end": 27.6
+  },
+  {
+   "text": " I'm going to be co-lectoring 6.006, introduction",
+   "start": 27.6,
+   "end": 30.92
+  },
+  {
+   "text": " to algorithms this term, with Professor Eric DeMaine.",
+   "start": 30.92,
+   "end": 34.88
+  },
+  {
+   "text": " Eric, say hi.",
+   "start": 34.88,
+   "end": 38.66
+  },
+  {
+   "text": " And we hope you're going to have a fun time in 6.006",
+   "start": 38.66,
+   "end": 42.54
+  },
+  {
+   "text": " learning a variety of algorithms.",
+   "start": 42.54,
+   "end": 45.74
+  },
+  {
+   "text": " What I want to do today is spend literally a minute or so on",
+   "start": 45.74,
+   "end": 51.44
+  },
+  {
+   "text": " administrative details, maybe even less.",
+   "start": 51.44,
+   "end": 54.96
+  },
+  {
+   "text": " What I'd like to do is to tell you to go to the website",
+   "start": 54.96,
+   "end": 57.36
+  },
+  {
+   "text": " that's listed up there and read it.",
+   "start": 57.36,
+   "end": 60.62
+  },
+  {
+   "text": " And you'll get all the information you need about",
+   "start": 60.62,
+   "end": 64.14
+  },
+  {
+   "text": " what this class is about from a standpoint of syllabus, what's",
+   "start": 64.14,
+   "end": 67.62
+  },
+  {
+   "text": " expected of you, the problem set schedule, the quiz",
+   "start": 67.62,
+   "end": 72.88
+  },
+  {
+   "text": " schedule, and so on and so forth.",
+   "start": 72.88,
+   "end": 75.6
+  },
+  {
+   "text": " I want to dive right in and tell you about interesting",
+   "start": 75.6,
+   "end": 78.48
+  },
+  {
+   "text": " things like algorithms and complexity of algorithms.",
+   "start": 78.48,
+   "end": 84.52
+  },
+  {
+   "text": " I want to spend some time giving you an overview",
+   "start": 84.52,
+   "end": 87.04
+  },
+  {
+   "text": " of the course content.",
+   "start": 87.04,
+   "end": 89.32
+  },
+  {
+   "text": " And then we're going to dive right in and look at a",
+   "start": 89.32,
+   "end": 93.04
+  },
+  {
+   "text": " particular problem of peak finding, both a one dimensional",
+   "start": 93.04,
+   "end": 97.32
+  },
+  {
+   "text": " version and a two dimensional version, and talk about",
+   "start": 97.32,
+   "end": 100.28
+  },
+  {
+   "text": " algorithms to solve this peak finding problem, both",
+   "start": 100.28,
+   "end": 104.94
+  },
+  {
+   "text": " varieties of it.",
+   "start": 104.94,
+   "end": 106.54
+  },
+  {
+   "text": " And you'll find that there's really a difference between",
+   "start": 106.54,
+   "end": 112.02
+  },
+  {
+   "text": " these various algorithms that we'll look at in terms of",
+   "start": 112.02,
+   "end": 114.7
+  },
+  {
+   "text": " their complexity.",
+   "start": 114.7,
+   "end": 116.43
+  },
+  {
+   "text": " And what I mean by that is you're going to have different",
+   "start": 116.43,
+   "end": 120.83
+  },
+  {
+   "text": " run times of these algorithms depending on input size based",
+   "start": 120.83,
+   "end": 125.76
+  },
+  {
+   "text": " on how efficient these algorithms are.",
+   "start": 125.76,
+   "end": 128.65
+  },
+  {
+   "text": " And a prerequisite for this class is 6042.",
+   "start": 128.65,
+   "end": 134.34
+  },
+  {
+   "text": " And in 6042, you learned about asymptotic complexity.",
+   "start": 134.34,
+   "end": 138.58
+  },
+  {
+   "text": " And you'll see that in this lecture, we'll analyze",
+   "start": 138.58,
+   "end": 143.38
+  },
+  {
+   "text": " relatively simple algorithms today in terms of their",
+   "start": 143.38,
+   "end": 146.42
+  },
+  {
+   "text": " asymptotic complexity.",
+   "start": 146.42,
+   "end": 148.02
+  },
+  {
+   "text": " And you'll be able to compare and say that this algorithm is",
+   "start": 148.02,
+   "end": 151.18
+  },
+  {
+   "text": " faster than this other one, assuming that you have large",
+   "start": 151.18,
+   "end": 154.66
+  },
+  {
+   "text": " inputs because it's asymptotically less complex.",
+   "start": 154.66,
+   "end": 160.78
+  },
+  {
+   "text": " So let's dive right in and talk about the class.",
+   "start": 160.78,
+   "end": 172.36
+  },
+  {
+   "text": " So the one sentence summary of this class is that this is",
+   "start": 172.36,
+   "end": 176.45
+  },
+  {
+   "text": " about efficient procedures for solving problems on large",
+   "start": 176.45,
+   "end": 182.49
+  },
+  {
+   "text": " inputs.",
+   "start": 182.49,
+   "end": 184.8
+  },
+  {
+   "text": " And when I say large inputs, I mean things like the US",
+   "start": 184.8,
+   "end": 188.94
+  },
+  {
+   "text": " highway system, a map of all of the highways in the United",
+   "start": 188.94,
+   "end": 192.78
+  },
+  {
+   "text": " States, the human genome, which has a billion letters in",
+   "start": 192.78,
+   "end": 197.94
+  },
+  {
+   "text": " its alphabet, a social network corresponding to",
+   "start": 197.94,
+   "end": 202.31
+  },
+  {
+   "text": " Facebook that I guess has 500 million nodes or so.",
+   "start": 202.31,
+   "end": 206.79
+  },
+  {
+   "text": " So these are large inputs.",
+   "start": 206.79,
+   "end": 208.23
+  },
+  {
+   "text": " Now our definition of large has really changed with the",
+   "start": 208.23,
+   "end": 210.63
+  },
+  {
+   "text": " times.",
+   "start": 210.63,
+   "end": 211.43
+  },
+  {
+   "text": " And so really the 21st century definition of large is, I guess,",
+   "start": 211.43,
+   "end": 216.23
+  },
+  {
+   "text": " a trillion.",
+   "start": 216.23,
+   "end": 217.43
+  },
+  {
+   "text": " Back when I was your age, large was like 1,000.",
+   "start": 217.43,
+   "end": 222.35
+  },
+  {
+   "text": " I guess I'm dating myself here.",
+   "start": 222.35,
+   "end": 224.95
+  },
+  {
+   "text": " Back when Eric was your age, it was a million.",
+   "start": 224.95,
+   "end": 228.59
+  },
+  {
+   "text": " But what's happening, really, the world is moving faster.",
+   "start": 228.59,
+   "end": 234.95
+  },
+  {
+   "text": " Things are getting bigger.",
+   "start": 234.95,
+   "end": 237.35
+  },
+  {
+   "text": " You have the capability of computing on large inputs.",
+   "start": 237.35,
+   "end": 240.87
+  },
+  {
+   "text": " But that doesn't mean that efficiency isn't of paramount",
+   "start": 240.87,
+   "end": 244.31
+  },
+  {
+   "text": " concern.",
+   "start": 244.31,
+   "end": 245.78
+  },
+  {
+   "text": " The fact of the matter is that you can maybe scan a billion",
+   "start": 245.78,
+   "end": 251.04
+  },
+  {
+   "text": " elements in a matter of seconds.",
+   "start": 251.04,
+   "end": 253.52
+  },
+  {
+   "text": " But if you had an algorithm that required cubic",
+   "start": 253.52,
+   "end": 256.56
+  },
+  {
+   "text": " complexity, suddenly you're not talking about 10",
+   "start": 256.56,
+   "end": 259.16
+  },
+  {
+   "text": " raised to 9.",
+   "start": 259.16,
+   "end": 259.92
+  },
+  {
+   "text": " You're talking about 10 raised to 27.",
+   "start": 259.92,
+   "end": 262.08
+  },
+  {
+   "text": " And even current computers can't really handle those",
+   "start": 262.08,
+   "end": 266.6
+  },
+  {
+   "text": " kinds of numbers.",
+   "start": 266.6,
+   "end": 268.37
+  },
+  {
+   "text": " So efficiency is a concern.",
+   "start": 268.37,
+   "end": 270.85
+  },
+  {
+   "text": " And as inputs get larger, it becomes more of a concern.",
+   "start": 270.85,
+   "end": 275.32
+  },
+  {
+   "text": " So we're concerned about efficient procedures for",
+   "start": 275.32,
+   "end": 289.58
+  },
+  {
+   "text": " solving large-scale problems in this class.",
+   "start": 289.58,
+   "end": 298.09
+  },
+  {
+   "text": " And we're concerned about scalability.",
+   "start": 298.09,
+   "end": 301.63
+  },
+  {
+   "text": " Because just as 1,000 was a big number a couple of",
+   "start": 301.63,
+   "end": 308.84
+  },
+  {
+   "text": " decades ago, and now it's kind of a small number, it's",
+   "start": 308.84,
+   "end": 312.12
+  },
+  {
+   "text": " quite possible that by the time you guys are professors",
+   "start": 312.12,
+   "end": 316.38
+  },
+  {
+   "text": " teaching this class in some university that a trillion is",
+   "start": 316.38,
+   "end": 319.22
+  },
+  {
+   "text": " going to be a small number.",
+   "start": 319.22,
+   "end": 320.66
+  },
+  {
+   "text": " And we're going to be talking about 10 raised to 18 as",
+   "start": 320.66,
+   "end": 325.94
+  },
+  {
+   "text": " being something that we're concerned with from a",
+   "start": 325.94,
+   "end": 331.0
+  },
+  {
+   "text": " standpoint of a common case input for an algorithm.",
+   "start": 331.0,
+   "end": 334.46
+  },
+  {
+   "text": " So scalability is important.",
+   "start": 334.46,
+   "end": 338.08
+  },
+  {
+   "text": " And we want to be able to track how our algorithms are",
+   "start": 338.08,
+   "end": 341.32
+  },
+  {
+   "text": " going to do as inputs get larger and larger.",
+   "start": 341.32,
+   "end": 347.19
+  },
+  {
+   "text": " You've got to learn a bunch of different data structures.",
+   "start": 347.19,
+   "end": 352.19
+  },
+  {
+   "text": " We'll call them classic data structures like bind research",
+   "start": 352.19,
+   "end": 358.18
+  },
+  {
+   "text": " trees, hash tables that are called dictionaries in",
+   "start": 358.18,
+   "end": 362.26
+  },
+  {
+   "text": " Python, and data structures such as balanced bind research",
+   "start": 362.26,
+   "end": 368.95
+  },
+  {
+   "text": " trees that are more efficient than just the",
+   "start": 368.95,
+   "end": 371.07
+  },
+  {
+   "text": " regular bind research trees.",
+   "start": 371.07,
+   "end": 373.07
+  },
+  {
+   "text": " And these are all data structures that were invented",
+   "start": 373.07,
+   "end": 377.05
+  },
+  {
+   "text": " many decades ago.",
+   "start": 377.05,
+   "end": 378.49
+  },
+  {
+   "text": " But they've stood the test of time, and they",
+   "start": 378.49,
+   "end": 381.68
+  },
+  {
+   "text": " continue to be useful.",
+   "start": 381.68,
+   "end": 383.61
+  },
+  {
+   "text": " We're going to augment these data structures in various",
+   "start": 383.61,
+   "end": 385.81
+  },
+  {
+   "text": " ways to make them more efficient for certain kinds",
+   "start": 385.81,
+   "end": 389.13
+  },
+  {
+   "text": " of problems.",
+   "start": 389.13,
+   "end": 390.29
+  },
+  {
+   "text": " And while you're not going to be doing a whole lot of",
+   "start": 390.29,
+   "end": 393.45
+  },
+  {
+   "text": " algorithm design in this class, you will be doing some",
+   "start": 393.45,
+   "end": 396.69
+  },
+  {
+   "text": " design and a whole lot of analysis.",
+   "start": 396.69,
+   "end": 400.85
+  },
+  {
+   "text": " The class following this one, 6046, design analysis of",
+   "start": 401.81,
+   "end": 406.13
+  },
+  {
+   "text": " algorithms, is a class that you should take if you like this",
+   "start": 406.13,
+   "end": 411.41
+  },
+  {
+   "text": " one, and you can do a whole lot more design of algorithms",
+   "start": 411.41,
+   "end": 414.89
+  },
+  {
+   "text": " in 6046.",
+   "start": 414.89,
+   "end": 417.12
+  },
+  {
+   "text": " But you will look at classic data structures and",
+   "start": 417.12,
+   "end": 420.8
+  },
+  {
+   "text": " classical algorithms for these data structures,",
+   "start": 420.8,
+   "end": 426.14
+  },
+  {
+   "text": " including things like sorting and matching and so on.",
+   "start": 426.14,
+   "end": 432.34
+  },
+  {
+   "text": " And one of the nice things about this class is that you'll",
+   "start": 432.34,
+   "end": 437.78
+  },
+  {
+   "text": " be doing real implementations of these data structures and",
+   "start": 437.78,
+   "end": 443.02
+  },
+  {
+   "text": " algorithms in Python.",
+   "start": 443.02,
+   "end": 448.21
+  },
+  {
+   "text": " And in particular, each of the problem sets in this class",
+   "start": 448.21,
+   "end": 454.49
+  },
+  {
+   "text": " are going to have both a theory part to them and a",
+   "start": 454.49,
+   "end": 460.21
+  },
+  {
+   "text": " programming part to them.",
+   "start": 460.21,
+   "end": 461.81
+  },
+  {
+   "text": " So hopefully, it'll all tie together.",
+   "start": 461.81,
+   "end": 463.41
+  },
+  {
+   "text": " The kinds of things we're going to be talking about in",
+   "start": 463.41,
+   "end": 465.05
+  },
+  {
+   "text": " lectures and recitations are going to be directly connected",
+   "start": 465.05,
+   "end": 471.13
+  },
+  {
+   "text": " to the theory parts of the problem sets.",
+   "start": 471.13,
+   "end": 473.21
+  },
+  {
+   "text": " And you'll be programming the algorithms that we talk about",
+   "start": 473.21,
+   "end": 475.77
+  },
+  {
+   "text": " in lecture or augmenting them, running them, figuring out",
+   "start": 475.77,
+   "end": 479.49
+  },
+  {
+   "text": " whether they work well on large inputs or not.",
+   "start": 479.49,
+   "end": 486.46
+  },
+  {
+   "text": " So let me talk a little bit about the modules in this",
+   "start": 486.46,
+   "end": 489.74
+  },
+  {
+   "text": " class and the problem sets.",
+   "start": 489.74,
+   "end": 491.62
+  },
+  {
+   "text": " And we hope that these problem sets are going to be fun",
+   "start": 491.62,
+   "end": 493.98
+  },
+  {
+   "text": " for you.",
+   "start": 493.98,
+   "end": 495.42
+  },
+  {
+   "text": " And by fun, I don't mean easy.",
+   "start": 495.42,
+   "end": 499.38
+  },
+  {
+   "text": " I mean challenging and worthwhile.",
+   "start": 499.38,
+   "end": 501.62
+  },
+  {
+   "text": " So at the end of it, you feel like you've learned something.",
+   "start": 501.62,
+   "end": 504.26
+  },
+  {
+   "text": " And you've had some fun along the way.",
+   "start": 504.26,
+   "end": 508.54
+  },
+  {
+   "text": " So content-wise, we have eight modules in the class,",
+   "start": 508.54,
+   "end": 521.78
+  },
+  {
+   "text": " each of which, roughly speaking, has a problem set",
+   "start": 521.78,
+   "end": 525.04
+  },
+  {
+   "text": " associated with it.",
+   "start": 525.04,
+   "end": 527.06
+  },
+  {
+   "text": " The first of these is what we call algorithmic thinking.",
+   "start": 527.06,
+   "end": 535.62
+  },
+  {
+   "text": " And we'll kick-start that one today.",
+   "start": 535.7,
+   "end": 538.93
+  },
+  {
+   "text": " I'll be looking at a particular problem, as I mentioned,",
+   "start": 538.93,
+   "end": 541.49
+  },
+  {
+   "text": " of peak finding.",
+   "start": 541.49,
+   "end": 542.81
+  },
+  {
+   "text": " And as part of this, you're going to have a problem set",
+   "start": 542.81,
+   "end": 545.73
+  },
+  {
+   "text": " that's going to go out today as well.",
+   "start": 545.73,
+   "end": 547.89
+  },
+  {
+   "text": " And you'll find that in this problem set,",
+   "start": 547.89,
+   "end": 552.32
+  },
+  {
+   "text": " some of these algorithms I've talked about today",
+   "start": 552.32,
+   "end": 554.24
+  },
+  {
+   "text": " will be coded in Python and given to you.",
+   "start": 554.24,
+   "end": 557.08
+  },
+  {
+   "text": " A couple of them are going to have bugs in them.",
+   "start": 557.08,
+   "end": 560.18
+  },
+  {
+   "text": " You'll have to analyze the complexity of these algorithms,",
+   "start": 560.18,
+   "end": 564.34
+  },
+  {
+   "text": " figure out which ones are correct and efficient,",
+   "start": 564.34,
+   "end": 567.38
+  },
+  {
+   "text": " and write a proof for one of them.",
+   "start": 567.38,
+   "end": 570.17
+  },
+  {
+   "text": " So that's sort of an example problem set.",
+   "start": 570.17,
+   "end": 573.33
+  },
+  {
+   "text": " And you can expect that most of the problem sets",
+   "start": 573.33,
+   "end": 577.6
+  },
+  {
+   "text": " are going to follow that sort of template.",
+   "start": 577.6,
+   "end": 580.56
+  },
+  {
+   "text": " So you'll get a better sense of this",
+   "start": 580.56,
+   "end": 584.82
+  },
+  {
+   "text": " by the end of the day today, for sure,",
+   "start": 584.82,
+   "end": 586.7
+  },
+  {
+   "text": " or a concrete sense of this, because we'll",
+   "start": 586.7,
+   "end": 588.94
+  },
+  {
+   "text": " be done with lecture and you'll",
+   "start": 588.94,
+   "end": 590.66
+  },
+  {
+   "text": " see your first problem set.",
+   "start": 590.66,
+   "end": 592.89
+  },
+  {
+   "text": " We're going to be doing a module on sorting and trees.",
+   "start": 592.89,
+   "end": 597.54
+  },
+  {
+   "text": " Sorting you know about, sorting a bunch of numbers.",
+   "start": 597.54,
+   "end": 600.62
+  },
+  {
+   "text": " Imagine if you had a trillion numbers",
+   "start": 600.62,
+   "end": 602.18
+  },
+  {
+   "text": " and you wanted to sort them.",
+   "start": 602.18,
+   "end": 604.27
+  },
+  {
+   "text": " What kind of algorithm could you use for that?",
+   "start": 604.27,
+   "end": 607.59
+  },
+  {
+   "text": " Trees are a wonderful data structure.",
+   "start": 607.59,
+   "end": 610.43
+  },
+  {
+   "text": " There's different varieties, the most common being binary trees.",
+   "start": 610.43,
+   "end": 614.75
+  },
+  {
+   "text": " And there's ways of doing all sorts of things",
+   "start": 614.75,
+   "end": 617.59
+  },
+  {
+   "text": " like scheduling and sorting using various kinds of trees,",
+   "start": 617.59,
+   "end": 622.55
+  },
+  {
+   "text": " including binary trees.",
+   "start": 622.55,
+   "end": 624.19
+  },
+  {
+   "text": " And we have a problem set on simulating a logic network",
+   "start": 624.19,
+   "end": 631.35
+  },
+  {
+   "text": " using a particular kind of sorting algorithm",
+   "start": 631.35,
+   "end": 635.99
+  },
+  {
+   "text": " and a data structure.",
+   "start": 635.99,
+   "end": 638.24
+  },
+  {
+   "text": " That is going to be your second problem set.",
+   "start": 638.24,
+   "end": 641.18
+  },
+  {
+   "text": " And more quickly, we're going to have modules on hashing,",
+   "start": 641.18,
+   "end": 647.15
+  },
+  {
+   "text": " where we'll do things like genome comparison in past terms.",
+   "start": 647.15,
+   "end": 653.49
+  },
+  {
+   "text": " We compared a human genome to a rat genome",
+   "start": 653.49,
+   "end": 656.37
+  },
+  {
+   "text": " and discovered they were pretty similar.",
+   "start": 656.37,
+   "end": 659.3
+  },
+  {
+   "text": " 99% similar, which is kind of amazing.",
+   "start": 659.3,
+   "end": 661.9
+  },
+  {
+   "text": " But again, these things are so large",
+   "start": 661.9,
+   "end": 664.54
+  },
+  {
+   "text": " that you have to have efficiency in the comparison methods",
+   "start": 664.54,
+   "end": 667.46
+  },
+  {
+   "text": " that you use.",
+   "start": 667.46,
+   "end": 668.5
+  },
+  {
+   "text": " And you'll find that if you don't get the complexity low",
+   "start": 668.5,
+   "end": 671.7
+  },
+  {
+   "text": " enough, your program won't be able to finish",
+   "start": 671.7,
+   "end": 677.3
+  },
+  {
+   "text": " running within the time that your problem set is due,",
+   "start": 677.3,
+   "end": 681.7
+  },
+  {
+   "text": " which is a bit of a problem.",
+   "start": 681.7,
+   "end": 684.7
+  },
+  {
+   "text": " So that's something to keep in mind as you test your code.",
+   "start": 684.74,
+   "end": 688.86
+  },
+  {
+   "text": " The fact is that you will get large inputs to run your code.",
+   "start": 688.86,
+   "end": 692.18
+  },
+  {
+   "text": " And you want to keep complexity in mind as you're coding",
+   "start": 692.18,
+   "end": 696.22
+  },
+  {
+   "text": " and thinking about the pseudocode, if you will,",
+   "start": 696.22,
+   "end": 700.46
+  },
+  {
+   "text": " of your algorithm itself.",
+   "start": 700.46,
+   "end": 703.67
+  },
+  {
+   "text": " We will talk about numerics.",
+   "start": 703.67,
+   "end": 707.39
+  },
+  {
+   "text": " A lot of the time, we talk about such large numbers",
+   "start": 707.39,
+   "end": 710.83
+  },
+  {
+   "text": " that 32 bits isn't enough.",
+   "start": 710.83,
+   "end": 713.75
+  },
+  {
+   "text": " Our 64 bits isn't enough to represent these numbers.",
+   "start": 714.23,
+   "end": 716.99
+  },
+  {
+   "text": " These numbers have thousands of bits.",
+   "start": 716.99,
+   "end": 718.87
+  },
+  {
+   "text": " A good example is RSA encryption that",
+   "start": 718.87,
+   "end": 721.23
+  },
+  {
+   "text": " is used in SSL, for example.",
+   "start": 721.23,
+   "end": 725.12
+  },
+  {
+   "text": " And when you go use HTTPS on websites,",
+   "start": 725.12,
+   "end": 729.64
+  },
+  {
+   "text": " RSA is used at the back end.",
+   "start": 729.64,
+   "end": 732.68
+  },
+  {
+   "text": " And typically, you work with prime numbers",
+   "start": 732.68,
+   "end": 735.32
+  },
+  {
+   "text": " that are thousands of bits long in RSA.",
+   "start": 735.32,
+   "end": 738.48
+  },
+  {
+   "text": " So how do you handle that?",
+   "start": 738.48,
+   "end": 739.8
+  },
+  {
+   "text": " How does Python handle that?",
+   "start": 739.8,
+   "end": 741.16
+  },
+  {
+   "text": " How do you write algorithms that can",
+   "start": 741.16,
+   "end": 742.92
+  },
+  {
+   "text": " deal with what are called infinite precision numbers?",
+   "start": 742.92,
+   "end": 746.28
+  },
+  {
+   "text": " So we have a module on numerics in the middle of the term",
+   "start": 746.28,
+   "end": 749.52
+  },
+  {
+   "text": " that talks about that.",
+   "start": 749.52,
+   "end": 751.84
+  },
+  {
+   "text": " Graphs, really a fundamental data structure",
+   "start": 751.84,
+   "end": 755.44
+  },
+  {
+   "text": " in all of computer science.",
+   "start": 755.44,
+   "end": 757.96
+  },
+  {
+   "text": " You might have heard of the famous Rubik's Cube assignment",
+   "start": 757.96,
+   "end": 762.61
+  },
+  {
+   "text": " from 006, a 2 by 2 by 2 Rubik's Cube.",
+   "start": 762.61,
+   "end": 766.81
+  },
+  {
+   "text": " What's the minimum number of moves necessary",
+   "start": 766.81,
+   "end": 770.09
+  },
+  {
+   "text": " to go from a given starting configuration",
+   "start": 770.09,
+   "end": 773.21
+  },
+  {
+   "text": " to the final end configuration where each of the faces",
+   "start": 773.21,
+   "end": 777.17
+  },
+  {
+   "text": " has uniform color?",
+   "start": 777.17,
+   "end": 778.97
+  },
+  {
+   "text": " And that can be posed as a graph problem.",
+   "start": 778.97,
+   "end": 781.97
+  },
+  {
+   "text": " We'll probably do that one.",
+   "start": 781.97,
+   "end": 783.49
+  },
+  {
+   "text": " This term, in previous terms, we've",
+   "start": 783.49,
+   "end": 785.09
+  },
+  {
+   "text": " done other things like the 15 puzzle.",
+   "start": 785.09,
+   "end": 787.33
+  },
+  {
+   "text": " And so some of these are tentative.",
+   "start": 787.33,
+   "end": 789.81
+  },
+  {
+   "text": " We definitely know what the first problem set is like.",
+   "start": 789.81,
+   "end": 792.41
+  },
+  {
+   "text": " But the rest of them are, at this moment, tentative.",
+   "start": 792.41,
+   "end": 796.45
+  },
+  {
+   "text": " And to finish up, shortest paths.",
+   "start": 796.45,
+   "end": 800.31
+  },
+  {
+   "text": " Again, in terms past, we've asked you",
+   "start": 800.31,
+   "end": 804.62
+  },
+  {
+   "text": " to write code using a particular algorithm that",
+   "start": 804.62,
+   "end": 807.34
+  },
+  {
+   "text": " finds the shortest path from Caltech to MIT.",
+   "start": 807.34,
+   "end": 811.12
+  },
+  {
+   "text": " This time, we made do things a little bit differently.",
+   "start": 811.12,
+   "end": 813.56
+  },
+  {
+   "text": " We're thinking maybe we'll give you a street map of Boston",
+   "start": 813.56,
+   "end": 817.16
+  },
+  {
+   "text": " and go figure out if Paul Revere used the shortest path",
+   "start": 817.16,
+   "end": 822.68
+  },
+  {
+   "text": " to get to where he was going or things like that.",
+   "start": 822.68,
+   "end": 825.16
+  },
+  {
+   "text": " We'll try and make it fun.",
+   "start": 825.16,
+   "end": 827.54
+  },
+  {
+   "text": " Dynamic programming is an important algorithm design",
+   "start": 827.54,
+   "end": 834.37
+  },
+  {
+   "text": " technique that's used in many, many problems.",
+   "start": 834.37,
+   "end": 840.65
+  },
+  {
+   "text": " And it can be used to do a variety of things,",
+   "start": 840.65,
+   "end": 844.19
+  },
+  {
+   "text": " including image compression.",
+   "start": 844.19,
+   "end": 846.54
+  },
+  {
+   "text": " How do you compress an image?",
+   "start": 846.54,
+   "end": 848.26
+  },
+  {
+   "text": " So the number of pixels reduces.",
+   "start": 848.26,
+   "end": 851.46
+  },
+  {
+   "text": " But it still looks like the image",
+   "start": 851.46,
+   "end": 852.94
+  },
+  {
+   "text": " that you started out with that had many more pixels.",
+   "start": 852.94,
+   "end": 856.26
+  },
+  {
+   "text": " So you could use dynamic programming for that.",
+   "start": 856.3,
+   "end": 858.9
+  },
+  {
+   "text": " And finally, advanced topics, complexity theory,",
+   "start": 858.9,
+   "end": 862.86
+  },
+  {
+   "text": " research and algorithms.",
+   "start": 862.86,
+   "end": 865.76
+  },
+  {
+   "text": " Hopefully, by this time in the course,",
+   "start": 865.76,
+   "end": 868.48
+  },
+  {
+   "text": " you would have been sold on algorithms.",
+   "start": 868.48,
+   "end": 870.36
+  },
+  {
+   "text": " And most if not all of you would",
+   "start": 870.36,
+   "end": 872.56
+  },
+  {
+   "text": " want to pursue a career in algorithms.",
+   "start": 872.56,
+   "end": 874.56
+  },
+  {
+   "text": " And we'll give you a sense of what else is there.",
+   "start": 874.56,
+   "end": 877.68
+  },
+  {
+   "text": " We're just scratching the surface in this class.",
+   "start": 877.68,
+   "end": 880.6
+  },
+  {
+   "text": " And there's many, many classes that you can possibly take",
+   "start": 880.6,
+   "end": 883.48
+  },
+  {
+   "text": " if you want to continue to learn about algorithms",
+   "start": 883.48,
+   "end": 887.64
+  },
+  {
+   "text": " or to pursue a career in algorithms.",
+   "start": 887.64,
+   "end": 889.76
+  },
+  {
+   "text": " All right?",
+   "start": 889.76,
+   "end": 891.54
+  },
+  {
+   "text": " So that's the story of the class,",
+   "start": 891.54,
+   "end": 893.9
+  },
+  {
+   "text": " of the synopsis of the class.",
+   "start": 893.9,
+   "end": 895.82
+  },
+  {
+   "text": " And I encourage you to go spend a few minutes",
+   "start": 895.82,
+   "end": 900.9
+  },
+  {
+   "text": " on the website.",
+   "start": 900.9,
+   "end": 901.94
+  },
+  {
+   "text": " In particular, please read the collaboration policy",
+   "start": 901.94,
+   "end": 905.42
+  },
+  {
+   "text": " and get a sense of what is expected of you,",
+   "start": 905.42,
+   "end": 908.42
+  },
+  {
+   "text": " what the rules are in terms of doing the problem sets,",
+   "start": 908.42,
+   "end": 913.58
+  },
+  {
+   "text": " and the course grading breakdown and the grading policies",
+   "start": 913.58,
+   "end": 918.5
+  },
+  {
+   "text": " are all listed on the website as well.",
+   "start": 918.5,
+   "end": 921.28
+  },
+  {
+   "text": " Right?",
+   "start": 921.28,
+   "end": 923.0
+  },
+  {
+   "text": " OK.",
+   "start": 923.0,
+   "end": 923.88
+  },
+  {
+   "text": " So let's get started.",
+   "start": 923.88,
+   "end": 926.2
+  },
+  {
+   "text": " I want to talk about a specific problem",
+   "start": 926.2,
+   "end": 928.92
+  },
+  {
+   "text": " and talk about algorithms for a specific problem.",
+   "start": 928.92,
+   "end": 932.0
+  },
+  {
+   "text": " We picked this problem because it's so easy to understand.",
+   "start": 932.0,
+   "end": 935.56
+  },
+  {
+   "text": " And they're fairly straightforward algorithms",
+   "start": 935.56,
+   "end": 938.76
+  },
+  {
+   "text": " that are not particularly efficient to solve this problem.",
+   "start": 938.76,
+   "end": 942.4
+  },
+  {
+   "text": " And so this is kind of a toy problem.",
+   "start": 942.4,
+   "end": 945.0
+  },
+  {
+   "text": " But like a lot of toy problems, it's very evocative",
+   "start": 945.0,
+   "end": 951.36
+  },
+  {
+   "text": " in that it points out the issues involved",
+   "start": 951.36,
+   "end": 955.24
+  },
+  {
+   "text": " in designing efficient algorithms.",
+   "start": 955.24,
+   "end": 957.74
+  },
+  {
+   "text": " So we start with a one-dimensional version",
+   "start": 957.74,
+   "end": 960.14
+  },
+  {
+   "text": " of what we call peak finding.",
+   "start": 960.14,
+   "end": 965.78
+  },
+  {
+   "text": " And a peak finder is something in the one-dimensional case",
+   "start": 965.78,
+   "end": 974.12
+  },
+  {
+   "text": " runs on an array of numbers.",
+   "start": 974.12,
+   "end": 978.24
+  },
+  {
+   "text": " And I'm just putting symbols for each of these numbers here.",
+   "start": 978.24,
+   "end": 987.04
+  },
+  {
+   "text": " And the numbers are positive, negative.",
+   "start": 987.04,
+   "end": 991.59
+  },
+  {
+   "text": " We'll just assume they're all positive.",
+   "start": 991.59,
+   "end": 993.15
+  },
+  {
+   "text": " It doesn't really matter.",
+   "start": 993.15,
+   "end": 994.47
+  },
+  {
+   "text": " The algorithms we describe will work.",
+   "start": 994.47,
+   "end": 998.49
+  },
+  {
+   "text": " And so we have this one-dimensional array",
+   "start": 998.49,
+   "end": 1001.33
+  },
+  {
+   "text": " that has nine different positions,",
+   "start": 1001.33,
+   "end": 1003.49
+  },
+  {
+   "text": " and a through i are numbers.",
+   "start": 1003.49,
+   "end": 1009.93
+  },
+  {
+   "text": " And we want to find a peak.",
+   "start": 1009.93,
+   "end": 1013.04
+  },
+  {
+   "text": " And so we have to define what we mean by a peak.",
+   "start": 1013.04,
+   "end": 1016.18
+  },
+  {
+   "text": " And so in particular, as an example,",
+   "start": 1016.18,
+   "end": 1020.37
+  },
+  {
+   "text": " position 2 is a peak if and only if b greater than or equal to a",
+   "start": 1020.37,
+   "end": 1034.66
+  },
+  {
+   "text": " and b greater than or equal to c.",
+   "start": 1034.66,
+   "end": 1037.99
+  },
+  {
+   "text": " So it's really a very local property corresponding to a peak.",
+   "start": 1037.99,
+   "end": 1042.27
+  },
+  {
+   "text": " In the one-dimensional case, it's trivial.",
+   "start": 1042.27,
+   "end": 1044.99
+  },
+  {
+   "text": " Look to your left.",
+   "start": 1044.99,
+   "end": 1046.19
+  },
+  {
+   "text": " Look to your right.",
+   "start": 1046.19,
+   "end": 1047.95
+  },
+  {
+   "text": " If you're equal or greater than both of the elements",
+   "start": 1047.95,
+   "end": 1051.98
+  },
+  {
+   "text": " that you see on the left and the right, you're a peak.",
+   "start": 1051.98,
+   "end": 1055.78
+  },
+  {
+   "text": " And in the case of the edges, you only",
+   "start": 1055.78,
+   "end": 1058.7
+  },
+  {
+   "text": " have to look to one side.",
+   "start": 1058.7,
+   "end": 1060.69
+  },
+  {
+   "text": " So position 9 is a peak if i greater than or equal to h.",
+   "start": 1060.69,
+   "end": 1073.73
+  },
+  {
+   "text": " So you just have to look to your left there,",
+   "start": 1073.73,
+   "end": 1075.41
+  },
+  {
+   "text": " because you're all the way on the right hand side.",
+   "start": 1075.41,
+   "end": 1078.28
+  },
+  {
+   "text": " So that's it.",
+   "start": 1078.28,
+   "end": 1080.45
+  },
+  {
+   "text": " And the statement of the problem, the one-dimensional version,",
+   "start": 1080.45,
+   "end": 1085.24
+  },
+  {
+   "text": " is find a peak if it exists.",
+   "start": 1085.24,
+   "end": 1102.08
+  },
+  {
+   "text": " That's all there is to it.",
+   "start": 1102.08,
+   "end": 1104.78
+  },
+  {
+   "text": " I'm going to give you a straightforward algorithm.",
+   "start": 1104.78,
+   "end": 1107.9
+  },
+  {
+   "text": " And then we'll see if we can improve it.",
+   "start": 1107.9,
+   "end": 1111.28
+  },
+  {
+   "text": " You can imagine that the straightforward algorithm is",
+   "start": 1111.28,
+   "end": 1114.12
+  },
+  {
+   "text": " something that just walks across the array.",
+   "start": 1114.12,
+   "end": 1119.41
+  },
+  {
+   "text": " But we need that as a starting point for building",
+   "start": 1119.41,
+   "end": 1123.5
+  },
+  {
+   "text": " something more sophisticated.",
+   "start": 1123.5,
+   "end": 1129.57
+  },
+  {
+   "text": " So let's say we start from left.",
+   "start": 1129.57,
+   "end": 1136.23
+  },
+  {
+   "text": " And all we have is one traversal, really.",
+   "start": 1136.23,
+   "end": 1145.39
+  },
+  {
+   "text": " So let's say we have 1, 2.",
+   "start": 1145.39,
+   "end": 1147.67
+  },
+  {
+   "text": " And then we have n over 2 over here,",
+   "start": 1147.67,
+   "end": 1150.21
+  },
+  {
+   "text": " corresponding to the middle of this n element array.",
+   "start": 1150.21,
+   "end": 1154.63
+  },
+  {
+   "text": " And then we have n minus 1 and n.",
+   "start": 1154.63,
+   "end": 1159.02
+  },
+  {
+   "text": " What I'm interested in doing is not only coming up",
+   "start": 1159.02,
+   "end": 1162.18
+  },
+  {
+   "text": " with a straightforward algorithm,",
+   "start": 1162.18,
+   "end": 1164.86
+  },
+  {
+   "text": " but also precisely categorizing what its complexity is",
+   "start": 1164.86,
+   "end": 1171.37
+  },
+  {
+   "text": " in relation to n, which is the number of inputs.",
+   "start": 1171.37,
+   "end": 1175.51
+  },
+  {
+   "text": " Yeah, question.",
+   "start": 1175.51,
+   "end": 1181.74
+  },
+  {
+   "text": " That's exactly right.",
+   "start": 1181.74,
+   "end": 1182.7
+  },
+  {
+   "text": " I was going to get to that.",
+   "start": 1182.7,
+   "end": 1184.5
+  },
+  {
+   "text": " So if you look at the definition of the peak,",
+   "start": 1184.5,
+   "end": 1190.49
+  },
+  {
+   "text": " then what I have here is greater than or equal to.",
+   "start": 1190.49,
+   "end": 1195.97
+  },
+  {
+   "text": " And so that's a great question that was asked.",
+   "start": 1195.97,
+   "end": 1199.65
+  },
+  {
+   "text": " Why is there if it exists in this problem?",
+   "start": 1199.65,
+   "end": 1204.44
+  },
+  {
+   "text": " Now, in the case where I have greater than or equal to,",
+   "start": 1204.44,
+   "end": 1208.44
+  },
+  {
+   "text": " then this is a homework question for you",
+   "start": 1208.44,
+   "end": 1212.32
+  },
+  {
+   "text": " and for the rest of you.",
+   "start": 1212.32,
+   "end": 1214.32
+  },
+  {
+   "text": " Argue that any array will always have a peak.",
+   "start": 1214.32,
+   "end": 1220.78
+  },
+  {
+   "text": " Now, if you didn't have the greater than or equal to",
+   "start": 1220.78,
+   "end": 1224.3
+  },
+  {
+   "text": " and you had a greater than, then can you make that argument?",
+   "start": 1224.3,
+   "end": 1229.08
+  },
+  {
+   "text": " No, you can't.",
+   "start": 1229.08,
+   "end": 1230.8
+  },
+  {
+   "text": " So great question.",
+   "start": 1230.8,
+   "end": 1233.28
+  },
+  {
+   "text": " In this case, you would want to modify this problem statement",
+   "start": 1233.28,
+   "end": 1237.8
+  },
+  {
+   "text": " to find the peak.",
+   "start": 1237.8,
+   "end": 1238.96
+  },
+  {
+   "text": " But if I had a different definition of a peak,",
+   "start": 1238.96,
+   "end": 1242.92
+  },
+  {
+   "text": " and this is part of algorithmic thinking,",
+   "start": 1242.92,
+   "end": 1245.84
+  },
+  {
+   "text": " you want to be able to create algorithms that are general.",
+   "start": 1245.84,
+   "end": 1249.6
+  },
+  {
+   "text": " So if the problem definition changes on you,",
+   "start": 1249.6,
+   "end": 1252.32
+  },
+  {
+   "text": " you still have a starting point",
+   "start": 1252.32,
+   "end": 1253.52
+  },
+  {
+   "text": " to go attack the second version of the problem.",
+   "start": 1253.52,
+   "end": 1257.32
+  },
+  {
+   "text": " So you could eliminate this in the case of the greater than",
+   "start": 1257.36,
+   "end": 1262.29
+  },
+  {
+   "text": " or equal to definition, the if it exists,",
+   "start": 1262.29,
+   "end": 1264.05
+  },
+  {
+   "text": " because a peak will always exist.",
+   "start": 1264.05,
+   "end": 1265.73
+  },
+  {
+   "text": " But you probably want to argue that when you want to show",
+   "start": 1265.73,
+   "end": 1267.81
+  },
+  {
+   "text": " the correctness of your algorithm.",
+   "start": 1267.81,
+   "end": 1269.97
+  },
+  {
+   "text": " And if in fact you had a different definition,",
+   "start": 1269.97,
+   "end": 1273.21
+  },
+  {
+   "text": " well, you would have to create an algorithm that",
+   "start": 1273.21,
+   "end": 1278.53
+  },
+  {
+   "text": " tells you for sure that a peak doesn't exist",
+   "start": 1278.53,
+   "end": 1281.77
+  },
+  {
+   "text": " or find a peak if it exists.",
+   "start": 1281.77,
+   "end": 1284.37
+  },
+  {
+   "text": " So that's really the general case.",
+   "start": 1284.37,
+   "end": 1286.49
+  },
+  {
+   "text": " Many a time it's possible that you're asked to do something",
+   "start": 1286.53,
+   "end": 1289.85
+  },
+  {
+   "text": " and you can't actually give an answer to the question",
+   "start": 1289.85,
+   "end": 1295.01
+  },
+  {
+   "text": " or find something that satisfies all the constraints required.",
+   "start": 1295.01,
+   "end": 1299.61
+  },
+  {
+   "text": " And in that case, you want to be able to put up your hand",
+   "start": 1299.61,
+   "end": 1301.69
+  },
+  {
+   "text": " and say, you know what?",
+   "start": 1301.69,
+   "end": 1303.49
+  },
+  {
+   "text": " I searched long and hard.",
+   "start": 1303.49,
+   "end": 1304.89
+  },
+  {
+   "text": " I searched exhaustively.",
+   "start": 1304.89,
+   "end": 1306.73
+  },
+  {
+   "text": " Here's my argument that I searched exhaustively.",
+   "start": 1306.73,
+   "end": 1310.13
+  },
+  {
+   "text": " And I couldn't find it.",
+   "start": 1310.13,
+   "end": 1311.85
+  },
+  {
+   "text": " If you do that, you get to keep your job.",
+   "start": 1311.85,
+   "end": 1314.61
+  },
+  {
+   "text": " Otherwise, there's always the case",
+   "start": 1314.61,
+   "end": 1317.37
+  },
+  {
+   "text": " that you didn't search hard enough.",
+   "start": 1317.37,
+   "end": 1319.09
+  },
+  {
+   "text": " So it's nice to have that argument.",
+   "start": 1319.09,
+   "end": 1322.3
+  },
+  {
+   "text": " All right, great.",
+   "start": 1322.3,
+   "end": 1323.06
+  },
+  {
+   "text": " Thanks for the question.",
+   "start": 1323.06,
+   "end": 1324.18
+  },
+  {
+   "text": " Feel free to interrupt, raise your hand,",
+   "start": 1324.18,
+   "end": 1325.9
+  },
+  {
+   "text": " and I'm watching you guys, and I'm",
+   "start": 1325.9,
+   "end": 1328.02
+  },
+  {
+   "text": " happy to answer questions at any time.",
+   "start": 1328.02,
+   "end": 1331.46
+  },
+  {
+   "text": " So let's talk about the straightforward algorithm.",
+   "start": 1331.46,
+   "end": 1334.54
+  },
+  {
+   "text": " The straightforward algorithm is something",
+   "start": 1334.54,
+   "end": 1336.5
+  },
+  {
+   "text": " that starts from the left and just walks across.",
+   "start": 1336.5,
+   "end": 1340.9
+  },
+  {
+   "text": " And you might have something that looks like that.",
+   "start": 1340.9,
+   "end": 1345.22
+  },
+  {
+   "text": " But by this, I mean the numbers are increasing",
+   "start": 1345.22,
+   "end": 1347.86
+  },
+  {
+   "text": " as you start from the left.",
+   "start": 1347.86,
+   "end": 1349.54
+  },
+  {
+   "text": " The peak is somewhere in the middle,",
+   "start": 1349.54,
+   "end": 1351.74
+  },
+  {
+   "text": " and then things start decreasing.",
+   "start": 1351.74,
+   "end": 1354.06
+  },
+  {
+   "text": " So in this case, this might be the peak.",
+   "start": 1354.06,
+   "end": 1366.98
+  },
+  {
+   "text": " You also may have a situation where the peak is all the way",
+   "start": 1366.98,
+   "end": 1370.46
+  },
+  {
+   "text": " on the right.",
+   "start": 1370.46,
+   "end": 1371.22
+  },
+  {
+   "text": " You start it from the left, and it's",
+   "start": 1371.22,
+   "end": 1373.3
+  },
+  {
+   "text": " 1, 2, 3, 4, 5, 6, literally in terms of the numbers.",
+   "start": 1373.3,
+   "end": 1376.42
+  },
+  {
+   "text": " And you're going to look at n elements going all the way",
+   "start": 1376.42,
+   "end": 1380.98
+  },
+  {
+   "text": " to the right in order to find the peak.",
+   "start": 1380.98,
+   "end": 1384.8
+  },
+  {
+   "text": " So in the case of the middle, you'd",
+   "start": 1384.8,
+   "end": 1387.36
+  },
+  {
+   "text": " look at n over 2 elements if it was right in the middle.",
+   "start": 1387.36,
+   "end": 1398.4
+  },
+  {
+   "text": " And the worst case complexity is what we call theta n.",
+   "start": 1398.4,
+   "end": 1409.84
+  },
+  {
+   "text": " And it's theta n because in the worst case,",
+   "start": 1409.84,
+   "end": 1413.6
+  },
+  {
+   "text": " you may have to look at all n elements.",
+   "start": 1413.6,
+   "end": 1416.2
+  },
+  {
+   "text": " And that would be the case where",
+   "start": 1416.2,
+   "end": 1417.4
+  },
+  {
+   "text": " you started from the left, and you had to go all the way",
+   "start": 1417.4,
+   "end": 1419.64
+  },
+  {
+   "text": " to the right.",
+   "start": 1419.64,
+   "end": 1420.87
+  },
+  {
+   "text": " Now remember, theta n is essentially something",
+   "start": 1420.87,
+   "end": 1423.83
+  },
+  {
+   "text": " that says of the order of n.",
+   "start": 1423.83,
+   "end": 1425.83
+  },
+  {
+   "text": " So it gives you both the lower bound and an upper bound.",
+   "start": 1425.83,
+   "end": 1429.39
+  },
+  {
+   "text": " Big O of n is just the upper bound.",
+   "start": 1429.39,
+   "end": 1432.5
+  },
+  {
+   "text": " And what we're saying here is we're",
+   "start": 1432.5,
+   "end": 1433.98
+  },
+  {
+   "text": " saying this algorithm that starts from the left",
+   "start": 1433.98,
+   "end": 1438.11
+  },
+  {
+   "text": " is going to essentially require, in the worst case, something",
+   "start": 1438.11,
+   "end": 1443.98
+  },
+  {
+   "text": " that's a constant times n.",
+   "start": 1443.98,
+   "end": 1447.86
+  },
+  {
+   "text": " And that constant could be 1.",
+   "start": 1447.86,
+   "end": 1451.26
+  },
+  {
+   "text": " You could certainly set things up that way.",
+   "start": 1451.26,
+   "end": 1453.38
+  },
+  {
+   "text": " Or if you had a different kind of algorithm,",
+   "start": 1453.38,
+   "end": 1455.86
+  },
+  {
+   "text": " maybe you could work on the constant.",
+   "start": 1455.86,
+   "end": 1458.42
+  },
+  {
+   "text": " But bottom line, we're only concerned at this moment",
+   "start": 1458.42,
+   "end": 1462.34
+  },
+  {
+   "text": " about asymptotic complexity.",
+   "start": 1462.34,
+   "end": 1464.78
+  },
+  {
+   "text": " And the asymptotic complexity of this algorithm is linear.",
+   "start": 1464.78,
+   "end": 1469.7
+  },
+  {
+   "text": " That makes sense?",
+   "start": 1469.7,
+   "end": 1472.02
+  },
+  {
+   "text": " OK.",
+   "start": 1472.02,
+   "end": 1472.9
+  },
+  {
+   "text": " So someone help me do better.",
+   "start": 1472.9,
+   "end": 1478.84
+  },
+  {
+   "text": " How can we do better?",
+   "start": 1478.84,
+   "end": 1479.76
+  },
+  {
+   "text": " How can we lower the asymptotic complexity",
+   "start": 1479.76,
+   "end": 1483.0
+  },
+  {
+   "text": " of a one-dimensional peak finder?",
+   "start": 1483.0,
+   "end": 1486.94
+  },
+  {
+   "text": " Anybody want to take a stab at that?",
+   "start": 1486.94,
+   "end": 1488.46
+  },
+  {
+   "text": " Yeah, back there.",
+   "start": 1488.46,
+   "end": 1500.14
+  },
+  {
+   "text": " Example it here.",
+   "start": 1500.14,
+   "end": 1508.9
+  },
+  {
+   "text": " Excellent.",
+   "start": 1508.9,
+   "end": 1509.7
+  },
+  {
+   "text": " That's exactly right.",
+   "start": 1509.7,
+   "end": 1510.9
+  },
+  {
+   "text": " So you can do something different,",
+   "start": 1510.9,
+   "end": 1514.62
+  },
+  {
+   "text": " which is essentially try and break up this problem,",
+   "start": 1514.62,
+   "end": 1519.22
+  },
+  {
+   "text": " use a divide and conquer strategy,",
+   "start": 1519.22,
+   "end": 1521.42
+  },
+  {
+   "text": " and recursively break up this one-dimensional array",
+   "start": 1521.42,
+   "end": 1524.9
+  },
+  {
+   "text": " into smaller arrays, and try and get this complexity down.",
+   "start": 1524.9,
+   "end": 1530.1
+  },
+  {
+   "text": " Yeah?",
+   "start": 1530.1,
+   "end": 1531.32
+  },
+  {
+   "text": " Is there only one peak?",
+   "start": 1531.36,
+   "end": 1533.44
+  },
+  {
+   "text": " No, we're not.",
+   "start": 1533.44,
+   "end": 1534.72
+  },
+  {
+   "text": " If it's find a peak if it exists, and in this case,",
+   "start": 1534.72,
+   "end": 1540.02
+  },
+  {
+   "text": " it's find a peak because of the definition,",
+   "start": 1540.02,
+   "end": 1542.58
+  },
+  {
+   "text": " we don't really need this as it was discussed.",
+   "start": 1542.58,
+   "end": 1545.94
+  },
+  {
+   "text": " All right?",
+   "start": 1545.94,
+   "end": 1546.66
+  },
+  {
+   "text": " OK.",
+   "start": 1546.66,
+   "end": 1547.18
+  },
+  {
+   "text": " So that was a great answer.",
+   "start": 1547.18,
+   "end": 1550.51
+  },
+  {
+   "text": " And this class, after a while, is going to get boring, right?",
+   "start": 1550.51,
+   "end": 1555.79
+  },
+  {
+   "text": " Every class gets boring.",
+   "start": 1555.79,
+   "end": 1557.63
+  },
+  {
+   "text": " So we try and break the monotony here a bit.",
+   "start": 1557.63,
+   "end": 1560.87
+  },
+  {
+   "text": " And the other thing that we realized",
+   "start": 1561.43,
+   "end": 1562.83
+  },
+  {
+   "text": " was that these seats you're sitting on,",
+   "start": 1562.83,
+   "end": 1564.63
+  },
+  {
+   "text": " this is a nice classroom, but the seats you're sitting on",
+   "start": 1564.63,
+   "end": 1566.99
+  },
+  {
+   "text": " are kind of hard.",
+   "start": 1566.99,
+   "end": 1568.15
+  },
+  {
+   "text": " So what Eric and I did was we decided",
+   "start": 1568.15,
+   "end": 1570.95
+  },
+  {
+   "text": " we'll help you guys out, especially the ones who",
+   "start": 1570.95,
+   "end": 1574.39
+  },
+  {
+   "text": " are interacting with us.",
+   "start": 1574.39,
+   "end": 1575.87
+  },
+  {
+   "text": " And we have these cushions that are 6-006 cushions.",
+   "start": 1575.87,
+   "end": 1582.38
+  },
+  {
+   "text": " And that's a 2 by 2 by 2 Rubik's cube here.",
+   "start": 1582.38,
+   "end": 1585.14
+  },
+  {
+   "text": " And since you answered the first question,",
+   "start": 1585.14,
+   "end": 1587.34
+  },
+  {
+   "text": " you get a cushion.",
+   "start": 1587.34,
+   "end": 1588.34
+  },
+  {
+   "text": " This is kind of like a Frisbee, but not really.",
+   "start": 1588.34,
+   "end": 1591.02
+  },
+  {
+   "text": " So I'm not sure I'm going to get it to you.",
+   "start": 1591.46,
+   "end": 1595.06
+  },
+  {
+   "text": " But the other thing I want to say",
+   "start": 1595.06,
+   "end": 1596.14
+  },
+  {
+   "text": " is this is not a baseball game, right,",
+   "start": 1596.14,
+   "end": 1598.22
+  },
+  {
+   "text": " where you just grab the balls that come by.",
+   "start": 1598.22,
+   "end": 1600.42
+  },
+  {
+   "text": " This is meant for him, my friend in the red shirt.",
+   "start": 1600.42,
+   "end": 1603.66
+  },
+  {
+   "text": " So here you go.",
+   "start": 1603.66,
+   "end": 1606.2
+  },
+  {
+   "text": " Too bad.",
+   "start": 1606.2,
+   "end": 1606.84
+  },
+  {
+   "text": " All right.",
+   "start": 1606.84,
+   "end": 1607.6
+  },
+  {
+   "text": " It is soft.",
+   "start": 1607.6,
+   "end": 1608.6
+  },
+  {
+   "text": " So it won't hurt you if it hits you.",
+   "start": 1608.6,
+   "end": 1611.92
+  },
+  {
+   "text": " All right?",
+   "start": 1611.92,
+   "end": 1612.56
+  },
+  {
+   "text": " So if you've got a bunch of these and raise your hands,",
+   "start": 1612.56,
+   "end": 1617.16
+  },
+  {
+   "text": " when I ask, there's going to be,",
+   "start": 1617.16,
+   "end": 1620.2
+  },
+  {
+   "text": " I think there's some trivial questions",
+   "start": 1620.2,
+   "end": 1622.12
+  },
+  {
+   "text": " that we're going to ask just to make sure you're away.",
+   "start": 1622.12,
+   "end": 1625.16
+  },
+  {
+   "text": " So an answer to that doesn't get you a cushion.",
+   "start": 1625.16,
+   "end": 1627.72
+  },
+  {
+   "text": " But an answer like, what's your name?",
+   "start": 1627.72,
+   "end": 1631.16
+  },
+  {
+   "text": " Jace.",
+   "start": 1631.16,
+   "end": 1631.84
+  },
+  {
+   "text": " An answer like Jace just gave is that's",
+   "start": 1631.84,
+   "end": 1635.4
+  },
+  {
+   "text": " a good answer to a non-trivial question that",
+   "start": 1635.4,
+   "end": 1637.24
+  },
+  {
+   "text": " gets you a cushion.",
+   "start": 1637.24,
+   "end": 1639.28
+  },
+  {
+   "text": " All right, great.",
+   "start": 1639.28,
+   "end": 1640.28
+  },
+  {
+   "text": " So let's put up Jace's algorithm up here.",
+   "start": 1640.28,
+   "end": 1644.24
+  },
+  {
+   "text": " I'm going to write it out for the 1D version.",
+   "start": 1644.24,
+   "end": 1661.38
+  },
+  {
+   "text": " So what we have here is a recursive algorithm.",
+   "start": 1661.42,
+   "end": 1683.28
+  },
+  {
+   "text": " So the picture you want to keep in your head",
+   "start": 1683.28,
+   "end": 1684.8
+  },
+  {
+   "text": " is this picture that I've put up there.",
+   "start": 1684.8,
+   "end": 1686.88
+  },
+  {
+   "text": " And this is a divide and conquer algorithm.",
+   "start": 1686.88,
+   "end": 1691.01
+  },
+  {
+   "text": " You're going to see this over and over, this paradigm,",
+   "start": 1691.01,
+   "end": 1694.13
+  },
+  {
+   "text": " over and over in 6006.",
+   "start": 1694.13,
+   "end": 1697.37
+  },
+  {
+   "text": " We're going to look at the n over 2 position.",
+   "start": 1697.37,
+   "end": 1706.02
+  },
+  {
+   "text": " And we're going to look to the left.",
+   "start": 1706.02,
+   "end": 1708.74
+  },
+  {
+   "text": " And we're going to look to the right.",
+   "start": 1708.74,
+   "end": 1710.93
+  },
+  {
+   "text": " And we're going to do that in sequence.",
+   "start": 1710.93,
+   "end": 1713.54
+  },
+  {
+   "text": " So if a n over 2 is less than a n over 2 minus 1,",
+   "start": 1713.54,
+   "end": 1726.18
+  },
+  {
+   "text": " then only look at the left half, 1",
+   "start": 1726.18,
+   "end": 1738.11
+  },
+  {
+   "text": " through n over 2 minus 1, to look for a peak, for a peak.",
+   "start": 1738.11,
+   "end": 1748.89
+  },
+  {
+   "text": " So that's step one.",
+   "start": 1748.89,
+   "end": 1751.01
+  },
+  {
+   "text": " And I can run the right hand side or the left hand side.",
+   "start": 1751.01,
+   "end": 1753.25
+  },
+  {
+   "text": " Doesn't really matter.",
+   "start": 1753.25,
+   "end": 1755.96
+  },
+  {
+   "text": " I chose to do the left hand side first, the left half.",
+   "start": 1755.96,
+   "end": 1760.62
+  },
+  {
+   "text": " And so what I've done is through that one step,",
+   "start": 1760.62,
+   "end": 1764.58
+  },
+  {
+   "text": " if in fact you have that condition a n over 2 is less than a n",
+   "start": 1764.58,
+   "end": 1770.86
+  },
+  {
+   "text": " over 2 minus 1, then you move to your left",
+   "start": 1770.86,
+   "end": 1773.62
+  },
+  {
+   "text": " and you work on one half of the problem.",
+   "start": 1773.62,
+   "end": 1777.45
+  },
+  {
+   "text": " But if that's not the case, then if n over 2 is less than",
+   "start": 1777.45,
+   "end": 1784.98
+  },
+  {
+   "text": " a n over n by 2 plus 1, then only",
+   "start": 1784.98,
+   "end": 1790.14
+  },
+  {
+   "text": " look at n over 2 plus 1 through n for a peak.",
+   "start": 1790.14,
+   "end": 1797.55
+  },
+  {
+   "text": " So I haven't bothered writing out all the words.",
+   "start": 1797.55,
+   "end": 1799.99
+  },
+  {
+   "text": " They're exactly the same as the left hand side.",
+   "start": 1799.99,
+   "end": 1803.51
+  },
+  {
+   "text": " You just look to the right hand side.",
+   "start": 1803.51,
+   "end": 1806.07
+  },
+  {
+   "text": " Otherwise, if both of these conditions don't fire,",
+   "start": 1806.07,
+   "end": 1810.45
+  },
+  {
+   "text": " you're actually done.",
+   "start": 1810.45,
+   "end": 1812.68
+  },
+  {
+   "text": " That's actually the best case in terms of finishing early,",
+   "start": 1812.68,
+   "end": 1816.16
+  },
+  {
+   "text": " at least in this recursive step.",
+   "start": 1816.16,
+   "end": 1818.29
+  },
+  {
+   "text": " Because now the n over 2 position is a peak.",
+   "start": 1818.29,
+   "end": 1827.08
+  },
+  {
+   "text": " Because what you've found is that the n over 2 position is",
+   "start": 1827.08,
+   "end": 1830.84
+  },
+  {
+   "text": " greater than or equal to both of its adjacent positions.",
+   "start": 1830.84,
+   "end": 1834.72
+  },
+  {
+   "text": " And that's exactly the definition of a peak.",
+   "start": 1834.72,
+   "end": 1836.84
+  },
+  {
+   "text": " So you're done.",
+   "start": 1836.84,
+   "end": 1839.32
+  },
+  {
+   "text": " So all of this is good.",
+   "start": 1839.32,
+   "end": 1844.5
+  },
+  {
+   "text": " You want to write an argument that this algorithm is correct.",
+   "start": 1844.5,
+   "end": 1853.39
+  },
+  {
+   "text": " And I'm not going to bother with that.",
+   "start": 1853.39,
+   "end": 1854.87
+  },
+  {
+   "text": " I just wave my hands a bit, and you all nodded.",
+   "start": 1854.87,
+   "end": 1859.56
+  },
+  {
+   "text": " So we're done with that.",
+   "start": 1859.56,
+   "end": 1861.28
+  },
+  {
+   "text": " But the point being, you will see in your problem set",
+   "start": 1861.28,
+   "end": 1867.28
+  },
+  {
+   "text": " a precise argument for a more complicated algorithm,",
+   "start": 1867.28,
+   "end": 1870.72
+  },
+  {
+   "text": " the 2D version of this.",
+   "start": 1870.72,
+   "end": 1872.72
+  },
+  {
+   "text": " And that should be a template for you",
+   "start": 1872.72,
+   "end": 1875.08
+  },
+  {
+   "text": " to go write a proof or an argument, a formal argument,",
+   "start": 1875.08,
+   "end": 1879.2
+  },
+  {
+   "text": " that a particular algorithm is correct,",
+   "start": 1879.2,
+   "end": 1881.6
+  },
+  {
+   "text": " that it does what it claims to do.",
+   "start": 1881.6,
+   "end": 1883.56
+  },
+  {
+   "text": " And in this case, it's two, three lines of careful reasoning",
+   "start": 1883.56,
+   "end": 1890.44
+  },
+  {
+   "text": " that I essentially say, given the definition of the peak,",
+   "start": 1890.44,
+   "end": 1894.56
+  },
+  {
+   "text": " that this is going to find a peak in the array",
+   "start": 1894.56,
+   "end": 1898.6
+  },
+  {
+   "text": " that you're given.",
+   "start": 1898.6,
+   "end": 1900.92
+  },
+  {
+   "text": " So we all believe that this algorithm is correct.",
+   "start": 1900.92,
+   "end": 1904.96
+  },
+  {
+   "text": " Let's talk now about the complexity of this algorithm.",
+   "start": 1904.96,
+   "end": 1908.66
+  },
+  {
+   "text": " Because the whole point of this algorithm",
+   "start": 1908.66,
+   "end": 1910.58
+  },
+  {
+   "text": " was because we didn't like this theta n complexity corresponding",
+   "start": 1910.58,
+   "end": 1914.82
+  },
+  {
+   "text": " to the straightforward algorithm.",
+   "start": 1914.82,
+   "end": 1916.38
+  },
+  {
+   "text": " So it'd like to do better.",
+   "start": 1916.38,
+   "end": 1928.36
+  },
+  {
+   "text": " So what I'd like to do is ask one of you",
+   "start": 1928.36,
+   "end": 1930.8
+  },
+  {
+   "text": " to give me a recurrence relation of the kind,",
+   "start": 1930.8,
+   "end": 1934.24
+  },
+  {
+   "text": " t of n equals blah, blah, blah, that",
+   "start": 1934.24,
+   "end": 1938.6
+  },
+  {
+   "text": " would correspond to this recursive algorithm, this divide",
+   "start": 1938.6,
+   "end": 1942.92
+  },
+  {
+   "text": " and concord algorithm.",
+   "start": 1942.92,
+   "end": 1944.08
+  },
+  {
+   "text": " And then using that, I'd like to get",
+   "start": 1944.08,
+   "end": 1946.64
+  },
+  {
+   "text": " to the actual complexity in terms",
+   "start": 1946.64,
+   "end": 1949.43
+  },
+  {
+   "text": " of what the theta of complexity corresponds to.",
+   "start": 1949.43,
+   "end": 1953.51
+  },
+  {
+   "text": " Yeah, back there.",
+   "start": 1953.51,
+   "end": 1962.76
+  },
+  {
+   "text": " Yeah?",
+   "start": 1962.76,
+   "end": 1963.26
+  },
+  {
+   "text": " Exactly.",
+   "start": 1963.26,
+   "end": 1972.4
+  },
+  {
+   "text": " Great, exactly right.",
+   "start": 1972.4,
+   "end": 1973.4
+  },
+  {
+   "text": " That's exactly right.",
+   "start": 1973.4,
+   "end": 1974.48
+  },
+  {
+   "text": " So if you look at this algorithm and you say,",
+   "start": 1974.48,
+   "end": 1978.28
+  },
+  {
+   "text": " from a computation standpoint, can I",
+   "start": 1978.28,
+   "end": 1981.32
+  },
+  {
+   "text": " write an equation corresponding to the execution",
+   "start": 1981.32,
+   "end": 1985.52
+  },
+  {
+   "text": " of this algorithm?",
+   "start": 1985.52,
+   "end": 1986.6
+  },
+  {
+   "text": " And you say, t of n is the work",
+   "start": 1986.6,
+   "end": 1988.76
+  },
+  {
+   "text": " that this algorithm does on input of size n.",
+   "start": 1988.76,
+   "end": 2005.4
+  },
+  {
+   "text": " Then I can write this equation.",
+   "start": 2005.4,
+   "end": 2011.33
+  },
+  {
+   "text": " And this theta 1 corresponds to the two comparisons",
+   "start": 2011.33,
+   "end": 2014.53
+  },
+  {
+   "text": " that you do, potentially the two comparisons that you do,",
+   "start": 2014.53,
+   "end": 2018.53
+  },
+  {
+   "text": " looking at the left-hand side and the right-hand side.",
+   "start": 2018.53,
+   "end": 2021.45
+  },
+  {
+   "text": " So 2 is a constant.",
+   "start": 2021.45,
+   "end": 2022.85
+  },
+  {
+   "text": " So that's why we put theta 1.",
+   "start": 2022.85,
+   "end": 2025.21
+  },
+  {
+   "text": " So you get a cushion 2.",
+   "start": 2025.21,
+   "end": 2027.01
+  },
+  {
+   "text": " Watch out, guys.",
+   "start": 2027.01,
+   "end": 2029.65
+  },
+  {
+   "text": " Whoa.",
+   "start": 2029.65,
+   "end": 2030.77
+  },
+  {
+   "text": " Actually, that wasn't so bad.",
+   "start": 2030.77,
+   "end": 2034.06
+  },
+  {
+   "text": " Vier's left.",
+   "start": 2034.06,
+   "end": 2035.26
+  },
+  {
+   "text": " Eric, Vier's left.",
+   "start": 2035.26,
+   "end": 2037.42
+  },
+  {
+   "text": " So if you take this and you start expanding it,",
+   "start": 2037.42,
+   "end": 2043.35
+  },
+  {
+   "text": " eventually you're going to get to the base case, which",
+   "start": 2043.35,
+   "end": 2046.55
+  },
+  {
+   "text": " is t of 1 is theta 1.",
+   "start": 2046.55,
+   "end": 2052.57
+  },
+  {
+   "text": " Because you have a 1 element array, for that array,",
+   "start": 2052.57,
+   "end": 2056.77
+  },
+  {
+   "text": " you're just going to return that as a peak.",
+   "start": 2056.77,
+   "end": 2059.67
+  },
+  {
+   "text": " And so if you do that and you expand it all the way out,",
+   "start": 2059.67,
+   "end": 2063.15
+  },
+  {
+   "text": " then you can write t of n equals theta 1 plus theta 1.",
+   "start": 2063.15,
+   "end": 2071.1
+  },
+  {
+   "text": " And you're going to do this log to the base 2 of n times.",
+   "start": 2071.1,
+   "end": 2079.34
+  },
+  {
+   "text": " And adding these all up gives you a complexity theta log 2 of n.",
+   "start": 2079.34,
+   "end": 2088.32
+  },
+  {
+   "text": " So now you compare this with that.",
+   "start": 2088.32,
+   "end": 2093.16
+  },
+  {
+   "text": " And there's really a huge difference.",
+   "start": 2093.16,
+   "end": 2094.64
+  },
+  {
+   "text": " There's an exponential difference.",
+   "start": 2094.64,
+   "end": 2097.48
+  },
+  {
+   "text": " If you coded up this algorithm in Python,",
+   "start": 2097.48,
+   "end": 2101.89
+  },
+  {
+   "text": " and I did both these algorithms for the 1D version.",
+   "start": 2101.89,
+   "end": 2106.17
+  },
+  {
+   "text": " And if you run it on n being 10 million or so,",
+   "start": 2106.17,
+   "end": 2114.18
+  },
+  {
+   "text": " then this algorithm takes 13 seconds.",
+   "start": 2114.18,
+   "end": 2118.3
+  },
+  {
+   "text": " The theta n algorithm takes 13 seconds.",
+   "start": 2118.3,
+   "end": 2121.9
+  },
+  {
+   "text": " And this one takes 0.001 seconds.",
+   "start": 2121.9,
+   "end": 2126.54
+  },
+  {
+   "text": " Huge difference.",
+   "start": 2126.54,
+   "end": 2128.1
+  },
+  {
+   "text": " So there is a big difference between theta n and theta log n.",
+   "start": 2128.1,
+   "end": 2131.77
+  },
+  {
+   "text": " It's literally the difference between 2 raised to n and n.",
+   "start": 2131.77,
+   "end": 2135.85
+  },
+  {
+   "text": " It makes sense to try and reduce complexity, as you can see,",
+   "start": 2135.85,
+   "end": 2141.89
+  },
+  {
+   "text": " especially if you're talking about large inputs.",
+   "start": 2141.89,
+   "end": 2145.41
+  },
+  {
+   "text": " And you'll see that more clearly as we go to a 2D version",
+   "start": 2145.41,
+   "end": 2149.91
+  },
+  {
+   "text": " of this problem.",
+   "start": 2149.91,
+   "end": 2152.2
+  },
+  {
+   "text": " So you can't really do better for the 1D.",
+   "start": 2152.2,
+   "end": 2153.92
+  },
+  {
+   "text": " The 1D is a straightforward problem.",
+   "start": 2153.92,
+   "end": 2156.76
+  },
+  {
+   "text": " It gets a little more interesting.",
+   "start": 2156.76,
+   "end": 2158.52
+  },
+  {
+   "text": " The problems get a little more sophisticated.",
+   "start": 2158.52,
+   "end": 2163.6
+  },
+  {
+   "text": " And we look at a 2D version of peak finding.",
+   "start": 2163.64,
+   "end": 2168.36
+  },
+  {
+   "text": " So let's talk about the 2D version.",
+   "start": 2168.36,
+   "end": 2175.8
+  },
+  {
+   "text": " So as you can imagine, in the 2D version,",
+   "start": 2175.8,
+   "end": 2178.28
+  },
+  {
+   "text": " you have a matrix or a two-dimensional array.",
+   "start": 2178.28,
+   "end": 2183.53
+  },
+  {
+   "text": " And we'll say this thing has n rows and m columns.",
+   "start": 2183.53,
+   "end": 2194.71
+  },
+  {
+   "text": " And now we have to define what a peak is.",
+   "start": 2194.71,
+   "end": 2197.23
+  },
+  {
+   "text": " And it's a hill.",
+   "start": 2197.23,
+   "end": 2198.39
+  },
+  {
+   "text": " It's the obvious definition of a peak.",
+   "start": 2198.39,
+   "end": 2201.55
+  },
+  {
+   "text": " So if you had a in here, c, b, d, e, then as you can guess,",
+   "start": 2201.55,
+   "end": 2213.46
+  },
+  {
+   "text": " a is a 2D peak if and only if a greater than or equal to b,",
+   "start": 2213.46,
+   "end": 2224.56
+  },
+  {
+   "text": " a greater than or equal to d, c, and e.",
+   "start": 2224.56,
+   "end": 2230.58
+  },
+  {
+   "text": " So it's a little hill up there.",
+   "start": 2230.58,
+   "end": 2232.4
+  },
+  {
+   "text": " And again, I've used the greater than or equal to here.",
+   "start": 2232.4,
+   "end": 2235.12
+  },
+  {
+   "text": " So that's similar to the 1D in the case",
+   "start": 2235.16,
+   "end": 2238.48
+  },
+  {
+   "text": " that you'll always find a peak in any 2D matrix.",
+   "start": 2238.48,
+   "end": 2243.97
+  },
+  {
+   "text": " Now again, I'll give you the straightforward algorithm.",
+   "start": 2243.97,
+   "end": 2249.22
+  },
+  {
+   "text": " And we'll call it the greedy ascent algorithm.",
+   "start": 2249.22,
+   "end": 2261.66
+  },
+  {
+   "text": " And the greedy ascent algorithm essentially",
+   "start": 2261.66,
+   "end": 2263.74
+  },
+  {
+   "text": " picks the direction and tries to follow that direction",
+   "start": 2263.74,
+   "end": 2270.15
+  },
+  {
+   "text": " in order to find the peak.",
+   "start": 2270.15,
+   "end": 2272.78
+  },
+  {
+   "text": " So for example, if I had this particular matrix,",
+   "start": 2272.82,
+   "end": 2283.05
+  },
+  {
+   "text": " 14, 13, 12, 15, 9, 11, 7, then what might happen",
+   "start": 2283.05,
+   "end": 2297.84
+  },
+  {
+   "text": " is if I started at some arbitrary midpoint,",
+   "start": 2297.84,
+   "end": 2301.88
+  },
+  {
+   "text": " so the greedy ascent algorithm has to make choices as to where",
+   "start": 2301.88,
+   "end": 2305.12
+  },
+  {
+   "text": " to start.",
+   "start": 2305.12,
+   "end": 2306.2
+  },
+  {
+   "text": " Just like we had different cases here,",
+   "start": 2306.2,
+   "end": 2309.2
+  },
+  {
+   "text": " you have to make a choice as to where to start.",
+   "start": 2309.2,
+   "end": 2311.12
+  },
+  {
+   "text": " You might want to start in the middle.",
+   "start": 2311.12,
+   "end": 2312.8
+  },
+  {
+   "text": " And you might want to work your way left first.",
+   "start": 2312.8,
+   "end": 2315.56
+  },
+  {
+   "text": " You just keep going left or keep going right.",
+   "start": 2316.24,
+   "end": 2319.72
+  },
+  {
+   "text": " And if you hit an edge, you go down.",
+   "start": 2319.72,
+   "end": 2322.32
+  },
+  {
+   "text": " So you make some choices as to what the default traversal",
+   "start": 2322.32,
+   "end": 2326.44
+  },
+  {
+   "text": " directions are.",
+   "start": 2326.44,
+   "end": 2327.88
+  },
+  {
+   "text": " And so if you say you want to start with 12,",
+   "start": 2327.88,
+   "end": 2330.88
+  },
+  {
+   "text": " you're going to go look for something to your left.",
+   "start": 2330.88,
+   "end": 2334.04
+  },
+  {
+   "text": " And if it's greater, then you're",
+   "start": 2334.04,
+   "end": 2336.99
+  },
+  {
+   "text": " going to follow that direction.",
+   "start": 2336.99,
+   "end": 2338.47
+  },
+  {
+   "text": " If it's less, then you're going",
+   "start": 2338.47,
+   "end": 2341.07
+  },
+  {
+   "text": " to go in the other direction in this case, for example.",
+   "start": 2341.07,
+   "end": 2345.07
+  },
+  {
+   "text": " So in this case, you'll go 12, 13, 14, 15, 16, 17, 19, and 20.",
+   "start": 2345.07,
+   "end": 2354.23
+  },
+  {
+   "text": " And you'd find this peak.",
+   "start": 2354.23,
+   "end": 2357.9
+  },
+  {
+   "text": " Now, I haven't given you the specific details",
+   "start": 2357.9,
+   "end": 2361.7
+  },
+  {
+   "text": " of a greedy ascent algorithm.",
+   "start": 2361.7,
+   "end": 2363.74
+  },
+  {
+   "text": " But I think if you look at the worst case possibilities",
+   "start": 2363.74,
+   "end": 2373.44
+  },
+  {
+   "text": " here with respect to a given matrix",
+   "start": 2373.44,
+   "end": 2376.4
+  },
+  {
+   "text": " and for any given starting point and for any given strategy",
+   "start": 2376.4,
+   "end": 2381.68
+  },
+  {
+   "text": " in terms of choosing left first versus right first",
+   "start": 2381.68,
+   "end": 2385.6
+  },
+  {
+   "text": " or down first versus up first, you",
+   "start": 2385.6,
+   "end": 2388.76
+  },
+  {
+   "text": " will have a situation where just like we had in the 1D case,",
+   "start": 2388.76,
+   "end": 2393.8
+  },
+  {
+   "text": " you may end up touching a large fraction of the elements",
+   "start": 2393.8,
+   "end": 2400.44
+  },
+  {
+   "text": " in the 2D array.",
+   "start": 2400.44,
+   "end": 2402.76
+  },
+  {
+   "text": " So in this case, we ended up touching",
+   "start": 2402.76,
+   "end": 2405.48
+  },
+  {
+   "text": " a bunch of different elements.",
+   "start": 2405.48,
+   "end": 2406.88
+  },
+  {
+   "text": " And it's quite possible that you could end up",
+   "start": 2406.88,
+   "end": 2409.96
+  },
+  {
+   "text": " starting from the midpoint.",
+   "start": 2409.96,
+   "end": 2411.72
+  },
+  {
+   "text": " You could end up touching half the elements.",
+   "start": 2411.72,
+   "end": 2413.76
+  },
+  {
+   "text": " And in some cases, touching all of the elements.",
+   "start": 2413.76,
+   "end": 2416.88
+  },
+  {
+   "text": " So if you do a worst case analysis of this algorithm,",
+   "start": 2416.88,
+   "end": 2423.0
+  },
+  {
+   "text": " a particular algorithm with particular choices",
+   "start": 2423.0,
+   "end": 2425.08
+  },
+  {
+   "text": " in terms of the starting point and the direction of search,",
+   "start": 2425.08,
+   "end": 2430.4
+  },
+  {
+   "text": " a greedy ascent algorithm would have theta nm complexity.",
+   "start": 2430.4,
+   "end": 2434.36
+  },
+  {
+   "text": " And in the case where n equals m or m equals n,",
+   "start": 2434.36,
+   "end": 2442.49
+  },
+  {
+   "text": " you'd have theta n squared complexity.",
+   "start": 2442.49,
+   "end": 2446.29
+  },
+  {
+   "text": " I want to spend very much time on this",
+   "start": 2446.29,
+   "end": 2448.41
+  },
+  {
+   "text": " because I want to talk to you about the divide and conquer",
+   "start": 2448.41,
+   "end": 2452.73
+  },
+  {
+   "text": " versions of this algorithm for the 2D peak.",
+   "start": 2452.73,
+   "end": 2458.01
+  },
+  {
+   "text": " But hopefully you're all with me",
+   "start": 2458.01,
+   "end": 2460.33
+  },
+  {
+   "text": " with respect to what the worst case complexity is.",
+   "start": 2460.33,
+   "end": 2465.03
+  },
+  {
+   "text": " People by that?",
+   "start": 2465.03,
+   "end": 2466.23
+  },
+  {
+   "text": " Yeah, question back there.",
+   "start": 2466.23,
+   "end": 2467.19
+  },
+  {
+   "text": " So there are specific greedy ascent algorithms",
+   "start": 2474.36,
+   "end": 2478.76
+  },
+  {
+   "text": " and specific matrices where if I give you the code",
+   "start": 2478.76,
+   "end": 2482.32
+  },
+  {
+   "text": " for the algorithm and I give you a specific matrix,",
+   "start": 2482.32,
+   "end": 2484.64
+  },
+  {
+   "text": " that I could make you touch all of these elements.",
+   "start": 2484.64,
+   "end": 2488.16
+  },
+  {
+   "text": " That's correct.",
+   "start": 2488.16,
+   "end": 2488.84
+  },
+  {
+   "text": " So if you're talking about worst case,",
+   "start": 2488.84,
+   "end": 2490.56
+  },
+  {
+   "text": " you're being very paranoid when you talk about worst case",
+   "start": 2490.56,
+   "end": 2493.04
+  },
+  {
+   "text": " complexity.",
+   "start": 2493.04,
+   "end": 2494.52
+  },
+  {
+   "text": " And so I'm hand waving a bit here",
+   "start": 2494.52,
+   "end": 2498.76
+  },
+  {
+   "text": " simply because I haven't given you",
+   "start": 2498.76,
+   "end": 2500.44
+  },
+  {
+   "text": " the specifics of the algorithm yet.",
+   "start": 2500.44,
+   "end": 2502.36
+  },
+  {
+   "text": " This is really a set of algorithms",
+   "start": 2502.36,
+   "end": 2504.64
+  },
+  {
+   "text": " because I haven't given you the code.",
+   "start": 2504.64,
+   "end": 2506.04
+  },
+  {
+   "text": " I haven't told you where it starts",
+   "start": 2506.04,
+   "end": 2507.6
+  },
+  {
+   "text": " and which direction it goes.",
+   "start": 2507.6,
+   "end": 2509.0
+  },
+  {
+   "text": " But you go do that, fix it.",
+   "start": 2509.0,
+   "end": 2511.52
+  },
+  {
+   "text": " And I would be the person who tries to find the worst case",
+   "start": 2511.52,
+   "end": 2514.4
+  },
+  {
+   "text": " complexity.",
+   "start": 2514.4,
+   "end": 2515.32
+  },
+  {
+   "text": " Certainly it's very easy to get to theta nm",
+   "start": 2515.32,
+   "end": 2518.52
+  },
+  {
+   "text": " in terms of having some constant multiplying n times m.",
+   "start": 2518.52,
+   "end": 2523.16
+  },
+  {
+   "text": " But you can definitely get to that constant",
+   "start": 2523.16,
+   "end": 2525.76
+  },
+  {
+   "text": " being very close to 1, if not 1.",
+   "start": 2525.76,
+   "end": 2531.33
+  },
+  {
+   "text": " All right.",
+   "start": 2531.33,
+   "end": 2532.17
+  },
+  {
+   "text": " So let's talk about divide and conquer.",
+   "start": 2532.21,
+   "end": 2535.77
+  },
+  {
+   "text": " Let's say that I did something like this",
+   "start": 2535.77,
+   "end": 2539.21
+  },
+  {
+   "text": " where I just tried to jam the binary search algorithm",
+   "start": 2539.21,
+   "end": 2544.25
+  },
+  {
+   "text": " into the 2D version.",
+   "start": 2544.25,
+   "end": 2557.75
+  },
+  {
+   "text": " So what I'm going to do is I'm going",
+   "start": 2557.75,
+   "end": 2564.07
+  },
+  {
+   "text": " to pick the middle column, j equals m over 2.",
+   "start": 2564.07,
+   "end": 2575.37
+  },
+  {
+   "text": " And I'm going to find a 1D peak using whatever algorithm",
+   "start": 2575.37,
+   "end": 2581.38
+  },
+  {
+   "text": " I want.",
+   "start": 2581.38,
+   "end": 2581.88
+  },
+  {
+   "text": " And I'll probably end up using the more efficient algorithm,",
+   "start": 2581.88,
+   "end": 2584.82
+  },
+  {
+   "text": " the binary search version that's gone all the way",
+   "start": 2584.82,
+   "end": 2588.18
+  },
+  {
+   "text": " to the left of the board there.",
+   "start": 2588.18,
+   "end": 2590.48
+  },
+  {
+   "text": " And let's say I find a binary peak at i, j.",
+   "start": 2590.48,
+   "end": 2593.92
+  },
+  {
+   "text": " Because I've picked a column and I'm just finding a 1D peak.",
+   "start": 2593.92,
+   "end": 2600.26
+  },
+  {
+   "text": " So this is j equals m over 2.",
+   "start": 2600.26,
+   "end": 2603.51
+  },
+  {
+   "text": " That's i.",
+   "start": 2603.51,
+   "end": 2605.67
+  },
+  {
+   "text": " Now I use i, j in particular wrote i as a start",
+   "start": 2605.67,
+   "end": 2618.71
+  },
+  {
+   "text": " to find a 1D peak on row i.",
+   "start": 2618.71,
+   "end": 2627.48
+  },
+  {
+   "text": " And I stand up here and I'm really happy,",
+   "start": 2627.48,
+   "end": 2630.52
+  },
+  {
+   "text": " because I say, wow, I picked the middle column.",
+   "start": 2630.52,
+   "end": 2635.28
+  },
+  {
+   "text": " I found a 1D peak.",
+   "start": 2635.28,
+   "end": 2636.84
+  },
+  {
+   "text": " That is theta n complexity to find a 1D peak, as we argued.",
+   "start": 2636.84,
+   "end": 2641.36
+  },
+  {
+   "text": " And one side, the theta m.",
+   "start": 2641.36,
+   "end": 2647.88
+  },
+  {
+   "text": " Oh, I'm sorry.",
+   "start": 2647.88,
+   "end": 2648.68
+  },
+  {
+   "text": " You're right.",
+   "start": 2648.68,
+   "end": 2649.76
+  },
+  {
+   "text": " The log n complexity, that's what this was.",
+   "start": 2649.76,
+   "end": 2653.44
+  },
+  {
+   "text": " Better have that here.",
+   "start": 2653.44,
+   "end": 2655.32
+  },
+  {
+   "text": " Yeah, log n complexity.",
+   "start": 2655.32,
+   "end": 2656.44
+  },
+  {
+   "text": " Thanks, Eric.",
+   "start": 2656.44,
+   "end": 2658.04
+  },
+  {
+   "text": " And then once I do that, I can find a 1D peak on row i.",
+   "start": 2658.04,
+   "end": 2666.12
+  },
+  {
+   "text": " In this case, the row i would be m-wide.",
+   "start": 2666.12,
+   "end": 2668.76
+  },
+  {
+   "text": " So it'd be log m complexity.",
+   "start": 2668.76,
+   "end": 2670.64
+  },
+  {
+   "text": " If n equals m, then I have a couple of steps of log n.",
+   "start": 2670.64,
+   "end": 2673.84
+  },
+  {
+   "text": " And I'm done.",
+   "start": 2673.84,
+   "end": 2676.04
+  },
+  {
+   "text": " Am I done?",
+   "start": 2676.04,
+   "end": 2678.31
+  },
+  {
+   "text": " No.",
+   "start": 2678.31,
+   "end": 2679.51
+  },
+  {
+   "text": " Can someone tell me why I'm not done?",
+   "start": 2679.51,
+   "end": 2682.79
+  },
+  {
+   "text": " Precisely, yep.",
+   "start": 2682.79,
+   "end": 2694.35
+  },
+  {
+   "text": " That's exactly correct.",
+   "start": 2694.35,
+   "end": 2696.23
+  },
+  {
+   "text": " So this algorithm is incorrect.",
+   "start": 2696.23,
+   "end": 2699.87
+  },
+  {
+   "text": " It doesn't work.",
+   "start": 2699.87,
+   "end": 2701.46
+  },
+  {
+   "text": " It's efficient but incorrect.",
+   "start": 2701.46,
+   "end": 2703.7
+  },
+  {
+   "text": " You want to be correct.",
+   "start": 2706.5,
+   "end": 2707.58
+  },
+  {
+   "text": " Being correct and inefficient is definitely",
+   "start": 2707.58,
+   "end": 2710.1
+  },
+  {
+   "text": " better than being incorrect and efficient.",
+   "start": 2710.1,
+   "end": 2715.66
+  },
+  {
+   "text": " So this is an efficient algorithm in the sense",
+   "start": 2715.66,
+   "end": 2718.3
+  },
+  {
+   "text": " that it would only take log n time.",
+   "start": 2718.3,
+   "end": 2722.1
+  },
+  {
+   "text": " But it doesn't work.",
+   "start": 2722.1,
+   "end": 2722.9
+  },
+  {
+   "text": " And I'll give you a simple example here where it doesn't work.",
+   "start": 2722.9,
+   "end": 2732.5
+  },
+  {
+   "text": " The problem is a 2D peak may not exist on row i.",
+   "start": 2732.5,
+   "end": 2746.12
+  },
+  {
+   "text": " And here's an example of that.",
+   "start": 2746.12,
+   "end": 2753.65
+  },
+  {
+   "text": " Actually, this is exactly the example of that.",
+   "start": 2753.65,
+   "end": 2758.29
+  },
+  {
+   "text": " Let's say that I started with this row.",
+   "start": 2758.29,
+   "end": 2762.65
+  },
+  {
+   "text": " Since I'm starting with the middle row",
+   "start": 2762.65,
+   "end": 2765.13
+  },
+  {
+   "text": " and I could start with this one or that one,",
+   "start": 2765.13,
+   "end": 2766.89
+  },
+  {
+   "text": " let's say I started with that one,",
+   "start": 2766.89,
+   "end": 2770.63
+  },
+  {
+   "text": " I end up finding a peak.",
+   "start": 2770.63,
+   "end": 2776.35
+  },
+  {
+   "text": " And if this were 10 up here, I'd choose 12 as a peak.",
+   "start": 2776.35,
+   "end": 2782.32
+  },
+  {
+   "text": " And it's quite possible that I've returned 12 as a peak,",
+   "start": 2782.32,
+   "end": 2786.27
+  },
+  {
+   "text": " even though 19 is bigger because 12 is a peak given 10",
+   "start": 2786.27,
+   "end": 2789.03
+  },
+  {
+   "text": " and 11 up here.",
+   "start": 2789.03,
+   "end": 2790.35
+  },
+  {
+   "text": " And then when I choose this particular row",
+   "start": 2790.35,
+   "end": 2793.03
+  },
+  {
+   "text": " and I find a peak on this row, it would be 14.",
+   "start": 2793.03,
+   "end": 2796.67
+  },
+  {
+   "text": " That is a 1D peak on this row, but 14 is not a 2D peak.",
+   "start": 2796.71,
+   "end": 2802.79
+  },
+  {
+   "text": " So this particular example, 14 would return 14.",
+   "start": 2802.79,
+   "end": 2807.64
+  },
+  {
+   "text": " And 14 is not a 2D peak.",
+   "start": 2807.64,
+   "end": 2813.72
+  },
+  {
+   "text": " You can collect your question after the class.",
+   "start": 2813.72,
+   "end": 2817.5
+  },
+  {
+   "text": " So not so good.",
+   "start": 2817.5,
+   "end": 2821.88
+  },
+  {
+   "text": " Looked like an efficient algorithm, but doesn't work.",
+   "start": 2821.88,
+   "end": 2826.16
+  },
+  {
+   "text": " So how can we get to something that actually works?",
+   "start": 2826.16,
+   "end": 2829.16
+  },
+  {
+   "text": " So the last algorithm that I'm going to show you,",
+   "start": 2829.2,
+   "end": 2834.3
+  },
+  {
+   "text": " and you'll see four different algorithms in your problem set",
+   "start": 2834.3,
+   "end": 2841.16
+  },
+  {
+   "text": " that you'll have to analyze the complexity for and decide",
+   "start": 2841.16,
+   "end": 2844.2
+  },
+  {
+   "text": " if they're efficient and if they're correct.",
+   "start": 2844.2,
+   "end": 2848.18
+  },
+  {
+   "text": " But here's a recursive version that",
+   "start": 2848.18,
+   "end": 2854.84
+  },
+  {
+   "text": " is better than in terms of complexity",
+   "start": 2854.84,
+   "end": 2857.62
+  },
+  {
+   "text": " than the greedy ascent algorithm.",
+   "start": 2857.62,
+   "end": 2860.13
+  },
+  {
+   "text": " And this one works.",
+   "start": 2860.13,
+   "end": 2863.4
+  },
+  {
+   "text": " So what I'm going to do is pick a middle column.",
+   "start": 2863.4,
+   "end": 2869.72
+  },
+  {
+   "text": " j equals m over 2 as before.",
+   "start": 2869.72,
+   "end": 2874.04
+  },
+  {
+   "text": " I'm going to find the global maximum on column j.",
+   "start": 2874.04,
+   "end": 2885.41
+  },
+  {
+   "text": " And that's going to be at ij.",
+   "start": 2885.41,
+   "end": 2889.56
+  },
+  {
+   "text": " I'm going to compare i, j minus 1, i, j, and ij plus 1.",
+   "start": 2889.56,
+   "end": 2900.44
+  },
+  {
+   "text": " Which means that once I found the maximum in this row,",
+   "start": 2900.44,
+   "end": 2903.6
+  },
+  {
+   "text": " all I'm going to look to the left and the right",
+   "start": 2903.6,
+   "end": 2905.92
+  },
+  {
+   "text": " and compare.",
+   "start": 2905.92,
+   "end": 2907.93
+  },
+  {
+   "text": " I'm going to pick the left columns",
+   "start": 2907.93,
+   "end": 2913.53
+  },
+  {
+   "text": " if i, j minus 1 is greater than i, j.",
+   "start": 2913.53,
+   "end": 2920.91
+  },
+  {
+   "text": " And similarly for the right.",
+   "start": 2920.91,
+   "end": 2929.48
+  },
+  {
+   "text": " And if in fact either of these two conditions don't fire,",
+   "start": 2929.48,
+   "end": 2937.58
+  },
+  {
+   "text": " and what I have is i, j is greater than or equal to i,",
+   "start": 2937.58,
+   "end": 2942.82
+  },
+  {
+   "text": " j minus 1 and i, j plus 1, then I'm done.",
+   "start": 2942.82,
+   "end": 2947.58
+  },
+  {
+   "text": " Just like I had for the 1D version,",
+   "start": 2947.58,
+   "end": 2952.77
+  },
+  {
+   "text": " if i, j is greater than or equal to i, j minus 1",
+   "start": 2952.77,
+   "end": 2959.36
+  },
+  {
+   "text": " and i, j plus 1, that implies i, j is a 2D peak.",
+   "start": 2959.36,
+   "end": 2969.4
+  },
+  {
+   "text": " And the reason that's the case is because i, j",
+   "start": 2969.4,
+   "end": 2972.96
+  },
+  {
+   "text": " was the maximum element in that column.",
+   "start": 2972.96,
+   "end": 2976.0
+  },
+  {
+   "text": " So you know that you've compared it",
+   "start": 2976.0,
+   "end": 2977.28
+  },
+  {
+   "text": " to all of the adjacent elements looking up",
+   "start": 2977.28,
+   "end": 2980.32
+  },
+  {
+   "text": " and looking down.",
+   "start": 2980.32,
+   "end": 2981.52
+  },
+  {
+   "text": " That's the maximum element.",
+   "start": 2981.52,
+   "end": 2983.0
+  },
+  {
+   "text": " Now you've looked at the left and the right.",
+   "start": 2983.0,
+   "end": 2985.16
+  },
+  {
+   "text": " And in fact, it's greater than or equal to the elements",
+   "start": 2985.16,
+   "end": 2987.72
+  },
+  {
+   "text": " on the left and the right.",
+   "start": 2987.72,
+   "end": 2989.12
+  },
+  {
+   "text": " And so therefore it's a 2D peak.",
+   "start": 2989.12,
+   "end": 2992.24
+  },
+  {
+   "text": " So in this case, when you pick the left or the right",
+   "start": 2992.24,
+   "end": 2997.44
+  },
+  {
+   "text": " columns, you'll pick one of them.",
+   "start": 2997.44,
+   "end": 2999.36
+  },
+  {
+   "text": " You're going to solve the new problem with half",
+   "start": 2999.36,
+   "end": 3007.31
+  },
+  {
+   "text": " the number of columns.",
+   "start": 3007.31,
+   "end": 3017.61
+  },
+  {
+   "text": " And again, you have to go through an analysis or an argument",
+   "start": 3017.61,
+   "end": 3021.85
+  },
+  {
+   "text": " to make sure that this algorithm is correct.",
+   "start": 3021.89,
+   "end": 3024.97
+  },
+  {
+   "text": " But it's intuitively correct simply",
+   "start": 3024.97,
+   "end": 3028.21
+  },
+  {
+   "text": " because it matches the 1D version much more closely.",
+   "start": 3028.21,
+   "end": 3033.21
+  },
+  {
+   "text": " And you also have your condition",
+   "start": 3033.21,
+   "end": 3035.49
+  },
+  {
+   "text": " where you break away right here, where",
+   "start": 3035.49,
+   "end": 3038.64
+  },
+  {
+   "text": " you have a 2D peak, just like the 1D version.",
+   "start": 3038.64,
+   "end": 3041.16
+  },
+  {
+   "text": " And what you've done is break this matrix up",
+   "start": 3041.16,
+   "end": 3043.92
+  },
+  {
+   "text": " into half the size.",
+   "start": 3043.92,
+   "end": 3046.2
+  },
+  {
+   "text": " And that's essentially why this algorithm works.",
+   "start": 3046.2,
+   "end": 3051.13
+  },
+  {
+   "text": " Then you have a single column, find the global maximum,",
+   "start": 3051.13,
+   "end": 3067.43
+  },
+  {
+   "text": " and you're done.",
+   "start": 3067.43,
+   "end": 3070.11
+  },
+  {
+   "text": " So that's the base case.",
+   "start": 3070.11,
+   "end": 3072.55
+  },
+  {
+   "text": " So let me end with just writing out",
+   "start": 3072.55,
+   "end": 3074.67
+  },
+  {
+   "text": " what the recurrence relation for the complexity of this",
+   "start": 3074.67,
+   "end": 3077.79
+  },
+  {
+   "text": " is and argue what the overall complexity of this algorithm",
+   "start": 3077.79,
+   "end": 3082.62
+  },
+  {
+   "text": " is.",
+   "start": 3082.62,
+   "end": 3085.59
+  },
+  {
+   "text": " And then I'll give you the bad news.",
+   "start": 3085.59,
+   "end": 3090.95
+  },
+  {
+   "text": " All right, so overall what you have",
+   "start": 3090.95,
+   "end": 3093.47
+  },
+  {
+   "text": " is you have something like t of nm",
+   "start": 3093.47,
+   "end": 3096.27
+  },
+  {
+   "text": " equals t of nm over 2 plus theta n.",
+   "start": 3096.27,
+   "end": 3102.57
+  },
+  {
+   "text": " Why is that?",
+   "start": 3102.57,
+   "end": 3103.65
+  },
+  {
+   "text": " Well, n is the number of rows, m is the number of columns.",
+   "start": 3103.65,
+   "end": 3107.81
+  },
+  {
+   "text": " In one case, you will be breaking things down",
+   "start": 3107.81,
+   "end": 3111.41
+  },
+  {
+   "text": " into half the number of columns, which is m over 2.",
+   "start": 3111.41,
+   "end": 3114.65
+  },
+  {
+   "text": " And in order to find the global maximum,",
+   "start": 3114.65,
+   "end": 3117.49
+  },
+  {
+   "text": " you'll be doing theta n work because you're",
+   "start": 3117.49,
+   "end": 3119.93
+  },
+  {
+   "text": " finding the global maximum.",
+   "start": 3119.93,
+   "end": 3121.81
+  },
+  {
+   "text": " You just have to scan it.",
+   "start": 3121.81,
+   "end": 3123.29
+  },
+  {
+   "text": " And that's what it's going to take.",
+   "start": 3124.29,
+   "end": 3128.84
+  },
+  {
+   "text": " And so if you do that and you go run it through,",
+   "start": 3128.84,
+   "end": 3131.96
+  },
+  {
+   "text": " and you know that t of n1 is theta n, which",
+   "start": 3131.96,
+   "end": 3136.2
+  },
+  {
+   "text": " is this last part over here, that's your base case,",
+   "start": 3136.2,
+   "end": 3140.86
+  },
+  {
+   "text": " you get t of nm is theta of n added to theta of n log of m",
+   "start": 3140.86,
+   "end": 3149.44
+  },
+  {
+   "text": " times log 2 of m times, which is theta of n log 2 of m.",
+   "start": 3149.44,
+   "end": 3162.23
+  },
+  {
+   "text": " All right?",
+   "start": 3162.23,
+   "end": 3163.64
+  },
+  {
+   "text": " So you're not done with peak finding.",
+   "start": 3163.64,
+   "end": 3168.12
+  },
+  {
+   "text": " What you'll see is at four algorithms coded in Python,",
+   "start": 3168.12,
+   "end": 3173.3
+  },
+  {
+   "text": " I'm not going to give away what those algorithms are,",
+   "start": 3173.3,
+   "end": 3175.3
+  },
+  {
+   "text": " but you'll have to recognize them.",
+   "start": 3175.3,
+   "end": 3177.1
+  },
+  {
+   "text": " You will have seen versions of those algorithms",
+   "start": 3177.1,
+   "end": 3180.18
+  },
+  {
+   "text": " already in lecture.",
+   "start": 3180.18,
+   "end": 3181.86
+  },
+  {
+   "text": " And your job is going to be to analyze the algorithms,",
+   "start": 3181.86,
+   "end": 3186.02
+  },
+  {
+   "text": " as I said before, prove that one of them is correct,",
+   "start": 3186.02,
+   "end": 3189.7
+  },
+  {
+   "text": " and find counter examples for the ones that aren't correct.",
+   "start": 3189.7,
+   "end": 3193.06
+  },
+  {
+   "text": " The course staff will stick around here",
+   "start": 3193.06,
+   "end": 3194.98
+  },
+  {
+   "text": " to answer questions, logistical questions,",
+   "start": 3194.98,
+   "end": 3197.1
+  },
+  {
+   "text": " or questions about lecture.",
+   "start": 3197.1,
+   "end": 3198.98
+  },
+  {
+   "text": " And I owe that gentleman a cushion.",
+   "start": 3198.98,
+   "end": 3201.66
+  }
+ ]
+}

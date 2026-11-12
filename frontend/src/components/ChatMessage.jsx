@@ -43,6 +43,24 @@ export default function ChatMessage({ msg }) {
               {msg.queryType.replace("_", "-")}
             </span>
           )}
+          {msg.evidence?.status === "insufficient" && (
+            <span className="eyebrow rounded-full border border-amber-400/40 bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800">
+              not in sources
+            </span>
+          )}
+          {msg.evidence?.status === "uncited" && (
+            <span className="eyebrow rounded-full border border-rose-400/40 bg-rose-50 px-2 py-0.5 text-[10px] text-rose-800">
+              no supporting citation
+            </span>
+          )}
+          {msg.warning?.degraded?.length > 0 && (
+            <span
+              title={`Skipped: ${msg.warning.degraded.join(", ")}`}
+              className="eyebrow rounded-full border border-line px-2 py-0.5 text-[10px] text-ink-faint"
+            >
+              reduced retrieval
+            </span>
+          )}
           {msg.content && (
             <button
               onClick={copy}
@@ -55,7 +73,7 @@ export default function ChatMessage({ msg }) {
 
         {msg.content ? (
           <div className="prose-answer text-[15px]">
-            <ReactMarkdown>{msg.content}</ReactMarkdown>
+            <ReactMarkdown>{normalizeCitations(msg.content)}</ReactMarkdown>
           </div>
         ) : (
           <ThinkingDots />
@@ -99,7 +117,7 @@ export default function ChatMessage({ msg }) {
                   {msg.citations.map((c, i) => (
                     <li key={i} className="flex gap-3">
                       <span className="mt-0.5 font-mono text-xs text-emerald">
-                        [{i + 1}]
+                        [{c.ref ?? i + 1}]
                       </span>
                       <div className="min-w-0">
                         <div className="text-xs font-semibold text-ink">
@@ -123,6 +141,11 @@ export default function ChatMessage({ msg }) {
       </div>
     </motion.div>
   );
+}
+
+// gpt-oss sometimes cites in its native style (【6】 or 【6†L1-L4】); show it as [6].
+function normalizeCitations(text) {
+  return text.replace(/【\s*(\d+(?:\s*[,–-]\s*\d+)*)\s*(?:†[^】]*)?】/g, "[$1]");
 }
 
 function ThinkingDots() {

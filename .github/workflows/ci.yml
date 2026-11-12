@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main, sourcemind-2.0]
+  pull_request:
+
+jobs:
+  python:
+    name: Lint + unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Ruff
+        run: ruff check eval backend
+      - name: Validate benchmark datasets
+        run: |
+          python - <<'EOF'
+          import glob, sys, yaml
+          from eval.datasets.schema import validate_file
+          m = yaml.safe_load(open("eval/corpus/manifest.yaml"))
+          docs = {d["key"] for d in m["documents"]} | {v["key"] for v in m.get("videos", [])}
+          bad = 0
+          for p in sorted(glob.glob("eval/datasets/*.jsonl")):
+              probs = validate_file(p, docs)
+              print(f"{p}: {'ok' if not probs else f'{len(probs)} problem(s)'}")
+              for e in probs[:10]:
+                  print("   ", e)
+              bad += len(probs)
+          sys.exit(1 if bad else 0)
+          EOF
+      - name: Frozen test set unchanged
+        run: |
+          if [ -f eval/datasets/test.sha256 ]; then
+            cd eval/datasets && sha256sum -c test.sha256
+          else
+            echo "no frozen test set yet"
+          fi
+      - name: Unit tests
+        run: python -m pytest eval/tests -q
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
+# The eval smoke gate (20 questions through the real pipeline) needs Postgres,
+# Qdrant and a GROQ_API_KEY secret; it is added once the smoke set exists.

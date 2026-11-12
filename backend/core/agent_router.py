@@ -15,8 +15,11 @@ queue, yielding the same event dicts the API layer expects:
 
   {"type": "query_type", "value": ...}
   {"type": "sub_queries", "value": [...]}
-  {"type": "citations", "value": [...]}
+  {"type": "warning", "value": {...}}      # a retrieval helper failed (degraded)
+  {"type": "context", "value": [...]}      # every passage shown to the model
   {"type": "token", "value": "..."}
+  {"type": "citations", "value": [...]}    # only passages the answer cited
+  {"type": "evidence", "value": {...}}     # supported / insufficient / uncited
   {"type": "done", "value": None}
 """
 from __future__ import annotations
@@ -29,13 +32,23 @@ from uuid import UUID
 from langgraph.graph import END, START, StateGraph
 
 from core.rag_engine import (
-    build_citations,
     format_context_for_llm,
     get_fast_llm,
     hydrate_contexts,
     retrieve,
-    stream_answer,
+    stream_grounded_answer,
 )
+
+
+async def _retrieve(state: "QueryState", query: str) -> list[dict[str, Any]]:
+    """retrieve() that reports failed expansion steps to the client instead of
+    silently answering with a weaker pipeline."""
+    diag: dict[str, Any] = {}
+    chunks = await retrieve(query, source_id=state.get("source_id"), diagnostics=diag)
+    if diag.get("degraded"):
+        await state["emit"]({"type": "warning",
+                             "value": {"degraded": sorted(set(diag["degraded"]))}})
+    return chunks
 
 
 # -- Graph state -----------------------------------------------------------
@@ -148,51 +161,40 @@ async def classify_node(state: QueryState) -> dict[str, Any]:
     return {"query_type": qt}
 
 
+def _dedupe(chunks: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[str] = set()
+    out = []
+    for c in chunks:
+        cid = str(c.get("id"))
+        if cid not in seen:
+            seen.add(cid)
+            out.append(c)
+    return out
+
+
 async def simple_node(state: QueryState) -> dict[str, Any]:
     question = state["question"]
-    source_id = state.get("source_id")
-    emit = state["emit"]
-
-    chunks = await retrieve(question, source_id=source_id)
-    chunks = await hydrate_contexts(chunks)
-    await emit({"type": "citations", "value": build_citations(chunks)})
-
-    async for tok in stream_answer(question, chunks, state.get("chat_history")):
-        await emit({"type": "token", "value": tok})
+    chunks = await hydrate_contexts(await _retrieve(state, question))
+    await stream_grounded_answer(state["emit"], question, chunks, state.get("chat_history"))
     # LangGraph requires each node to write at least one state channel.
     return {"query_type": state.get("query_type", "simple")}
 
 
 async def comparative_node(state: QueryState) -> dict[str, Any]:
     question = state["question"]
-    source_id = state.get("source_id")
     emit = state["emit"]
 
     subs = await decompose_comparative(question)
     await emit({"type": "sub_queries", "value": subs})
 
-    chunk_lists = await asyncio.gather(
-        *(retrieve(s, source_id=source_id) for s in subs),
-        return_exceptions=True,
-    )
-
+    chunk_lists = await asyncio.gather(*(_retrieve(state, s) for s in subs), return_exceptions=True)
     all_chunks: list[dict[str, Any]] = []
     for cl in chunk_lists:
         if isinstance(cl, Exception):
+            await emit({"type": "warning", "value": {"degraded": ["sub_query_search"]}})
             continue
         all_chunks.extend(cl)
-
-    # Dedupe by id
-    seen: set[str] = set()
-    unique = []
-    for c in all_chunks:
-        cid = str(c.get("id"))
-        if cid not in seen:
-            seen.add(cid)
-            unique.append(c)
-
-    hydrated = await hydrate_contexts(unique)
-    await emit({"type": "citations", "value": build_citations(hydrated)})
+    hydrated = await hydrate_contexts(_dedupe(all_chunks))
 
     synth_question = (
         f"Compare the answers to the following sub-questions, and produce a "
@@ -201,56 +203,64 @@ async def comparative_node(state: QueryState) -> dict[str, Any]:
         f"Sub-question 1: {subs[0]}\n"
         f"Sub-question 2: {subs[1]}"
     )
-    async for tok in stream_answer(synth_question, hydrated, state.get("chat_history")):
-        await emit({"type": "token", "value": tok})
+    await stream_grounded_answer(emit, synth_question, hydrated, state.get("chat_history"))
     return {"sub_queries": subs}
 
 
 async def multi_hop_node(state: QueryState) -> dict[str, Any]:
     question = state["question"]
-    source_id = state.get("source_id")
     emit = state["emit"]
 
-    # Step 1: retrieve + intermediate answer (Groq 8B, no stream)
-    chunks_1 = await retrieve(question, source_id=source_id)
-    chunks_1 = await hydrate_contexts(chunks_1)
-
-    fast = get_fast_llm()
-    interm_prompt = (
-        f"Based ONLY on the following context, give a brief 2-3 sentence "
-        f"intermediate answer to:\n\n{question}\n\nContext:\n"
-        f"{format_context_for_llm(chunks_1)}"
-    )
-    interm_resp = await fast.ainvoke(interm_prompt)
-    intermediate = interm_resp.content if hasattr(interm_resp, "content") else str(interm_resp)
+    # Step 1: retrieve + intermediate answer (fast model, no stream)
+    chunks_1 = await hydrate_contexts(await _retrieve(state, question))
+    intermediate = ""
+    if chunks_1:
+        fast = get_fast_llm()
+        interm_prompt = (
+            f"Based ONLY on the following context, give a brief 2-3 sentence "
+            f"intermediate answer to:\n\n{question}\n\nContext:\n"
+            f"{format_context_for_llm(chunks_1)}"
+        )
+        try:
+            interm_resp = await fast.ainvoke(interm_prompt)
+            intermediate = interm_resp.content if hasattr(interm_resp, "content") else str(interm_resp)
+        except Exception as e:
+            print(f"[multi_hop_intermediate] failed: {e}")
+            await emit({"type": "warning", "value": {"degraded": ["multi_hop_intermediate"]}})
 
     # Step 2: follow-up query
-    followup = await make_followup_query(question, intermediate)
+    followup = await make_followup_query(question, intermediate) if intermediate else question
     await emit({"type": "sub_queries", "value": [question, followup]})
+    chunks_2 = await hydrate_contexts(await _retrieve(state, followup)) if followup != question else []
 
-    chunks_2 = await retrieve(followup, source_id=source_id)
-    chunks_2 = await hydrate_contexts(chunks_2)
-
-    # combine + dedupe
-    seen: set[str] = set()
-    combined: list[dict[str, Any]] = []
-    for c in chunks_1 + chunks_2:
-        cid = str(c.get("id"))
-        if cid not in seen:
-            seen.add(cid)
-            combined.append(c)
-
-    await emit({"type": "citations", "value": build_citations(combined)})
-
+    # chunks_1 keep their positions, so [n] numbers in the intermediate answer stay valid
+    combined = _dedupe(chunks_1 + chunks_2)
     final_question = (
         f"Original question: {question}\n\n"
-        f"Step 1 intermediate finding: {intermediate}\n\n"
+        f"Step 1 intermediate finding: {intermediate or '(none)'}\n\n"
         f"Synthesize a final, well-grounded answer using BOTH the step-1 finding "
         f"and the additional context retrieved below."
     )
-    async for tok in stream_answer(final_question, combined, state.get("chat_history")):
-        await emit({"type": "token", "value": tok})
+    await stream_grounded_answer(emit, final_question, combined, state.get("chat_history"))
     return {"sub_queries": [question, followup]}
+
+
+def user_facing_error(e: Exception) -> str:
+    """A short, actionable message for the chat UI. Raw provider errors can be long
+    and include account identifiers, so they are only written to the server log."""
+    from core.llm_providers import ProviderConfigError, active_provider
+
+    text = str(e)
+    if isinstance(e, ProviderConfigError):
+        return f"LLM provider is not configured: {text}"
+    if "429" in text or "rate limit" in text.lower() or "rate_limit" in text:
+        return (f"The LLM provider ({active_provider()}) rate limit was reached. "
+                "Try again later, or set LLM_PROVIDER to another configured provider.")
+    if "401" in text or "invalid api key" in text.lower() or "authentication" in text.lower():
+        return f"The LLM provider ({active_provider()}) rejected the API key. Check backend/.env."
+    if any(s in text for s in ("Connection", "connect", "Timeout", "timed out")):
+        return "Connection problem: could not reach the LLM provider, Postgres or Qdrant. Please retry."
+    return f"Something went wrong while answering ({type(e).__name__}). Check the server log."
 
 
 # -- Graph assembly --------------------------------------------------------
@@ -313,7 +323,7 @@ async def route_and_stream(
             await queue.put({"type": "done", "value": None})
         except Exception as e:
             print(f"[route_and_stream] graph run failed: {e}")
-            await queue.put({"type": "error", "value": str(e)})
+            await queue.put({"type": "error", "value": user_facing_error(e)})
             await queue.put({"type": "done", "value": None})
         finally:
             await queue.put(_SENTINEL)
