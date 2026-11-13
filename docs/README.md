@@ -5,6 +5,7 @@ Project-level notes that don't belong in the main README.
 | File | What it holds |
 |---|---|
 | [ROADMAP.md](ROADMAP.md) | The approved SourceMind 2.0 plan, phase by phase |
+| [ROADMAP_NEXT.md](ROADMAP_NEXT.md) | Remaining work after the 2.0 release: phases A–D |
 | [DECISIONS.md](DECISIONS.md) | Every important decision, with the reason behind it |
 | [PROGRESS.md](PROGRESS.md) | What each phase actually delivered, with commits and results |
 | [EVALUATION.md](EVALUATION.md) | How the benchmark is built and how every metric is defined |

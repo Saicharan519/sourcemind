@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SourceMind is a multi-modal RAG platform: ingest PDFs or YouTube URLs, then chat with the content over SSE-streamed answers with citations (page numbers for docs, timestamp segments for videos). Backend is FastAPI (async), frontend is React/Vite, storage is Qdrant (vectors) + PostgreSQL (everything else). LLMs run on Groq (free tier: `openai/gpt-oss-120b` main, `openai/gpt-oss-20b` fast); embeddings (`all-MiniLM-L6-v2`) and Whisper transcription run locally on CPU. See `README.md` for current behavior; `sourcemind_prd.md` is the original design doc and diverges from the code in places (noted at its top).
 
-**SourceMind 2.0 is in progress** on branch `sourcemind-2.0`, executed phase by phase (evaluation benchmark → fixes → retrieval ablations → citations/abstention → isolation/security → MCP → observability → packaging). The pre-2.0 code is tagged `v1-as-shipped` and is ablation arm 1 — never move that tag. No metric goes into the README or resume unless a committed result file backs it.
+**SourceMind 2.0 is in progress** on branch `sourcemind-2.0`, The 2.0 local release is merged to `main`; remaining work is planned in `docs/ROADMAP_NEXT.md` (A: full benchmark, B: measured quality improvements, then C: multi-user/security, D: agent + showcase). The pre-2.0 code is tagged `v1-as-shipped` and is ablation arm 1 — never move that tag. No metric goes into the README or resume unless a committed result file backs it.
 
 ## Running the project
 
@@ -67,11 +67,11 @@ This is a **real compiled LangGraph `StateGraph`** (`GRAPH = _build_graph()`, co
 
 ### The retrieval pipeline (`core/rag_engine.py` + `core/hybrid_search.py`)
 
-`retrieve()` expands the query with multi-query rephrasings + a HyDE hypothetical answer (both fast model), runs `hybrid_search` for each variant in parallel, then dedupes by chunk id keeping the best RRF score. `hybrid_search` fuses **dense** (Qdrant cosine) and **sparse** (BM25) results via Reciprocal Rank Fusion, then MMR-reranks for diversity down to `MMR_FINAL_K` chunks.
+`retrieve()` expands the query with multi-query rephrasings + a HyDE hypothetical answer (both fast model), runs `hybrid_search` for each variant in parallel, then fuses the per-variant ranked lists with RRF (`reciprocal_rank_fusion`) and keeps `MMR_FINAL_K`. Failed expansion steps are recorded in `diagnostics["degraded"]` and surfaced as a `warning` event. `hybrid_search` fuses **dense** (Qdrant cosine) and **sparse** (BM25) results via Reciprocal Rank Fusion, then MMR-reranks for diversity down to `MMR_FINAL_K` chunks.
 
 Key structural facts:
 - **Hierarchical chunking.** Child chunks (~300 **characters** — `length_function=len`, despite older docs saying tokens) are what's embedded and searched; parent chunks (~1500 characters) live in Postgres. After retrieval, `hydrate_contexts()` swaps each child's content for its **parent** content (via `parent_chunk_id` in the Qdrant payload) before the LLM sees it. Video chunks have no parent and pass through unchanged.
-- **Sparse vectors are NOT stored in Qdrant.** Contrary to the PRD's "sparse vectors enabled" claim, `db/qdrant.py` creates a dense-only collection. BM25 is a separate path: `core/bm25_index.py` pulls the text corpus from the Postgres `bm25_index` table and builds a fresh `BM25Okapi` index **per query**. Simple and fine at this scale; the place to change if retrieval gets slow.
+- **Sparse vectors are NOT stored in Qdrant.** Contrary to the PRD's "sparse vectors enabled" claim, `db/qdrant.py` creates a dense-only collection. BM25 is a separate path: `core/bm25_index.py` builds a `BM25Okapi` index from the Postgres `bm25_index` table, caches it per source in memory, and rebuilds only when a cheap (count, checksum) fingerprint of the corpus changes; build and scoring run in a worker thread.
 - **Source isolation via metadata filter.** Every Qdrant/BM25 call filters by `source_id`. Passing `source_id=None` (the global-chat path, `api/routes/global_chat.py`) omits the filter and searches across all sources.
 
 ### Data layer

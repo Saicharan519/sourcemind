@@ -69,3 +69,12 @@ mcp 2.x requires starlette 1.x, which breaks FastAPI 0.115. Upgrading FastAPI fo
 
 ## 2026-11-12: Release scope for the deadline
 Shipped: validated citations, insufficient-evidence answers, security fixes, MCP, tests. Deferred: the full agent loop, auth, the reranker ablation and the full benchmark run. The README claims no accuracy numbers until the benchmark has been run and committed.
+
+## 2026-11-13: Remaining work split into four phases; A and B first
+After the 2.0 release, the remaining work is planned in [ROADMAP_NEXT.md](ROADMAP_NEXT.md):
+- A: run the full benchmark (v1-as-shipped vs 2.0).
+- B: reranker, corrective re-search and token-aware chunking, each kept only if it measurably helps.
+- C: auth, per-user isolation, CI.
+- D: tool-calling agent experiment and showcase.
+
+A and B come first because the project still has no measured accuracy number, and B's changes can only be judged against A's baseline. C and D are deferred; they only add to the app.
