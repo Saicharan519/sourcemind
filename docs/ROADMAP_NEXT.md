@@ -2,7 +2,7 @@
 
 The 2.0 release (merged to `main`) shipped validated citations, the insufficient-evidence answer, retrieval and security fixes, provider selection and the MCP server. This plan covers what is left, in four phases. Each phase ends in a complete, showable state, so work can stop after any of them.
 
-**Status:** Phases A and B are next. Phases C and D are planned for later.
+**Status (2026-11-13):** all four phases are deferred to future work; nothing here is started. When resuming, start with Phase A. It needs a way to run about 300 Groq questions (free tier: about 50/day, so about 6 days; or Groq pay-as-you-go, about $1–2).
 
 Every phase only *adds* to the working app: the current release keeps running unchanged until a phase's changes are merged, and each phase is tested before it lands.
 
